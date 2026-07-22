@@ -396,12 +396,182 @@ CREATE TABLE IF NOT EXISTS analytics_feature_usage (
     last_used_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS analytics_failures (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    event_id UUID,
-    event_type VARCHAR(100) NOT NULL,
-    error_message TEXT,
-    stack_trace TEXT,
-    retry_count INT NOT NULL DEFAULT 0,
+-- =============================================================================
+-- 15. ANALYTICS WAREHOUSE & DATA ENGINEERING TABLES (STAR SCHEMA)
+-- =============================================================================
+
+-- DIMENSION TABLES
+CREATE TABLE IF NOT EXISTS dim_user (
+    user_key UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    graduation_year INT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS dim_date (
+    date_key INT PRIMARY KEY, -- YYYYMMDD format
+    full_date DATE NOT NULL UNIQUE,
+    day_of_week VARCHAR(20) NOT NULL,
+    day_of_month INT NOT NULL,
+    month_number INT NOT NULL,
+    month_name VARCHAR(20) NOT NULL,
+    quarter INT NOT NULL,
+    year_number INT NOT NULL,
+    is_weekend BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS dim_skill (
+    skill_key UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    skill_name VARCHAR(100) NOT NULL UNIQUE,
+    category VARCHAR(100),
+    is_technical BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS dim_project (
+    project_key UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    project_title VARCHAR(255) NOT NULL,
+    technologies TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS dim_company (
+    company_key UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    company_name VARCHAR(255) NOT NULL UNIQUE,
+    industry VARCHAR(100),
+    location VARCHAR(100)
+);
+
+CREATE TABLE IF NOT EXISTS dim_resume (
+    resume_key UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    resume_id UUID NOT NULL UNIQUE,
+    version INT NOT NULL,
+    file_name VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS dim_feature (
+    feature_key UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    feature_name VARCHAR(100) NOT NULL UNIQUE,
+    module VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS dim_career_goal (
+    goal_key UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    target_role VARCHAR(100) NOT NULL UNIQUE,
+    industry VARCHAR(100)
+);
+
+-- FACT TABLES
+CREATE TABLE IF NOT EXISTS fact_user_activity (
+    fact_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_key UUID REFERENCES dim_user(user_key),
+    date_key INT REFERENCES dim_date(date_key),
+    feature_key UUID REFERENCES dim_feature(feature_key),
+    source_event_id UUID,
+    event_type VARCHAR(100) NOT NULL,
+    duration_ms BIGINT DEFAULT 0,
+    etl_job_id UUID,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS fact_resume_analysis (
+    fact_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_key UUID REFERENCES dim_user(user_key),
+    date_key INT REFERENCES dim_date(date_key),
+    resume_key UUID REFERENCES dim_resume(resume_key),
+    ats_score INT NOT NULL DEFAULT 0,
+    skills_count INT NOT NULL DEFAULT 0,
+    source_event_id UUID,
+    etl_job_id UUID,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS fact_ai_usage (
+    fact_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_key UUID REFERENCES dim_user(user_key),
+    date_key INT REFERENCES dim_date(date_key),
+    feature_key UUID REFERENCES dim_feature(feature_key),
+    prompt_tokens INT DEFAULT 0,
+    completion_tokens INT DEFAULT 0,
+    source_event_id UUID,
+    etl_job_id UUID,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS fact_profile_updates (
+    fact_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_key UUID REFERENCES dim_user(user_key),
+    date_key INT REFERENCES dim_date(date_key),
+    field_updated VARCHAR(100) NOT NULL,
+    source_event_id UUID,
+    etl_job_id UUID,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS fact_career_scores (
+    fact_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_key UUID REFERENCES dim_user(user_key),
+    date_key INT REFERENCES dim_date(date_key),
+    career_score INT NOT NULL,
+    source_event_id UUID,
+    etl_job_id UUID,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS fact_recommendations (
+    fact_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_key UUID REFERENCES dim_user(user_key),
+    date_key INT REFERENCES dim_date(date_key),
+    recommendation_type VARCHAR(100) NOT NULL,
+    source_event_id UUID,
+    etl_job_id UUID,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS fact_interviews (
+    fact_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_key UUID REFERENCES dim_user(user_key),
+    date_key INT REFERENCES dim_date(date_key),
+    target_role VARCHAR(100) NOT NULL,
+    questions_count INT NOT NULL DEFAULT 0,
+    source_event_id UUID,
+    etl_job_id UUID,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ETL AUDIT & DATA QUALITY TABLES
+CREATE TABLE IF NOT EXISTS etl_execution_history (
+    job_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    pipeline_name VARCHAR(100) NOT NULL,
+    pipeline_version VARCHAR(50) NOT NULL DEFAULT 'v1.0.0',
+    records_extracted INT NOT NULL DEFAULT 0,
+    records_transformed INT NOT NULL DEFAULT 0,
+    records_loaded INT NOT NULL DEFAULT 0,
+    records_rejected INT NOT NULL DEFAULT 0,
+    status VARCHAR(50) NOT NULL, -- SUCCESS, FAILED, RUNNING
+    error_message TEXT,
+    started_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS data_quality_reports (
+    report_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    job_id UUID REFERENCES etl_execution_history(job_id),
+    total_assertions INT NOT NULL DEFAULT 0,
+    passed_assertions INT NOT NULL DEFAULT 0,
+    failed_assertions INT NOT NULL DEFAULT 0,
+    quality_score INT NOT NULL DEFAULT 100, -- 0 to 100
+    report_json TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS warehouse_metadata (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    table_name VARCHAR(100) NOT NULL UNIQUE,
+    table_type VARCHAR(50) NOT NULL, -- DIMENSION, FACT, METADATA
+    row_count BIGINT NOT NULL DEFAULT 0,
+    last_refreshed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
