@@ -9,6 +9,10 @@ import {
   Award,
   Briefcase,
   Target,
+  FileText,
+  Activity,
+  UploadCloud,
+  Search,
   Settings,
   LogOut,
   Sparkles,
@@ -31,12 +35,16 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'My Profile', path: '/profile', icon: User },
+    { name: 'Resumes', path: '/resumes', icon: FileText },
+    { name: 'Profile Health', path: '/health', icon: Activity },
     { name: 'Skills', path: '/skills', icon: Cpu },
     { name: 'Education', path: '/education', icon: GraduationCap },
     { name: 'Projects', path: '/projects', icon: FolderGit2 },
     { name: 'Certificates', path: '/certificates', icon: Award },
     { name: 'Experience', path: '/experience', icon: Briefcase },
     { name: 'Career Goals', path: '/career-goals', icon: Target },
+    { name: 'Upload Center', path: '/upload-center', icon: UploadCloud },
+    { name: 'Search Engine', path: '/search', icon: Search },
     { name: 'Settings', path: '/settings', icon: Settings },
   ];
 

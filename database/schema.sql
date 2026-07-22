@@ -249,5 +249,79 @@ CREATE TABLE IF NOT EXISTS applications (
     CONSTRAINT uk_student_internship UNIQUE (internship_id, student_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_applications_student_id ON applications(student_id);
-CREATE INDEX IF NOT EXISTS idx_applications_internship_id ON applications(internship_id);
+-- =============================================================================
+-- 8. FILE_METADATA TABLE
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS file_metadata (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+    file_name VARCHAR(255) NOT NULL,
+    original_filename VARCHAR(255) NOT NULL,
+    file_path VARCHAR(500) NOT NULL,
+    file_size BIGINT NOT NULL,
+    content_type VARCHAR(100) NOT NULL,
+    upload_type VARCHAR(50) NOT NULL, -- RESUME, CERTIFICATE, PROFILE_PHOTO
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================================================
+-- 9. RESUMES TABLE (Versioning)
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS resumes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+    file_id UUID NOT NULL REFERENCES file_metadata(id) ON DELETE CASCADE,
+    version INT NOT NULL DEFAULT 1,
+    is_active BOOLEAN NOT NULL DEFAULT FALSE,
+    parsed_content TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================================================
+-- 10. SKILL TAXONOMY TABLES
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS skill_categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    category_name VARCHAR(100) NOT NULL UNIQUE,
+    parent_category_id UUID REFERENCES skill_categories(id) ON DELETE SET NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS master_skills (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    category_id UUID REFERENCES skill_categories(id) ON DELETE SET NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    icon VARCHAR(100),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS skill_aliases (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    master_skill_id UUID NOT NULL REFERENCES master_skills(id) ON DELETE CASCADE,
+    alias VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Seed Taxonomy Baseline
+INSERT INTO skill_categories (category_name) VALUES ('Programming'), ('Backend'), ('Frontend'), ('Database'), ('AI/ML')
+ON CONFLICT (category_name) DO NOTHING;
+
+-- =============================================================================
+-- 11. ANALYTICS_EVENTS TABLE
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS analytics_events (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    event_type VARCHAR(100) NOT NULL,
+    event_details TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_events_user_id ON analytics_events(user_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_type ON analytics_events(event_type);

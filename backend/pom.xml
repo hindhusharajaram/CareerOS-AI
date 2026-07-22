@@ -74,6 +74,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Apache Tika for Document Text Parsing -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
         <!-- Lombok Annotation Processor -->
         <dependency>
             <groupId>org.projectlombok</groupId>
