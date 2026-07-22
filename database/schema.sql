@@ -373,12 +373,35 @@ CREATE TABLE IF NOT EXISTS ai_chat_sessions (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS ai_chat_messages (
+-- =============================================================================
+-- 14. EVENT-DRIVEN ANALYTICS PLATFORM TABLES
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS analytics_daily_summary (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    session_id UUID NOT NULL REFERENCES ai_chat_sessions(id) ON DELETE CASCADE,
-    sender_role VARCHAR(50) NOT NULL, -- USER or AI
-    message_text TEXT NOT NULL,
-    context_snapshot_json TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    summary_date DATE NOT NULL UNIQUE,
+    dau INT NOT NULL DEFAULT 0,
+    wau INT NOT NULL DEFAULT 0,
+    mau INT NOT NULL DEFAULT 0,
+    resume_upload_count INT NOT NULL DEFAULT 0,
+    career_score_count INT NOT NULL DEFAULT 0,
+    recommendation_count INT NOT NULL DEFAULT 0,
+    ai_usage_count INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS analytics_feature_usage (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    feature_name VARCHAR(100) NOT NULL UNIQUE,
+    usage_count BIGINT NOT NULL DEFAULT 0,
+    last_used_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS analytics_failures (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    event_id UUID,
+    event_type VARCHAR(100) NOT NULL,
+    error_message TEXT,
+    stack_trace TEXT,
+    retry_count INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

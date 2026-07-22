@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.careerosai.analytics.events.ResumeUploadedEvent;
+import com.careerosai.analytics.producer.EventPublisherService;
+
 @RestController
 @RequestMapping("/api/v1/student/resumes")
 @RequiredArgsConstructor
@@ -51,6 +54,7 @@ public class ResumeController {
     private final UserRepository userRepository;
     private final StudentWorkspaceService studentWorkspaceService;
     private final AnalyticsService analyticsService;
+    private final EventPublisherService eventPublisherService;
 
     private UUID getEffectiveUserId(final CustomUserPrincipal principal) {
         if (principal != null && principal.getId() != null) return principal.getId();
@@ -120,6 +124,7 @@ public class ResumeController {
         }
 
         analyticsService.trackEvent(userId, "RESUME_UPLOADED", "Version " + nextVersion + ": " + file.getOriginalFilename());
+        eventPublisherService.publishEvent(new ResumeUploadedEvent(userId, file.getOriginalFilename(), nextVersion));
 
         final ResumeDto dto = toDto(resume);
         return new ResponseEntity<>(ApiResponse.success("Resume uploaded, parsed, and set as active version", dto, request.getRequestURI()), HttpStatus.CREATED);

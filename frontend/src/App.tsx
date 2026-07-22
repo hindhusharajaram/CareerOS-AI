@@ -33,6 +33,7 @@ import AiLearningCoachPage from './pages/AiLearningCoachPage';
 import AiMockInterviewPage from './pages/AiMockInterviewPage';
 import AiProjectAdvisorPage from './pages/AiProjectAdvisorPage';
 import AiCareerChatPage from './pages/AiCareerChatPage';
+import AnalyticsAdminPage from './pages/AnalyticsAdminPage';
 
 /**
  * Root Application Shell Component — CareerOS AI
@@ -78,6 +79,9 @@ export default function App(): React.ReactElement {
         <Route path="/ai/mock-interview" element={<AiMockInterviewPage />} />
         <Route path="/ai/project-advisor" element={<AiProjectAdvisorPage />} />
         <Route path="/ai/chat" element={<AiCareerChatPage />} />
+
+        {/* Sprint 6.1: Event-Driven Analytics Platform Route */}
+        <Route path="/analytics-admin" element={<AnalyticsAdminPage />} />
 
         <Route path="/settings" element={<Navigate to="/profile" replace />} />
       </Routes>
