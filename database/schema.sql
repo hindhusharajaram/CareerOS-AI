@@ -52,11 +52,147 @@ CREATE TABLE IF NOT EXISTS student_profiles (
     user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
+    profile_photo TEXT,
     phone VARCHAR(20),
+    gender VARCHAR(20),
+    date_of_birth VARCHAR(20),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    country VARCHAR(100),
     university_name VARCHAR(255) NOT NULL,
+    degree VARCHAR(100),
     major VARCHAR(150) NOT NULL,
+    branch VARCHAR(150),
     gpa NUMERIC(3, 2),
     graduation_year INT NOT NULL,
+    current_semester INT,
+    about TEXT,
+    linkedin VARCHAR(255),
+    github VARCHAR(255),
+    portfolio VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================================================
+-- 4.1 SKILLS TABLE
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS skills (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    skill_name VARCHAR(100) NOT NULL UNIQUE,
+    category VARCHAR(100) NOT NULL,
+    icon VARCHAR(100),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Seed Baseline Popular Skills
+INSERT INTO skills (skill_name, category, icon) VALUES 
+('Java', 'Backend', 'code'),
+('Python', 'Backend/AI', 'code'),
+('React', 'Frontend', 'layout'),
+('TypeScript', 'Frontend', 'code'),
+('Spring Boot', 'Backend', 'server'),
+('PostgreSQL', 'Database', 'database'),
+('Node.js', 'Backend', 'server'),
+('SQL', 'Database', 'database'),
+('Machine Learning', 'AI/Data', 'brain'),
+('Data Structures', 'CS Fundamentals', 'cpu'),
+('Docker', 'DevOps', 'box'),
+('Git', 'Tools', 'git-branch'),
+('Tailwind CSS', 'Frontend', 'palette'),
+('REST APIs', 'Backend', 'globe')
+ON CONFLICT (skill_name) DO NOTHING;
+
+-- =============================================================================
+-- 4.2 STUDENT_SKILLS JOIN TABLE
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS student_skills (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+    skill_id UUID NOT NULL REFERENCES skills(id) ON DELETE CASCADE,
+    proficiency VARCHAR(50) NOT NULL,
+    years_of_experience NUMERIC(3, 1) DEFAULT 1.0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uk_student_skill UNIQUE (student_id, skill_id)
+);
+
+-- =============================================================================
+-- 4.3 EDUCATION TABLE
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS education (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+    institution VARCHAR(255) NOT NULL,
+    degree VARCHAR(150) NOT NULL,
+    specialization VARCHAR(150),
+    start_year INT NOT NULL,
+    end_year INT,
+    cgpa NUMERIC(3, 2),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================================================
+-- 4.4 PROJECTS TABLE
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS projects (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    technologies VARCHAR(255),
+    github_link VARCHAR(255),
+    live_link VARCHAR(255),
+    start_date VARCHAR(30),
+    end_date VARCHAR(30),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================================================
+-- 4.5 CERTIFICATES TABLE
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS certificates (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    provider VARCHAR(255) NOT NULL,
+    issue_date VARCHAR(30),
+    credential_url VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================================================
+-- 4.6 EXPERIENCE TABLE
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS experience (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
+    company VARCHAR(255) NOT NULL,
+    role VARCHAR(150) NOT NULL,
+    description TEXT,
+    start_date VARCHAR(30),
+    end_date VARCHAR(30),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================================================
+-- 4.7 CAREER_GOALS TABLE
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS career_goals (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    student_id UUID NOT NULL UNIQUE REFERENCES student_profiles(id) ON DELETE CASCADE,
+    preferred_role VARCHAR(150),
+    preferred_domain VARCHAR(150),
+    preferred_location VARCHAR(150),
+    expected_salary NUMERIC(12, 2),
+    higher_studies BOOLEAN DEFAULT FALSE,
+    target_companies VARCHAR(255),
+    work_mode VARCHAR(50),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

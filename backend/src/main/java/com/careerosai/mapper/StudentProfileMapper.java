@@ -30,4 +30,46 @@ public class StudentProfileMapper {
             .graduationYear(request.getGraduationYear())
             .build();
     }
+
+    /**
+     * Maps StudentProfile entity to StudentProfileDto.
+     */
+    public com.careerosai.dto.StudentProfileDto toDto(final StudentProfile entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        final String userFullName = entity.getUser() != null ? entity.getUser().getFullName() : null;
+        final String userEmail = entity.getUser() != null ? entity.getUser().getEmail() : null;
+        final String fullName = (entity.getFirstName() != null && entity.getLastName() != null)
+            ? entity.getFirstName() + " " + entity.getLastName()
+            : userFullName;
+
+        return com.careerosai.dto.StudentProfileDto.builder()
+            .id(entity.getId())
+            .userId(entity.getUser() != null ? entity.getUser().getId() : null)
+            .firstName(entity.getFirstName())
+            .lastName(entity.getLastName())
+            .fullName(fullName)
+            .email(userEmail)
+            .profilePhoto(entity.getProfilePhoto())
+            .phone(entity.getPhone())
+            .gender(entity.getGender())
+            .dateOfBirth(entity.getDateOfBirth())
+            .city(entity.getCity())
+            .state(entity.getState())
+            .country(entity.getCountry())
+            .universityName(entity.getUniversityName())
+            .degree(entity.getDegree())
+            .major(entity.getMajor())
+            .branch(entity.getBranch())
+            .gpa(entity.getGpa())
+            .graduationYear(entity.getGraduationYear())
+            .currentSemester(entity.getCurrentSemester())
+            .about(entity.getAbout())
+            .linkedin(entity.getLinkedin())
+            .github(entity.getGithub())
+            .portfolio(entity.getPortfolio())
+            .build();
+    }
 }
