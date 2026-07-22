@@ -17,6 +17,16 @@ import ProfileHealthPage from './pages/ProfileHealthPage';
 import UploadCenterPage from './pages/UploadCenterPage';
 import SearchPage from './pages/SearchPage';
 
+import IntelligenceDashboardPage from './pages/IntelligenceDashboardPage';
+import CareerScorePage from './pages/CareerScorePage';
+import AtsAnalysisPage from './pages/AtsAnalysisPage';
+import SkillGapPage from './pages/SkillGapPage';
+import RoadmapPage from './pages/RoadmapPage';
+import EligibilityPage from './pages/EligibilityPage';
+import ProjectAnalyzerPage from './pages/ProjectAnalyzerPage';
+import RecommendationsPage from './pages/RecommendationsPage';
+import TrendAnalyticsPage from './pages/TrendAnalyticsPage';
+
 /**
  * Root Application Shell Component — CareerOS AI
  * Configures routes for Authentication and Student Career Workspace modules.
@@ -42,6 +52,18 @@ export default function App(): React.ReactElement {
         <Route path="/career-goals" element={<CareerGoalsPage />} />
         <Route path="/upload-center" element={<UploadCenterPage />} />
         <Route path="/search" element={<SearchPage />} />
+
+        {/* Sprint 4: Career Intelligence Engine Routes */}
+        <Route path="/intelligence" element={<IntelligenceDashboardPage />} />
+        <Route path="/intelligence/score" element={<CareerScorePage />} />
+        <Route path="/intelligence/ats" element={<AtsAnalysisPage />} />
+        <Route path="/intelligence/skill-gap" element={<SkillGapPage />} />
+        <Route path="/intelligence/roadmap" element={<RoadmapPage />} />
+        <Route path="/intelligence/eligibility" element={<EligibilityPage />} />
+        <Route path="/intelligence/projects" element={<ProjectAnalyzerPage />} />
+        <Route path="/intelligence/recommendations" element={<RecommendationsPage />} />
+        <Route path="/intelligence/trends" element={<TrendAnalyticsPage />} />
+
         <Route path="/settings" element={<Navigate to="/profile" replace />} />
       </Routes>
     </BrowserRouter>

@@ -13,6 +13,7 @@ import {
   Activity,
   UploadCloud,
   Search,
+  Brain,
   Settings,
   LogOut,
   Sparkles,
@@ -34,6 +35,7 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
 
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'Career Intelligence', path: '/intelligence', icon: Brain },
     { name: 'My Profile', path: '/profile', icon: User },
     { name: 'Resumes', path: '/resumes', icon: FileText },
     { name: 'Profile Health', path: '/health', icon: Activity },
