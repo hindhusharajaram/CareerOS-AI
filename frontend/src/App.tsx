@@ -1,12 +1,20 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import StudentDashboardPage from './pages/StudentDashboardPage';
+import ProfilePage from './pages/ProfilePage';
+import SkillsPage from './pages/SkillsPage';
+import EducationPage from './pages/EducationPage';
+import ProjectsPage from './pages/ProjectsPage';
+import CertificatesPage from './pages/CertificatesPage';
+import ExperiencePage from './pages/ExperiencePage';
+import CareerGoalsPage from './pages/CareerGoalsPage';
 
 /**
  * Root Application Shell Component — CareerOS AI
- * Configures routes for Landing, Login, and Register pages.
+ * Configures routes for Authentication and Student Career Workspace modules.
  */
 export default function App(): React.ReactElement {
   return (
@@ -15,6 +23,17 @@ export default function App(): React.ReactElement {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
+        {/* Student Workspace Routes */}
+        <Route path="/dashboard" element={<StudentDashboardPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/skills" element={<SkillsPage />} />
+        <Route path="/education" element={<EducationPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/certificates" element={<CertificatesPage />} />
+        <Route path="/experience" element={<ExperiencePage />} />
+        <Route path="/career-goals" element={<CareerGoalsPage />} />
+        <Route path="/settings" element={<Navigate to="/profile" replace />} />
       </Routes>
     </BrowserRouter>
   );

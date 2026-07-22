@@ -82,11 +82,53 @@ public class StudentProfile extends BaseEntity {
     private String phone;
 
     /**
+     * Optional Profile Photo URL or Base64 string.
+     */
+    @Column(name = "profile_photo", columnDefinition = "TEXT")
+    private String profilePhoto;
+
+    /**
+     * Gender string.
+     */
+    @Column(name = "gender", length = 20)
+    private String gender;
+
+    /**
+     * Date of birth formatted as YYYY-MM-DD.
+     */
+    @Column(name = "date_of_birth", length = 20)
+    private String dateOfBirth;
+
+    /**
+     * City location.
+     */
+    @Column(name = "city", length = 100)
+    private String city;
+
+    /**
+     * State location.
+     */
+    @Column(name = "state", length = 100)
+    private String state;
+
+    /**
+     * Country location.
+     */
+    @Column(name = "country", length = 100)
+    private String country;
+
+    /**
      * Academic Institution / University Name.
      */
     @NotBlank(message = "University name cannot be blank")
     @Column(name = "university_name", nullable = false)
     private String universityName;
+
+    /**
+     * Academic Degree (e.g. B.Tech, B.S., M.S., M.Tech).
+     */
+    @Column(name = "degree", length = 100)
+    private String degree;
 
     /**
      * Major / Field of Study.
@@ -96,10 +138,16 @@ public class StudentProfile extends BaseEntity {
     private String major;
 
     /**
-     * Cumulative Grade Point Average (GPA) on a standard 4.0 scale.
+     * Branch / Department.
+     */
+    @Column(name = "branch", length = 150)
+    private String branch;
+
+    /**
+     * Cumulative Grade Point Average (GPA) on a standard scale.
      */
     @DecimalMin(value = "0.0", message = "GPA cannot be negative")
-    @DecimalMax(value = "4.0", message = "GPA cannot exceed 4.0")
+    @DecimalMax(value = "10.0", message = "GPA cannot exceed 10.0")
     @Column(name = "gpa", precision = 3, scale = 2)
     private BigDecimal gpa;
 
@@ -111,4 +159,36 @@ public class StudentProfile extends BaseEntity {
     @Max(value = 2035, message = "Graduation year cannot exceed 2035")
     @Column(name = "graduation_year", nullable = false)
     private Integer graduationYear;
+
+    /**
+     * Current Academic Semester (1 to 10).
+     */
+    @Min(value = 1, message = "Semester must be at least 1")
+    @Max(value = 12, message = "Semester cannot exceed 12")
+    @Column(name = "current_semester")
+    private Integer currentSemester;
+
+    /**
+     * Personal About / Professional Bio summary.
+     */
+    @Column(name = "about", columnDefinition = "TEXT")
+    private String about;
+
+    /**
+     * LinkedIn Profile URL.
+     */
+    @Column(name = "linkedin", length = 255)
+    private String linkedin;
+
+    /**
+     * GitHub Profile URL.
+     */
+    @Column(name = "github", length = 255)
+    private String github;
+
+    /**
+     * Portfolio / Personal Website URL.
+     */
+    @Column(name = "portfolio", length = 255)
+    private String portfolio;
 }

@@ -49,7 +49,7 @@ export default function LoginPage(): React.ReactElement {
         
         setSuccessMsg(`Welcome back, ${authData.user.fullName || 'User'}!`);
         setTimeout(() => {
-          navigate('/');
+          navigate('/dashboard');
         }, 1500);
       } else {
         setServerError(resBody.message || 'Login failed.');
