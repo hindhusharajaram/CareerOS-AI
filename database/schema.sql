@@ -362,10 +362,23 @@ CREATE TABLE IF NOT EXISTS eligibility_reports (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS recommendation_history (
+-- =============================================================================
+-- 13. AI CHAT & CONVERSATION HISTORY TABLES
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS ai_chat_sessions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     student_id UUID NOT NULL REFERENCES student_profiles(id) ON DELETE CASCADE,
-    recommendations_json TEXT NOT NULL,
+    session_title VARCHAR(255) NOT NULL DEFAULT 'Career Conversation',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ai_chat_messages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    session_id UUID NOT NULL REFERENCES ai_chat_sessions(id) ON DELETE CASCADE,
+    sender_role VARCHAR(50) NOT NULL, -- USER or AI
+    message_text TEXT NOT NULL,
+    context_snapshot_json TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
