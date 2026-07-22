@@ -27,6 +27,13 @@ import ProjectAnalyzerPage from './pages/ProjectAnalyzerPage';
 import RecommendationsPage from './pages/RecommendationsPage';
 import TrendAnalyticsPage from './pages/TrendAnalyticsPage';
 
+import CareerCopilotPage from './pages/CareerCopilotPage';
+import AiResumeReviewPage from './pages/AiResumeReviewPage';
+import AiLearningCoachPage from './pages/AiLearningCoachPage';
+import AiMockInterviewPage from './pages/AiMockInterviewPage';
+import AiProjectAdvisorPage from './pages/AiProjectAdvisorPage';
+import AiCareerChatPage from './pages/AiCareerChatPage';
+
 /**
  * Root Application Shell Component — CareerOS AI
  * Configures routes for Authentication and Student Career Workspace modules.
@@ -63,6 +70,14 @@ export default function App(): React.ReactElement {
         <Route path="/intelligence/projects" element={<ProjectAnalyzerPage />} />
         <Route path="/intelligence/recommendations" element={<RecommendationsPage />} />
         <Route path="/intelligence/trends" element={<TrendAnalyticsPage />} />
+
+        {/* Sprint 5: AI Augmentation Platform Routes */}
+        <Route path="/ai/copilot" element={<CareerCopilotPage />} />
+        <Route path="/ai/resume-review" element={<AiResumeReviewPage />} />
+        <Route path="/ai/learning-coach" element={<AiLearningCoachPage />} />
+        <Route path="/ai/mock-interview" element={<AiMockInterviewPage />} />
+        <Route path="/ai/project-advisor" element={<AiProjectAdvisorPage />} />
+        <Route path="/ai/chat" element={<AiCareerChatPage />} />
 
         <Route path="/settings" element={<Navigate to="/profile" replace />} />
       </Routes>

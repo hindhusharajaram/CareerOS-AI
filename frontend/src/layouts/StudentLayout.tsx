@@ -14,6 +14,8 @@ import {
   UploadCloud,
   Search,
   Brain,
+  Bot,
+  MessageSquare,
   Settings,
   LogOut,
   Sparkles,
@@ -35,6 +37,8 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
 
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'AI Career Copilot', path: '/ai/copilot', icon: Bot },
+    { name: 'AI Career Chat', path: '/ai/chat', icon: MessageSquare },
     { name: 'Career Intelligence', path: '/intelligence', icon: Brain },
     { name: 'My Profile', path: '/profile', icon: User },
     { name: 'Resumes', path: '/resumes', icon: FileText },
