@@ -25,9 +25,14 @@ public class RailwayDatabaseEnvironmentPostProcessor implements EnvironmentPostP
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+        System.out.println("=========================================================");
+        System.out.println("RailwayDatabaseEnvironmentPostProcessor: EXECUTING");
+        
         String databaseUrl = environment.getProperty(DATABASE_URL_PROPERTY);
+        System.out.println("RailwayDatabaseEnvironmentPostProcessor: DATABASE_URL exists? " + (databaseUrl != null));
         
         if (databaseUrl != null && (databaseUrl.startsWith("postgres://") || databaseUrl.startsWith("postgresql://"))) {
+            System.out.println("RailwayDatabaseEnvironmentPostProcessor: DATABASE_URL is native Postgres format. Converting to JDBC...");
             try {
                 URI uri = new URI(databaseUrl);
                 String host = uri.getHost();
@@ -53,10 +58,15 @@ public class RailwayDatabaseEnvironmentPostProcessor implements EnvironmentPostP
                 // Add these properties to the very front so they override application.yml
                 PropertySource<?> railwayProperties = new MapPropertySource("railwayDatabaseProperties", properties);
                 environment.getPropertySources().addFirst(railwayProperties);
+                System.out.println("RailwayDatabaseEnvironmentPostProcessor: Successfully injected SPRING_DATASOURCE_URL = " + jdbcUrl);
+                System.out.println("=========================================================");
                 
             } catch (URISyntaxException e) {
-                // Ignore parsing errors and let Spring Boot's standard mechanism fail explicitly
+                System.out.println("RailwayDatabaseEnvironmentPostProcessor: Failed to parse DATABASE_URL");
+                System.out.println("=========================================================");
             }
+        } else {
+            System.out.println("=========================================================");
         }
     }
 
