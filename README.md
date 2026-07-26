@@ -1,77 +1,223 @@
-# CareerOS AI — AI-Powered Career Intelligence Platform
+<div align="center">
+  <img src="assets/banner.png" alt="CareerOS AI Banner" width="100%" />
+  
+  <h1>CareerOS AI</h1>
+  <p><b>The Next-Generation Intelligent Career Acceleration Platform</b></p>
 
-CareerOS AI is an enterprise-grade AI-powered career intelligence platform designed to empower students, companies, and educational institutions through automated career guidance, intelligent placement management, and analytics.
-
----
-
-## 🚀 Mission & Scope
-
-CareerOS AI streamlines the career ecosystem:
-- **Students**: Discover opportunities, track applications, and optimize career readiness.
-- **Companies**: Recruits talent efficiently through structured application pipelines.
-- **Institutions**: Monitor and manage student career placement performance.
-
-### Version 1 Capabilities
-- **Authentication & Authorization**: Role-Based Access Control (`STUDENT`, `COMPANY`, `ADMIN`) via JWT.
-- **Student Portal**: Profile configuration and application tracking dashboard.
-- **Company Portal**: Profile administration and internship management dashboard.
-- **Internship CRUD**: Complete publishing and lifecycle management for internship opportunities.
-- **Student Application System**: Structured application flow and status progression tracking.
+  <p>
+    <img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=java&logoColor=white" alt="Java" />
+    <img src="https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" alt="Spring Boot" />
+    <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+    <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+    <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+    <img src="https://img.shields.io/github/actions/workflow/status/your-username/CareerOS-AI/build.yml?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions" />
+    <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License" />
+  </p>
+</div>
 
 ---
 
-## 🛠️ Technology Stack
+## 📖 Project Overview
 
-| Domain | Technology |
-| :--- | :--- |
-| **Frontend** | React 18+, TypeScript, Vite, TailwindCSS, Shadcn UI, React Router, Axios, React Hook Form |
-| **Backend** | Java 21, Spring Boot 3.4+, Spring Security, JWT, Hibernate, Spring Data JPA, Maven |
-| **Database** | PostgreSQL (Neon PostgreSQL) |
-| **Deployment** | Vercel (Frontend), Render (Backend), Neon PostgreSQL (Database) |
+**CareerOS AI** is an enterprise-grade, AI-powered career acceleration platform designed to bridge the gap between students, educators, and recruiters. By leveraging artificial intelligence, data analytics, and modern software architecture, CareerOS AI provides actionable insights, automated resume parsing, mock interviews, and career trajectory mapping.
 
----
+### The Problem
+Students often lack data-driven feedback on their resumes and career readiness. Traditional university career portals are static, manual, and unengaging.
 
-## ⚡ Prerequisites
-
-Before setting up or building CareerOS AI locally, ensure your environment meets the following requirements:
-
-- **Java Development Kit (JDK)**: Java 21 LTS (Oracle OpenJDK 21 or Eclipse Temurin 21)
-- **Node.js**: Node.js 20+ LTS (with `npm` 10+)
-- **Database**: PostgreSQL 15+ (Local instance or Neon PostgreSQL cloud connection)
-- **Version Control**: Git 2.40+
-- **Recommended IDEs / Tools**:
-  - **Backend**: IntelliJ IDEA Ultimate / Community Edition (with Spring Boot & Lombok plugins) or VS Code (Java Extension Pack)
-  - **Frontend**: VS Code or Cursor (with ESLint, Prettier, and Tailwind CSS IntelliSense extensions)
-  - **API Testing**: Postman or Insomnia
-  - **Database Management**: DBeaver, PgAdmin 4, or DataGrip
+### The Solution
+A highly interactive, dynamic, and intelligent platform that acts as a 24/7 personal career coach, analyzing profiles against industry standards and providing concrete, actionable recommendations.
 
 ---
 
-## 📐 Enterprise Architecture Principles
+## ✨ Key Features
 
-- **Clean Layered Architecture**: Decoupled presentation, domain, and data access layers.
-- **SOLID & DRY Principles**: Strict single responsibility and non-duplication across codebases.
-- **API Uniformity**: Standardized JSON envelope (`ApiResponse<T>`) for all REST endpoints.
-- **Audit Traceability**: Base entity tracking (`created_at`, `updated_at`) across all domain models.
-- **Security-First Design**: Stateless JWT authentication, BCrypt password hashing, role-based authorization.
+### 🧠 Intelligence & AI
+- **AI Resume Parser**: Automatically extracts entities, skills, and experiences from uploaded resumes.
+- **Career Score Engine**: Proprietary algorithm generating a holistic placement readiness score (0-100).
+- **Smart Recommendations**: Context-aware suggestions for skill gaps and project improvements.
+
+### 📊 Data & Analytics
+- **Data Warehouse**: Dedicated ETL pipelines streaming events into a structured analytics warehouse.
+- **Admin Dashboard**: Real-time observability of system health, active users, and global career metrics.
+- **Trend Analytics**: Visual graphs mapping skill demands and profile improvements over time.
+
+### 🔐 Security & Architecture
+- **Role-Based Access Control (RBAC)**: Secure separation between Student and Admin boundaries.
+- **Stateless JWT Auth**: High-performance, scalable authentication mechanism.
+- **Enterprise Observability**: Prometheus metrics, structured logging, and distributed tracing readiness.
 
 ---
 
-## 📁 Repository Organization
+## 🛠️ Tech Stack
 
+| Domain | Technology | Description |
+| :--- | :--- | :--- |
+| **Backend** | Java 21, Spring Boot 3 | High-performance core API architecture |
+| **Frontend** | React 18, Vite, TypeScript | Lightning-fast, premium UI with TailwindCSS |
+| **Database** | PostgreSQL, Flyway | Relational data persistence and schema migrations |
+| **Caching** | Redis | High-speed data caching and session management |
+| **DevOps** | Docker, Docker Compose | Containerized deployments and local environments |
+| **CI/CD** | GitHub Actions | Automated build, test, and release pipelines |
+
+---
+
+## 🏗️ Architecture
+
+### System Architecture
+
+```mermaid
+graph TD
+    Client[Web Client - React] -->|HTTPS / REST| API[API Gateway / Spring Security]
+    
+    subgraph Spring Boot Backend
+        API --> Auth[Auth Service]
+        API --> Profile[Profile Service]
+        API --> AI[AI Processing Engine]
+        API --> Analytics[Analytics Service]
+        
+        Profile --> EventBus[Internal Event Bus]
+        AI --> EventBus
+        
+        EventBus --> ETL[ETL Worker]
+    end
+    
+    Auth --> DB[(PostgreSQL Primary)]
+    Profile --> DB
+    AI --> Redis[(Redis Cache)]
+    
+    ETL --> DW[(PostgreSQL Warehouse)]
+    Analytics --> DW
 ```
+
+### Entity Relationship Diagram (ERD)
+
+```mermaid
+erDiagram
+    USER ||--o{ PROFILE : owns
+    USER {
+        uuid id PK
+        string email
+        string password_hash
+        string role
+        timestamp created_at
+    }
+    PROFILE ||--o{ EXPERIENCE : has
+    PROFILE ||--o{ PROJECT : builds
+    PROFILE ||--o{ EDUCATION : attends
+    PROFILE {
+        uuid id PK
+        uuid user_id FK
+        string full_name
+        string headline
+        integer career_score
+    }
+    EXPERIENCE {
+        uuid id PK
+        string company
+        string title
+        boolean is_current
+    }
+    PROJECT {
+        uuid id PK
+        string name
+        string description
+        string tech_stack
+    }
+```
+
+---
+
+## 📁 Folder Structure
+
+```text
 CareerOS-AI/
-├── .github/        # GitHub workflows & templates
-├── database/       # Schema DDL & seed scripts
-├── docker/         # Container configurations
-├── scripts/        # Build & environment setup scripts
-├── docs/           # Modular project documentation
-├── backend/        # Spring Boot Java application
-└── frontend/       # React TypeScript Vite application
+├── backend/                  # Spring Boot Application
+│   ├── src/main/java/        # Java Source Code
+│   │   ├── config/           # Security & App Configurations
+│   │   ├── controller/       # REST API Endpoints
+│   │   ├── service/          # Business Logic & AI Engines
+│   │   ├── repository/       # Data Access Layer
+│   │   ├── model/            # JPA Entities & DTOs
+│   │   └── observability/    # Metrics & Tracing
+│   └── src/main/resources/   # Application properties & Flyway
+├── frontend/                 # React + Vite Application
+│   ├── src/
+│   │   ├── components/       # Reusable UI (Cards, Buttons, Charts)
+│   │   ├── pages/            # Page Views (Dashboard, Analytics)
+│   │   ├── services/         # API Integration & Axios clients
+│   │   └── utils/            # Helper functions
+├── assets/                   # README graphics and diagrams
+├── docker-compose.yml        # Local infrastructure orchestration
+└── README.md
 ```
 
 ---
 
-## 📜 License
+## 🚀 Getting Started
 
-This project is licensed under the [MIT License](LICENSE).
+### Prerequisites
+- Docker & Docker Compose
+- Node.js 20+
+- Java 21
+
+### Local Development Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/CareerOS-AI.git
+   cd CareerOS-AI
+   ```
+
+2. **Spin up Infrastructure (Database & Cache)**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Run the Backend**
+   ```bash
+   cd backend
+   ./gradlew bootRun
+   ```
+
+4. **Run the Frontend**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+5. **Access the Application**
+   Open your browser and navigate to `http://localhost:5173`.
+
+---
+
+## 🐳 Docker Deployment
+
+To run the entire application stack in containers for a production-like environment:
+
+```bash
+docker-compose -f docker-compose.prod.yml up --build -d
+```
+
+---
+
+## 🗺️ Roadmap & Documentation
+
+- [Project Roadmap](ROADMAP.md) - View completed milestones and future enhancements.
+- [Contributing Guidelines](CONTRIBUTING.md) - Learn how to contribute to CareerOS AI.
+- [Security Policy](SECURITY.md) - Information on reporting vulnerabilities.
+- [Code of Conduct](CODE_OF_CONDUCT.md) - Our community standards.
+
+---
+
+## 👨‍💻 Author
+
+**Hindhusha P.R.**  
+*Software Engineer & Architect*
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
