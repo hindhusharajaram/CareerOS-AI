@@ -1,15 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { Award, CheckCircle2, AlertCircle, TrendingUp } from 'lucide-react';
+import { Award, CheckCircle2, AlertCircle, TrendingUp, Star } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
 import { intelligenceService, CareerScoreData } from '../services/intelligenceService';
+import SectionHeader from '../components/ui/SectionHeader';
+import { ProgressBar, ProgressRing } from '../components/ui/Progress';
+import { GlassCard } from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
+import AnimatedCounter from '../components/ui/AnimatedCounter';
+import { SkeletonCard, SkeletonStatGrid } from '../components/ui/Skeleton';
+
+function getScoreTier(val: number) {
+  if (val >= 850) return { label: 'Elite', color: 'emerald', desc: 'Top 5% of all candidates', stars: 5 };
+  if (val >= 700) return { label: 'Strong', color: 'indigo', desc: 'Top 15% of all candidates', stars: 4 };
+  if (val >= 500) return { label: 'Developing', color: 'amber', desc: 'Top 40% of all candidates', stars: 3 };
+  if (val >= 300) return { label: 'Starter', color: 'warning', desc: 'Building your foundation', stars: 2 };
+  return { label: 'Beginner', color: 'error', desc: 'Just getting started', stars: 1 };
+}
+
+const ringColorMap: Record<string, 'emerald' | 'indigo' | 'amber' | 'purple'> = {
+  Elite: 'emerald',
+  Strong: 'indigo',
+  Developing: 'amber',
+  Starter: 'amber',
+  Beginner: 'amber',
+};
 
 export default function CareerScorePage(): React.ReactElement {
   const [score, setScore] = useState<CareerScoreData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchScore();
-  }, []);
+  useEffect(() => { fetchScore(); }, []);
 
   const fetchScore = async () => {
     setIsLoading(true);
@@ -23,112 +43,155 @@ export default function CareerScorePage(): React.ReactElement {
     }
   };
 
-  const getScoreColor = (val: number) => {
-    if (val >= 800) return 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
-    if (val >= 600) return 'text-indigo-400 border-indigo-500/30 bg-indigo-500/10';
-    if (val >= 400) return 'text-amber-400 border-amber-500/30 bg-amber-500/10';
-    return 'text-red-400 border-red-500/30 bg-red-500/10';
-  };
-
   return (
     <StudentLayout>
       <div className="max-w-5xl mx-auto space-y-8">
-        <div className="border-b border-slate-800 pb-5">
-          <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <Award className="h-6 w-6 text-indigo-400" />
-            Career Score Engine (0–1000 Score)
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">Weighted scoring model evaluating candidate competitiveness for top placement drives</p>
-        </div>
+        <SectionHeader
+          title="Career Score Engine"
+          subtitle="Weighted scoring model evaluating candidate competitiveness across 9 indicators for top placement drives"
+          badge="Intelligence"
+          icon={<Award className="h-6 w-6" />}
+        />
 
         {isLoading ? (
-          <div className="py-20 flex justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+          <div className="space-y-6">
+            <SkeletonCard className="h-48" />
+            <SkeletonStatGrid cols={2} />
           </div>
         ) : score ? (
-          <div className="space-y-8">
-            {/* Score Ring Header */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <p className="text-xs font-semibold text-slate-400 uppercase">Overall Placement Index</p>
-                <h3 className="text-4xl font-black text-white mt-1">Career Score</h3>
-                <p className="text-xs text-slate-400 mt-2 max-w-md">
-                  Calculated using 9 weighted indicators including Projects (20%), Skills (20%), Experience (15%), and Completeness (15%).
-                </p>
-              </div>
+          <div className="space-y-6">
 
-              <div className={`h-36 w-36 rounded-full border-8 flex flex-col items-center justify-center font-black ${getScoreColor(score.overallScore)}`}>
-                <span className="text-4xl">{score.overallScore}</span>
-                <span className="text-[10px] uppercase font-mono tracking-wider font-semibold opacity-80">/ 1000 Pts</span>
-              </div>
-            </div>
-
-            {/* Category Breakdown */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 backdrop-blur-md space-y-6">
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-indigo-400" />
-                Category Weightage Breakdown
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Object.entries(score.categoryScores || {}).map(([cat, val]) => (
-                  <div key={cat} className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-slate-300">{cat}</span>
-                      <span className="font-mono font-bold text-indigo-400">{val} pts</span>
+            {/* ===== SCORE HERO CARD ===== */}
+            {(() => {
+              const tier = getScoreTier(score.overallScore);
+              const ringColor = ringColorMap[tier.label] || 'indigo';
+              return (
+                <div className="rounded-3xl border border-indigo-500/20 bg-gradient-to-br from-slate-900 via-indigo-950/20 to-slate-900 p-8 overflow-hidden relative">
+                  <div className="absolute top-0 right-0 h-48 w-48 bg-indigo-500/10 blur-[60px] rounded-full" />
+                  <div className="relative flex flex-col md:flex-row items-center gap-8">
+                    {/* Ring */}
+                    <div className="shrink-0">
+                      <ProgressRing
+                        value={score.overallScore}
+                        max={1000}
+                        size={160}
+                        strokeWidth={10}
+                        color={ringColor}
+                      >
+                        <div className="text-center">
+                          <span className="text-3xl font-black text-white">
+                            <AnimatedCounter target={score.overallScore} duration={1800} />
+                          </span>
+                          <p className="text-[10px] text-slate-500 font-mono mt-0.5">/1000 pts</p>
+                        </div>
+                      </ProgressRing>
                     </div>
-                    <div className="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden">
-                      <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (val / 200) * 100)}%` }} />
+
+                    {/* Score Details */}
+                    <div className="flex-1 text-center md:text-left">
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Overall Placement Index</p>
+                      <div className="flex items-center gap-3 justify-center md:justify-start mb-3">
+                        <h3 className="text-4xl font-black text-white">{tier.label}</h3>
+                        <Badge variant={tier.color as any} size="lg">{tier.label}</Badge>
+                      </div>
+                      <p className="text-sm text-slate-400 mb-4">{tier.desc}</p>
+
+                      {/* Stars */}
+                      <div className="flex items-center gap-1 justify-center md:justify-start mb-4">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-5 w-5 ${i < tier.stars ? 'fill-amber-400 text-amber-400' : 'text-slate-700'}`}
+                          />
+                        ))}
+                      </div>
+
+                      <p className="text-xs text-slate-500 max-w-md">
+                        Calculated using 9 weighted indicators including Projects (20%), Skills (20%), Experience (15%), and Profile Completeness (15%).
+                      </p>
                     </div>
                   </div>
+                </div>
+              );
+            })()}
+
+            {/* ===== CATEGORY BREAKDOWN ===== */}
+            <GlassCard padding="lg">
+              <div className="flex items-center gap-2 mb-6">
+                <TrendingUp className="h-5 w-5 text-indigo-400" />
+                <h3 className="text-base font-bold text-white">Category Weightage Breakdown</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {Object.entries(score.categoryScores || {}).map(([cat, val]) => (
+                  <ProgressBar
+                    key={cat}
+                    label={cat}
+                    value={val as number}
+                    max={200}
+                    sublabel={`${val} pts of 200`}
+                    color="auto"
+                    size="md"
+                  />
                 ))}
               </div>
-            </div>
+            </GlassCard>
 
-            {/* Strengths & Weaknesses */}
+            {/* ===== STRENGTHS & IMPROVEMENTS ===== */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Strengths */}
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <GlassCard padding="lg">
+                <div className="flex items-center gap-2 mb-5">
                   <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                  Key Candidate Strengths
-                </h3>
+                  <h3 className="text-base font-bold text-white">Key Candidate Strengths</h3>
+                </div>
                 {score.strengths.length === 0 ? (
-                  <p className="text-xs text-slate-500">Complete more profile sections to unlock strength indicators.</p>
+                  <p className="text-sm text-slate-500">Complete more sections to unlock strength indicators.</p>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     {score.strengths.map((str, idx) => (
-                      <div key={idx} className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4 shrink-0" />
-                        <span>{str}</span>
+                      <div key={idx} className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-500/8 border border-emerald-500/15">
+                        <div className="h-6 w-6 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                        </div>
+                        <span className="text-sm text-emerald-300">{str}</span>
                       </div>
                     ))}
                   </div>
                 )}
-              </div>
+              </GlassCard>
 
-              {/* Improvement Areas */}
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              {/* Improvements */}
+              <GlassCard padding="lg">
+                <div className="flex items-center gap-2 mb-5">
                   <AlertCircle className="h-5 w-5 text-amber-400" />
-                  Priority Improvement Areas
-                </h3>
+                  <h3 className="text-base font-bold text-white">Priority Improvement Areas</h3>
+                </div>
                 {score.improvementAreas.length === 0 ? (
-                  <p className="text-xs text-slate-500">No major improvement flags detected!</p>
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/8 border border-emerald-500/15">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    <span className="text-sm text-emerald-300">No major improvement flags detected!</span>
+                  </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     {score.improvementAreas.map((imp, idx) => (
-                      <div key={idx} className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4 shrink-0" />
-                        <span>{imp}</span>
+                      <div key={idx} className="flex items-center gap-3 p-3.5 rounded-xl bg-amber-500/8 border border-amber-500/15">
+                        <div className="h-6 w-6 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                          <AlertCircle className="h-3.5 w-3.5 text-amber-400" />
+                        </div>
+                        <span className="text-sm text-amber-300">{imp}</span>
                       </div>
                     ))}
                   </div>
                 )}
-              </div>
+              </GlassCard>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className="py-20 text-center text-slate-500">
+            <Award className="h-12 w-12 mx-auto mb-3 opacity-30" />
+            <p>No score data available. Complete your profile to compute your score.</p>
+          </div>
+        )}
       </div>
     </StudentLayout>
   );

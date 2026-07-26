@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, ShieldCheck, AlertTriangle, CheckCircle2, Clock, Terminal, HardDrive, Cpu, RefreshCw, Check } from 'lucide-react';
+import { ShieldCheck, Clock, HardDrive, Cpu, RefreshCw, Check, Activity, CheckCircle2, Terminal, AlertTriangle } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StudentLayout from '../layouts/StudentLayout';
 import { observabilityService, ObservabilityDashboard } from '../services/observabilityService';
+import SectionHeader from '../components/ui/SectionHeader';
+import { GlassCard, StatCard } from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
+import { SkeletonStatGrid, SkeletonCard } from '../components/ui/Skeleton';
+import { ProgressBar as Progress } from '../components/ui/Progress';
+import EmptyState from '../components/ui/EmptyState';
+import Button from '../components/ui/Button';
 
 export default function SystemMonitorPage(): React.ReactElement {
   const [dashboard, setDashboard] = useState<ObservabilityDashboard | null>(null);
@@ -18,7 +26,7 @@ export default function SystemMonitorPage(): React.ReactElement {
       const data = await observabilityService.getDashboard();
       setDashboard(data);
     } catch (err) {
-      console.error('Failed to fetch observability dashboard data:', err);
+      toast.error('Failed to fetch observability telemetry.');
     } finally {
       setIsLoading(false);
     }
@@ -29,8 +37,9 @@ export default function SystemMonitorPage(): React.ReactElement {
     try {
       await observabilityService.resolveAlert(alertId);
       fetchData();
+      toast.success('Alert resolved successfully');
     } catch (err) {
-      console.error('Failed to resolve alert:', err);
+      toast.error('Failed to resolve alert.');
     } finally {
       setResolvingId(null);
     }
@@ -38,163 +47,207 @@ export default function SystemMonitorPage(): React.ReactElement {
 
   return (
     <StudentLayout>
-      <div className="max-w-6xl mx-auto space-y-8 pb-12">
-        {/* Header */}
-        <div className="border-b border-slate-800 pb-5 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-              <Activity className="h-6 w-6 text-emerald-400" />
-              Observability & Production Monitoring Platform
-            </h2>
-            <p className="text-xs text-slate-400 mt-1">Real-time health probes, hardware & JVM metrics, operational alerts, and audit trail distributed traces</p>
-          </div>
-          <button
-            onClick={fetchData}
-            disabled={isLoading}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-all border border-slate-700"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh Telemetry
-          </button>
-        </div>
+      <div className="max-w-6xl mx-auto space-y-6 pb-20">
+        <SectionHeader
+          title="Observability Monitor"
+          subtitle="Real-time health probes, hardware metrics, alerts, and distributed tracing."
+          badge="Production Systems"
+          icon={<Activity className="h-6 w-6" />}
+          action={
+            <Button
+              onClick={fetchData}
+              isLoading={isLoading}
+              variant="outline"
+              icon={<RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />}
+            >
+              Sync Telemetry
+            </Button>
+          }
+        />
 
         {isLoading ? (
-          <div className="py-24 flex justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+          <div className="space-y-6">
+            <SkeletonStatGrid cols={4} />
+            <SkeletonCard className="h-40" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <SkeletonCard className="h-[400px]" />
+              <SkeletonCard className="h-[400px]" />
+            </div>
           </div>
         ) : dashboard ? (
-          <div className="space-y-8">
+          <div className="space-y-6 animate-fade-up">
             {/* Top Stat Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">System Status</p>
-                <h3 className="text-3xl font-black text-emerald-400 mt-1">{dashboard.healthSummary.status}</h3>
-                <p className="text-[11px] text-emerald-400 mt-1 font-mono flex items-center gap-1">
-                  <CheckCircle2 className="h-3 w-3" /> Probes Operational
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">JVM Heap Used</p>
-                <h3 className="text-3xl font-black text-indigo-400 mt-1">
-                  {dashboard.healthSummary.systemMetrics.jvmUsedMemoryMb} <span className="text-sm font-normal text-slate-500">MB</span>
-                </h3>
-                <p className="text-[11px] text-slate-400 mt-1 font-mono">
-                  Max: {dashboard.healthSummary.systemMetrics.jvmMaxMemoryMb} MB ({dashboard.healthSummary.systemMetrics.heapUsagePercentage?.toFixed(1) || '0.0'}%)
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Avg Latency</p>
-                <h3 className="text-3xl font-black text-purple-400 mt-1">
-                  {dashboard.apiAverageLatencyMs.toFixed(1)} <span className="text-sm font-normal text-slate-500">ms</span>
-                </h3>
-                <p className="text-[11px] text-purple-400 mt-1 font-mono">Distributed Tracing Active</p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Event Consumer Rate</p>
-                <h3 className="text-3xl font-black text-emerald-400 mt-1">{dashboard.eventConsumerSuccessRate.toFixed(1)}%</h3>
-                <p className="text-[11px] text-emerald-400 mt-1 font-mono">Async Pipeline Healthy</p>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              <StatCard
+                title="System Status"
+                value={dashboard.healthSummary.status}
+                subtitle="Probes Operational"
+                icon={<CheckCircle2 className="h-5 w-5" />}
+                color="emerald"
+                trend={0}
+              />
+              <StatCard
+                title="JVM Heap Used"
+                value={`${dashboard.healthSummary.systemMetrics.jvmUsedMemoryMb}MB`}
+                subtitle={`Max: ${dashboard.healthSummary.systemMetrics.jvmMaxMemoryMb}MB`}
+                icon={<Cpu className="h-5 w-5" />}
+                color="indigo"
+              />
+              <StatCard
+                title="Avg Latency"
+                value={`${dashboard.apiAverageLatencyMs.toFixed(1)}ms`}
+                subtitle="Distributed Tracing"
+                icon={<Activity className="h-5 w-5" />}
+                color="purple"
+              />
+              <StatCard
+                title="Event Pipeline"
+                value={`${dashboard.eventConsumerSuccessRate.toFixed(1)}%`}
+                subtitle="Async Success Rate"
+                icon={<Terminal className="h-5 w-5" />}
+                color="indigo"
+              />
             </div>
 
             {/* Infrastructure Hardware & Runtime Telemetry */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Cpu className="h-5 w-5 text-cyan-400" /> Infrastructure Hardware & System Telemetry
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                    <Cpu className="h-6 w-6" />
+            <GlassCard padding="lg">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400">
+                  <HardDrive className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Infrastructure & Runtime Telemetry</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-inner relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Cpu className="h-20 w-20 text-cyan-400" />
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-400 font-medium">CPU Processors & Load</p>
-                    <p className="text-lg font-bold text-white font-mono">{dashboard.healthSummary.systemMetrics.availableProcessors} Cores</p>
-                    <p className="text-[11px] text-slate-500 font-mono">Load Avg: {dashboard.healthSummary.systemMetrics.systemLoadAverage?.toFixed(2) || '0.15'}</p>
+                  <div className="relative z-10">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Processors</p>
+                    <p className="text-2xl font-black text-white font-mono mb-4">{dashboard.healthSummary.systemMetrics.availableProcessors} Cores</p>
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-medium mb-2">
+                        <span className="text-slate-400">System Load</span>
+                        <span className="text-cyan-400 font-mono">{dashboard.healthSummary.systemMetrics.systemLoadAverage?.toFixed(2) || '0.15'}</span>
+                      </div>
+                      <Progress value={((dashboard.healthSummary.systemMetrics.systemLoadAverage || 0.15) / dashboard.healthSummary.systemMetrics.availableProcessors) * 100} color="indigo" size="sm" showValue={false} />
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                    <Activity className="h-6 w-6" />
+                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-inner relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Activity className="h-20 w-20 text-indigo-400" />
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-400 font-medium">Active Threads & Memory</p>
-                    <p className="text-lg font-bold text-white font-mono">
-                      {dashboard.liveMetrics?.threadCount || 24} Threads
-                    </p>
-                    <p className="text-[11px] text-slate-500 font-mono">Free JVM: {dashboard.healthSummary.systemMetrics.jvmFreeMemoryMb} MB</p>
+                  <div className="relative z-10">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Active Threads</p>
+                    <p className="text-2xl font-black text-white font-mono mb-4">{dashboard.liveMetrics?.threadCount || 24}</p>
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-medium mb-2">
+                        <span className="text-slate-400">JVM Free Memory</span>
+                        <span className="text-indigo-400 font-mono">{dashboard.healthSummary.systemMetrics.jvmFreeMemoryMb} MB</span>
+                      </div>
+                      <Progress value={100 - (dashboard.healthSummary.systemMetrics.heapUsagePercentage || 0)} color="purple" size="sm" showValue={false} />
+                    </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    <HardDrive className="h-6 w-6" />
+                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-inner relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <HardDrive className="h-20 w-20 text-amber-400" />
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-400 font-medium">Disk Storage Usage</p>
-                    <p className="text-lg font-bold text-white font-mono">
-                      {dashboard.healthSummary.systemMetrics.usedDiskGb || 12} / {dashboard.healthSummary.systemMetrics.totalDiskGb || 256} GB
+                  <div className="relative z-10">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Disk Storage</p>
+                    <p className="text-2xl font-black text-white font-mono mb-4">
+                      {dashboard.healthSummary.systemMetrics.usedDiskGb || 12} <span className="text-base text-slate-500 font-sans">/ {dashboard.healthSummary.systemMetrics.totalDiskGb || 256} GB</span>
                     </p>
-                    <p className="text-[11px] text-slate-500 font-mono">Free Disk: {dashboard.healthSummary.systemMetrics.freeDiskGb || 244} GB</p>
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-medium">
+                        <span className="text-slate-400">Used Capacity</span>
+                        <span className="text-amber-400 font-mono">{(((dashboard.healthSummary.systemMetrics.usedDiskGb || 12) / (dashboard.healthSummary.systemMetrics.totalDiskGb || 256)) * 100).toFixed(1)}%</span>
+                      </div>
+                      <Progress value={((dashboard.healthSummary.systemMetrics.usedDiskGb || 12) / (dashboard.healthSummary.systemMetrics.totalDiskGb || 256)) * 100} color="amber" size="sm" showValue={false} />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </GlassCard>
 
-            {/* Subsystem Health & Active Alerts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Subsystem Component Probes */}
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-emerald-400" /> Subsystem Health Diagnostic Probes
-                </h3>
+              <GlassCard padding="lg">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                      <ShieldCheck className="h-4.5 w-4.5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">Subsystem Probes</h3>
+                  </div>
+                  <Badge variant="emerald">Online</Badge>
+                </div>
+                
                 <div className="space-y-3">
                   {Object.entries(dashboard.healthSummary.components || {}).map(([comp, status]) => (
-                    <div key={comp} className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-300 uppercase font-mono">{comp}</span>
-                      <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> {status}
+                    <div key={comp} className="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 flex items-center justify-between group hover:bg-slate-800/60 transition-colors">
+                      <span className="text-sm font-semibold text-slate-300 uppercase font-mono tracking-tight">{comp}</span>
+                      <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 flex items-center gap-1.5 shadow-inner">
+                        <CheckCircle2 className="h-4 w-4" /> {status}
                       </span>
                     </div>
                   ))}
                 </div>
-              </div>
+              </GlassCard>
 
               {/* Active Alerts */}
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-amber-400" /> Operational System Alerts
-                </h3>
-                <div className="space-y-3">
+              <GlassCard padding="lg" className="flex flex-col">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
+                      <AlertTriangle className="h-4.5 w-4.5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">System Alerts</h3>
+                  </div>
+                  {dashboard.activeAlerts.length > 0 && (
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                    </span>
+                  )}
+                </div>
+                
+                <div className="space-y-3 flex-1 overflow-y-auto max-h-[350px] custom-scrollbar pr-2">
                   {dashboard.activeAlerts.length === 0 ? (
-                    <p className="text-xs text-slate-400 italic py-4 text-center">No active system alerts.</p>
+                    <EmptyState
+                      icon={<ShieldCheck />}
+                      title="No Active Alerts"
+                      description="All systems are operating normally."
+                      className="py-12"
+                    />
                   ) : (
                     dashboard.activeAlerts.map((alert) => (
-                      <div key={alert.id} className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded border ${
+                      <div key={alert.id} className="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 flex flex-col gap-3">
+                        <div className="flex items-start justify-between gap-4">
+                          <span className={`text-[10px] font-bold font-mono px-2 py-1 rounded-md border tracking-wider uppercase ${
                             alert.alertLevel === 'CRITICAL'
-                              ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
-                              : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                              ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                              : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
                           }`}>
                             {alert.alertLevel} • {alert.sourceModule}
                           </span>
-                          <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
+                          <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1 bg-slate-950 px-2 py-1 rounded">
                             <Clock className="h-3 w-3" /> {new Date(alert.createdAt).toLocaleTimeString()}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-300 font-medium">{alert.message}</p>
+                        <p className="text-sm text-slate-200 font-medium leading-relaxed">{alert.message}</p>
                         {!alert.isResolved && (
-                          <div className="flex justify-end pt-1">
+                          <div className="flex justify-end pt-2 border-t border-slate-800/60 mt-1">
                             <button
                               onClick={() => handleResolveAlert(alert.id)}
                               disabled={resolvingId === alert.id}
-                              className="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 px-2.5 py-1 rounded-lg transition-all flex items-center gap-1"
+                              className="text-[11px] font-bold tracking-wider uppercase text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm"
                             >
-                              <Check className="h-3 w-3" />
+                              <Check className="h-3.5 w-3.5" />
                               {resolvingId === alert.id ? 'Resolving...' : 'Mark Resolved'}
                             </button>
                           </div>
@@ -203,34 +256,59 @@ export default function SystemMonitorPage(): React.ReactElement {
                     ))
                   )}
                 </div>
-              </div>
+              </GlassCard>
             </div>
 
             {/* Audit Log Activity */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Terminal className="h-5 w-5 text-indigo-400" /> Immutable Action Audit Trail & Distributed Traces
-              </h3>
-              <div className="space-y-2.5">
+            <GlassCard padding="lg">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                  <Terminal className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Immutable Audit Trail</h3>
+              </div>
+              
+              <div className="space-y-3">
                 {dashboard.recentAuditLogs.length === 0 ? (
-                  <p className="text-xs text-slate-400 italic py-4 text-center">No recent audit logs available.</p>
+                  <EmptyState
+                    icon={<Terminal />}
+                    title="No Audit Logs"
+                    description="System audit trail is currently empty."
+                  />
                 ) : (
-                  dashboard.recentAuditLogs.map((log) => (
-                    <div key={log.id} className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800 text-xs font-mono flex items-center justify-between flex-wrap gap-2">
-                      <div className="flex items-center gap-3">
-                        <span className="text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">{log.action}</span>
-                        <span className="text-slate-300 font-semibold">[{log.resource}]</span>
-                        <span className="text-slate-400">User: {log.userId || 'System'}</span>
-                      </div>
-                      <div className="flex items-center gap-4 text-slate-400">
-                        <span className="text-indigo-400 font-mono">TraceID: {log.traceId || 'N/A'}</span>
-                        <span className="text-slate-500 text-[10px]">{new Date(log.createdAt).toLocaleString()}</span>
-                      </div>
-                    </div>
-                  ))
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm text-slate-400 font-mono">
+                      <thead className="text-xs uppercase bg-slate-900/80 text-slate-500">
+                        <tr>
+                          <th className="px-4 py-3 rounded-tl-xl">Timestamp</th>
+                          <th className="px-4 py-3">Action</th>
+                          <th className="px-4 py-3">Resource</th>
+                          <th className="px-4 py-3">User</th>
+                          <th className="px-4 py-3 rounded-tr-xl text-right">Trace ID</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800/60">
+                        {dashboard.recentAuditLogs.map((log) => (
+                          <tr key={log.id} className="hover:bg-slate-900/40 transition-colors">
+                            <td className="px-4 py-3 text-xs whitespace-nowrap">{new Date(log.createdAt).toLocaleString()}</td>
+                            <td className="px-4 py-3">
+                              <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded text-xs border border-emerald-500/20">
+                                {log.action}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-slate-300 font-semibold">{log.resource}</td>
+                            <td className="px-4 py-3 text-slate-500">{log.userId || 'System'}</td>
+                            <td className="px-4 py-3 text-indigo-400 text-right text-xs truncate max-w-[120px]" title={log.traceId}>
+                              {log.traceId || 'N/A'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
-            </div>
+            </GlassCard>
           </div>
         ) : null}
       </div>

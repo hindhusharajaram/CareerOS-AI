@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { TrendingUp, BarChart3, Cpu, Target, Users } from 'lucide-react';
+import { TrendingUp, BarChart3, Cpu, Users, Target } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
 import { intelligenceService, TrendAnalyticsData } from '../services/intelligenceService';
+import SectionHeader from '../components/ui/SectionHeader';
+import { GlassCard } from '../components/ui/Card';
+import { SkeletonCard } from '../components/ui/Skeleton';
+import { ProgressBar as Progress } from '../components/ui/Progress';
+import AnimatedCounter from '../components/ui/AnimatedCounter';
 
 export default function TrendAnalyticsPage(): React.ReactElement {
   const [trends, setTrends] = useState<TrendAnalyticsData | null>(null);
@@ -25,100 +30,116 @@ export default function TrendAnalyticsPage(): React.ReactElement {
 
   return (
     <StudentLayout>
-      <div className="max-w-5xl mx-auto space-y-8">
-        <div className="border-b border-slate-800 pb-5">
-          <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <TrendingUp className="h-6 w-6 text-pink-400" />
-            Macro Trend Analytics & Platform Distribution
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">Aggregated candidate skill distributions, high-demand technologies, and benchmark scores</p>
-        </div>
+      <div className="max-w-6xl mx-auto space-y-6 pb-20">
+        <SectionHeader
+          title="Macro Trend Analytics"
+          subtitle="Aggregated platform statistics, high-demand skills, and benchmark distributions."
+          badge="Global Trends"
+          icon={<TrendingUp className="h-6 w-6" />}
+        />
 
         {isLoading ? (
-          <div className="py-20 flex justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-pink-500 border-t-transparent" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <SkeletonCard className="h-80" />
+            <SkeletonCard className="h-80" />
+            <SkeletonCard className="h-80" />
+            <SkeletonCard className="h-80" />
           </div>
         ) : trends ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-up">
+            
             {/* Most Common Skills */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Cpu className="h-4 w-4 text-indigo-400" /> Most Common Skills (%)
-              </h3>
-              <div className="space-y-3">
+            <GlassCard padding="lg" className="flex flex-col">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                  <Cpu className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Most Common Skills</h3>
+              </div>
+              <div className="space-y-4 flex-1">
                 {Object.entries(trends.mostCommonSkills || {}).map(([skill, val]) => (
-                  <div key={skill} className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-300 font-medium">{skill}</span>
-                      <span className="text-indigo-400 font-mono font-bold">{val}%</span>
+                  <div key={skill} className="space-y-1.5">
+                    <div className="flex justify-between items-end text-sm">
+                      <span className="text-slate-300 font-semibold tracking-tight">{skill}</span>
+                      <span className="text-indigo-400 font-mono font-bold flex items-baseline gap-0.5">
+                        <AnimatedCounter target={val} />%
+                      </span>
                     </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
-                      <div className="bg-indigo-500 h-full rounded-full" style={{ width: `${val}%` }} />
-                    </div>
+                    <Progress value={val} color="indigo" size="sm" showValue={false} />
                   </div>
                 ))}
               </div>
-            </div>
+            </GlassCard>
 
             {/* Missing Skills Distribution */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-pink-400" /> Top Skill Gaps Across Platform (%)
-              </h3>
-              <div className="space-y-3">
+            <GlassCard padding="lg" className="flex flex-col">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-pink-500/20 flex items-center justify-center text-pink-400">
+                  <BarChart3 className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Top Skill Gaps</h3>
+              </div>
+              <div className="space-y-4 flex-1">
                 {Object.entries(trends.missingSkillsDistribution || {}).map(([skill, val]) => (
-                  <div key={skill} className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-300 font-medium">{skill}</span>
-                      <span className="text-pink-400 font-mono font-bold">{val}%</span>
+                  <div key={skill} className="space-y-1.5">
+                    <div className="flex justify-between items-end text-sm">
+                      <span className="text-slate-300 font-semibold tracking-tight">{skill}</span>
+                      <span className="text-pink-400 font-mono font-bold flex items-baseline gap-0.5">
+                        <AnimatedCounter target={val} />%
+                      </span>
                     </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
-                      <div className="bg-pink-500 h-full rounded-full" style={{ width: `${val}%` }} />
-                    </div>
+                    <Progress value={val} color="rose" size="sm" showValue={false} />
                   </div>
                 ))}
               </div>
-            </div>
+            </GlassCard>
 
             {/* Target Career Goal Trends */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Target className="h-4 w-4 text-emerald-400" /> Candidate Target Role Aspirations (%)
-              </h3>
-              <div className="space-y-3">
+            <GlassCard padding="lg" className="flex flex-col">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <Target className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Candidate Target Roles</h3>
+              </div>
+              <div className="space-y-4 flex-1">
                 {Object.entries(trends.careerGoalTrends || {}).map(([goal, val]) => (
-                  <div key={goal} className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-300 font-medium">{goal}</span>
-                      <span className="text-emerald-400 font-mono font-bold">{val}%</span>
+                  <div key={goal} className="space-y-1.5">
+                    <div className="flex justify-between items-end text-sm">
+                      <span className="text-slate-300 font-semibold tracking-tight">{goal}</span>
+                      <span className="text-emerald-400 font-mono font-bold flex items-baseline gap-0.5">
+                        <AnimatedCounter target={val} />%
+                      </span>
                     </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
-                      <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${val}%` }} />
-                    </div>
+                    <Progress value={val} color="emerald" size="sm" showValue={false} />
                   </div>
                 ))}
               </div>
-            </div>
+            </GlassCard>
 
             {/* Career Score Distribution */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Users className="h-4 w-4 text-purple-400" /> Profile Career Score Tier Distribution
-              </h3>
-              <div className="space-y-3">
+            <GlassCard padding="lg" className="flex flex-col">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                  <Users className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Profile Score Distribution</h3>
+              </div>
+              <div className="space-y-4 flex-1">
                 {Object.entries(trends.profileScoreDistribution || {}).map(([tier, val]) => (
-                  <div key={tier} className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-300 font-medium">{tier}</span>
-                      <span className="text-purple-400 font-mono font-bold">{val}%</span>
+                  <div key={tier} className="space-y-1.5">
+                    <div className="flex justify-between items-end text-sm">
+                      <span className="text-slate-300 font-semibold tracking-tight">{tier}</span>
+                      <span className="text-purple-400 font-mono font-bold flex items-baseline gap-0.5">
+                        <AnimatedCounter target={val} />%
+                      </span>
                     </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
-                      <div className="bg-purple-500 h-full rounded-full" style={{ width: `${val}%` }} />
-                    </div>
+                    <Progress value={val} color="purple" size="sm" showValue={false} />
                   </div>
                 ))}
               </div>
-            </div>
+            </GlassCard>
+
           </div>
         ) : null}
       </div>

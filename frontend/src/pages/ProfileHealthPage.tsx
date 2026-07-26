@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, ShieldCheck, AlertTriangle, ArrowUpRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { ShieldCheck, ArrowUpRight, Sparkles, Activity, AlertTriangle } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
 import { healthService, ProfileHealthData } from '../services/healthService';
+import SectionHeader from '../components/ui/SectionHeader';
+import { GlassCard, StatCard } from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
+import { SkeletonStatGrid, SkeletonCard } from '../components/ui/Skeleton';
+import { ProgressBar as Progress } from '../components/ui/Progress';
+import AnimatedCounter from '../components/ui/AnimatedCounter';
 
 export default function ProfileHealthPage(): React.ReactElement {
   const [health, setHealth] = useState<ProfileHealthData | null>(null);
@@ -23,125 +29,110 @@ export default function ProfileHealthPage(): React.ReactElement {
     }
   };
 
-  const getGradeBadgeColor = (grade?: string) => {
-    switch (grade) {
-      case 'A+':
-      case 'A':
-        return 'from-emerald-500 to-teal-500 text-white shadow-emerald-500/20';
-      case 'B+':
-      case 'B':
-        return 'from-indigo-500 to-purple-500 text-white shadow-indigo-500/20';
-      case 'C':
-        return 'from-amber-500 to-orange-500 text-white shadow-amber-500/20';
-      default:
-        return 'from-red-500 to-pink-500 text-white shadow-red-500/20';
-    }
+  const getGradeVariant = (grade?: string): 'emerald' | 'indigo' | 'amber' | 'rose' => {
+    if (!grade) return 'rose';
+    if (grade.startsWith('A')) return 'emerald';
+    if (grade.startsWith('B')) return 'indigo';
+    if (grade.startsWith('C')) return 'amber';
+    return 'rose';
   };
 
   return (
     <StudentLayout>
-      <div className="max-w-5xl mx-auto space-y-8">
-        <div className="border-b border-slate-800 pb-5">
-          <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <Activity className="h-6 w-6 text-indigo-400" />
-            Profile Health Engine & AI Audit
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">Deep analysis of data completeness, placement readiness, and priority recommendations</p>
-        </div>
+      <div className="max-w-5xl mx-auto space-y-6 pb-20">
+        <SectionHeader
+          title="Profile Health Engine"
+          subtitle="Deep AI audit of your data completeness and placement readiness."
+          badge="Audit Engine"
+          icon={<Activity className="h-6 w-6" />}
+        />
 
         {isLoading ? (
-          <div className="py-20 flex justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+          <div className="space-y-8">
+            <SkeletonStatGrid cols={3} />
+            <SkeletonCard className="h-[400px]" />
           </div>
         ) : health ? (
-          <div className="space-y-8">
+          <div className="space-y-6">
             {/* Top Overview Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Grade Badge Card */}
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-slate-400 font-semibold uppercase">Overall Profile Grade</p>
-                  <h3 className="text-2xl font-extrabold text-white mt-1">Placement Grade</h3>
-                  <p className="text-xs text-slate-500 mt-1">Audit Score Index</p>
-                </div>
-                <div className={`h-20 w-20 rounded-2xl bg-gradient-to-tr ${getGradeBadgeColor(health.grade)} flex items-center justify-center text-3xl font-black shadow-xl`}>
-                  {health.grade}
-                </div>
-              </div>
-
-              {/* Numerical Score Card */}
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-slate-400 font-semibold uppercase">Health Score</p>
-                  <h3 className="text-3xl font-black text-white mt-1">{health.score} <span className="text-lg text-slate-500 font-normal">/ 100</span></h3>
-                  <p className="text-xs text-indigo-400 mt-1 flex items-center gap-1">
-                    <Sparkles className="h-3.5 w-3.5" /> AI Ready Index
-                  </p>
-                </div>
-                <div className="h-16 w-16 rounded-full border-4 border-indigo-500/30 flex items-center justify-center font-bold text-indigo-400 bg-indigo-500/10">
-                  {health.score}%
-                </div>
-              </div>
-
-              {/* Missing Sections Count */}
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-slate-400 font-semibold uppercase">Missing Modules</p>
-                  <h3 className="text-3xl font-black text-white mt-1">{health.missingSections.length}</h3>
-                  <p className="text-xs text-slate-500 mt-1">Action items needed</p>
-                </div>
-                <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
-                  <AlertTriangle className="h-6 w-6" />
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <StatCard
+                title="Overall Grade"
+                value={health.grade || 'N/A'}
+                subtitle="Placement Index"
+                icon={<ShieldCheck className="h-5 w-5" />}
+                color={getGradeVariant(health.grade)}
+              />
+              <StatCard
+                title="Health Score"
+                value={`${health.score}%`}
+                subtitle="Overall Profile Quality"
+                icon={<Activity className="h-5 w-5" />}
+                color="emerald"
+              />
+              <StatCard
+                title="Missing Modules"
+                value={health.missingSections?.length.toString() || '0'}
+                subtitle="Action items needed"
+                icon={<AlertTriangle className="h-5 w-5" />}
+                color="amber"
+              />
             </div>
 
             {/* Category Breakdown */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 backdrop-blur-md space-y-6">
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-indigo-400" />
-                Category Health Scores
-              </h3>
+            <GlassCard padding="lg">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                    <Sparkles className="h-4.5 w-4.5" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Category Health Scores</h3>
+                </div>
+                <Badge variant="indigo">Verified Engine</Badge>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 {Object.entries(health.categoryScores || {}).map(([cat, score]) => (
-                  <div key={cat} className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-slate-300">{cat}</span>
-                      <span className="font-mono font-bold text-indigo-400">{score} pts</span>
+                  <div key={cat} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-slate-300 capitalize text-sm">
+                        {cat.replace(/_/g, ' ')}
+                      </span>
+                      <span className="font-mono font-bold text-white flex items-baseline gap-1">
+                        <AnimatedCounter target={score} />
+                        <span className="text-xs text-slate-500 font-sans">/ 20</span>
+                      </span>
                     </div>
-                    <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                      <div className="bg-indigo-500 h-full rounded-full transition-all duration-500" style={{ width: `${(score / 20) * 100}%` }} />
-                    </div>
+                    <Progress value={(score / 20) * 100} color="indigo" size="md" showValue={false} />
                   </div>
                 ))}
               </div>
-            </div>
+            </GlassCard>
 
             {/* Priority Improvements */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 backdrop-blur-md space-y-4">
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                <ArrowUpRight className="h-5 w-5 text-purple-400" />
-                Priority Improvement Recommendations
-              </h3>
-
-              {health.priorityImprovements.length === 0 ? (
-                <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5" /> Excellent job! No high priority improvements needed.
+            <GlassCard padding="lg">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <ArrowUpRight className="h-4.5 w-4.5" />
                 </div>
-              ) : (
+                <h3 className="text-xl font-bold text-white">Priority Recommendations</h3>
+              </div>
+
+              <div className="mt-8">
+                <h4 className="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-emerald-400" />
+                  Priority Improvements
+                </h4>
                 <div className="space-y-3">
-                  {health.priorityImprovements.map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-3 p-4 rounded-2xl bg-slate-950/60 border border-slate-800 text-sm">
-                      <div className="h-6 w-6 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
-                        {idx + 1}
-                      </div>
-                      <span className="text-slate-300 font-medium">{item}</span>
+                  {health.priorityImprovements?.map((suggestion, idx) => (
+                    <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/50 group hover:border-emerald-500/30 transition-colors">
+                      <ArrowUpRight className="h-4 w-4 text-emerald-400 mt-0.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      <p className="text-sm text-slate-300 leading-snug">{suggestion}</p>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            </GlassCard>
           </div>
         ) : null}
       </div>

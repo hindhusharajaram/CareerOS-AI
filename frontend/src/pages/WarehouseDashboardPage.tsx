@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Database, Play, CheckCircle2, RefreshCw, Layers, HardDrive } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StudentLayout from '../layouts/StudentLayout';
 import { warehouseService, WarehouseSummary } from '../services/warehouseService';
+import SectionHeader from '../components/ui/SectionHeader';
+import { GlassCard, StatCard } from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import { SkeletonStatGrid, SkeletonCard } from '../components/ui/Skeleton';
+import Badge from '../components/ui/Badge';
+import AnimatedCounter from '../components/ui/AnimatedCounter';
 
 export default function WarehouseDashboardPage(): React.ReactElement {
   const [summary, setSummary] = useState<WarehouseSummary | null>(null);
@@ -18,7 +25,7 @@ export default function WarehouseDashboardPage(): React.ReactElement {
       const data = await warehouseService.getSummary();
       setSummary(data);
     } catch (err) {
-      console.error(err);
+      toast.error('Failed to load warehouse data.');
     } finally {
       setIsLoading(false);
     }
@@ -26,11 +33,13 @@ export default function WarehouseDashboardPage(): React.ReactElement {
 
   const handleTriggerEtl = async () => {
     setIsRunningEtl(true);
+    const toastId = toast.loading('Initializing ETL Pipeline...');
     try {
       await warehouseService.triggerEtl();
       await fetchSummary();
+      toast.success('ETL Pipeline execution completed successfully', { id: toastId });
     } catch (err) {
-      console.error(err);
+      toast.error('ETL Pipeline execution failed', { id: toastId });
     } finally {
       setIsRunningEtl(false);
     }
@@ -38,107 +47,148 @@ export default function WarehouseDashboardPage(): React.ReactElement {
 
   return (
     <StudentLayout>
-      <div className="max-w-5xl mx-auto space-y-8">
-        <div className="border-b border-slate-800 pb-5 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-              <Database className="h-6 w-6 text-purple-400" />
-              Analytics Warehouse & Data Engineering Platform
-            </h2>
-            <p className="text-xs text-slate-400 mt-1">Star Schema dimensional modeling, ETL lineage pipelines, and data quality auditing</p>
-          </div>
-          <button
-            onClick={handleTriggerEtl}
-            disabled={isRunningEtl}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold flex items-center gap-2 hover:from-purple-500 hover:to-indigo-500 transition shadow-lg shadow-purple-500/20 disabled:opacity-50"
-          >
-            {isRunningEtl ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-            <span>Trigger ETL Pipeline</span>
-          </button>
-        </div>
+      <div className="max-w-6xl mx-auto space-y-6 pb-20">
+        <SectionHeader
+          title="Data Warehouse"
+          subtitle="Star Schema dimensional modeling, ETL lineage pipelines, and data quality metrics."
+          badge="Data Engineering"
+          icon={<Database className="h-6 w-6" />}
+          action={
+            <Button
+              onClick={handleTriggerEtl}
+              isLoading={isRunningEtl}
+              variant="primary"
+              icon={<Play className="h-4 w-4" />}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 border-none shadow-lg shadow-purple-500/20"
+            >
+              Trigger ETL Job
+            </Button>
+          }
+        />
 
         {isLoading ? (
-          <div className="py-20 flex justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent" />
+          <div className="space-y-6">
+            <SkeletonStatGrid cols={4} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <SkeletonCard className="h-80" />
+              <SkeletonCard className="h-80" />
+            </div>
           </div>
         ) : summary ? (
-          <div className="space-y-8">
+          <div className="space-y-6 animate-fade-up">
             {/* Top Stat Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
-                <p className="text-xs font-semibold text-slate-400 uppercase">Data Quality Score</p>
-                <h3 className="text-3xl font-black text-emerald-400 mt-1">{summary.latestDataQualityScore}%</h3>
-                <p className="text-[11px] text-emerald-400 mt-1 font-mono">100% Quality Assertions Passed</p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
-                <p className="text-xs font-semibold text-slate-400 uppercase">ETL Pipeline Status</p>
-                <h3 className="text-3xl font-black text-indigo-400 mt-1">{summary.etlStatus}</h3>
-                <p className="text-[11px] text-indigo-400 mt-1 font-mono">{summary.totalEtlJobsExecuted} Jobs Completed</p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
-                <p className="text-xs font-semibold text-slate-400 uppercase">Total Fact Records</p>
-                <h3 className="text-3xl font-black text-white mt-1">{summary.totalFactRecords}</h3>
-                <p className="text-[11px] text-slate-400 mt-1 font-mono">Fact Tables Populated</p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
-                <p className="text-xs font-semibold text-slate-400 uppercase">Dimension Records</p>
-                <h3 className="text-3xl font-black text-purple-400 mt-1">{summary.totalDimensionRecords}</h3>
-                <p className="text-[11px] text-purple-400 mt-1 font-mono">Dimensions Synced</p>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              <StatCard
+                title="Data Quality"
+                value={`${summary.latestDataQualityScore}%`}
+                subtitle="Assertions Passed"
+                icon={<CheckCircle2 className="h-5 w-5" />}
+                color="emerald"
+                trend={0}
+              />
+              <StatCard
+                title="ETL Status"
+                value={summary.etlStatus}
+                subtitle={`${summary.totalEtlJobsExecuted} Jobs Completed`}
+                icon={<RefreshCw className="h-5 w-5" />}
+                color="indigo"
+              />
+              <StatCard
+                title="Fact Records"
+                value={summary.totalFactRecords.toString()}
+                subtitle="Populated Facts"
+                icon={<HardDrive className="h-5 w-5" />}
+                color="purple"
+              />
+              <StatCard
+                title="Dimension Records"
+                value={summary.totalDimensionRecords.toString()}
+                subtitle="Synced Dimensions"
+                icon={<Layers className="h-5 w-5" />}
+                color="indigo"
+              />
             </div>
 
             {/* Fact & Dimension Table Distributions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Fact Tables */}
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <HardDrive className="h-5 w-5 text-purple-400" /> Fact Tables Record Counts
-                </h3>
+              <GlassCard padding="lg">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                      <HardDrive className="h-4.5 w-4.5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">Fact Tables Lineage</h3>
+                  </div>
+                  <Badge variant="purple">{Object.keys(summary.factTableCounts || {}).length} Tables</Badge>
+                </div>
+                
                 <div className="space-y-3">
                   {Object.entries(summary.factTableCounts || {}).map(([table, count]) => (
-                    <div key={table} className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-300 font-mono">{table}</span>
-                      <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-lg border border-purple-500/20">
-                        {count} rows
+                    <div key={table} className="group p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:bg-slate-800/60 hover:border-purple-500/30 transition-all flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Database className="h-4 w-4 text-slate-500 group-hover:text-purple-400 transition-colors" />
+                        <span className="text-sm font-semibold text-slate-200 font-mono tracking-tight">{table}</span>
+                      </div>
+                      <span className="text-xs font-bold text-purple-400 bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 shadow-inner flex items-baseline gap-1">
+                        <AnimatedCounter target={count} /> rows
                       </span>
                     </div>
                   ))}
                 </div>
-              </div>
+              </GlassCard>
 
               {/* Dimension Tables */}
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Layers className="h-5 w-5 text-indigo-400" /> Dimension Tables Record Counts
-                </h3>
+              <GlassCard padding="lg">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                      <Layers className="h-4.5 w-4.5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white">Dimension Tables Lineage</h3>
+                  </div>
+                  <Badge variant="indigo">{Object.keys(summary.dimensionTableCounts || {}).length} Tables</Badge>
+                </div>
+                
                 <div className="space-y-3">
                   {Object.entries(summary.dimensionTableCounts || {}).map(([table, count]) => (
-                    <div key={table} className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-300 font-mono">{table}</span>
-                      <span className="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">
-                        {count} rows
+                    <div key={table} className="group p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:bg-slate-800/60 hover:border-indigo-500/30 transition-all flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Database className="h-4 w-4 text-slate-500 group-hover:text-indigo-400 transition-colors" />
+                        <span className="text-sm font-semibold text-slate-200 font-mono tracking-tight">{table}</span>
+                      </div>
+                      <span className="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20 shadow-inner flex items-baseline gap-1">
+                        <AnimatedCounter target={count} /> rows
                       </span>
                     </div>
                   ))}
                 </div>
-              </div>
+              </GlassCard>
             </div>
 
             {/* Pipeline Health Status Banner */}
-            <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-slate-900 via-emerald-950/20 to-slate-900 p-6 backdrop-blur-md flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-6 w-6 text-emerald-400" />
-                <div>
-                  <h4 className="text-sm font-bold text-white">ETL Pipeline & Data Quality Status</h4>
-                  <p className="text-xs text-slate-400 mt-0.5">{summary.pipelineHealthStatus}</p>
+            <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-6 shadow-lg shadow-emerald-500/5 group">
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative flex items-center justify-between z-10">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                     <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white">ETL Pipeline & Data Quality Status</h4>
+                    <p className="text-sm text-emerald-100/70 font-medium mt-1">{summary.pipelineHealthStatus}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  </span>
+                  <span className="px-3 py-1 rounded-md text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-inner">
+                    SYSTEM ACTIVE
+                  </span>
                 </div>
               </div>
-              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                ACTIVE
-              </span>
             </div>
           </div>
         ) : null}
