@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Cpu, Plus, Trash2, Search, AlertCircle } from 'lucide-react';
+import { Cpu, Plus, Trash2, Search, Code, CheckCircle2, Zap } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StudentLayout from '../layouts/StudentLayout';
 import { studentService, StudentSkillItem, SkillItem } from '../services/studentService';
+import SectionHeader from '../components/ui/SectionHeader';
+import { GlassCard } from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import Badge from '../components/ui/Badge';
+import EmptyState from '../components/ui/EmptyState';
+import { SkeletonCard } from '../components/ui/Skeleton';
+
+const proficiencyColors: Record<string, 'default' | 'success' | 'warning' | 'indigo' | 'purple'> = {
+  BEGINNER: 'default',
+  INTERMEDIATE: 'indigo',
+  ADVANCED: 'purple',
+  EXPERT: 'success',
+};
 
 export default function SkillsPage(): React.ReactElement {
   const [studentSkills, setStudentSkills] = useState<StudentSkillItem[]>([]);
@@ -12,7 +26,6 @@ export default function SkillsPage(): React.ReactElement {
   const [yearsExp] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -20,7 +33,6 @@ export default function SkillsPage(): React.ReactElement {
 
   const fetchData = async () => {
     setIsLoading(true);
-    setError('');
     try {
       const [userSkills, allSkills] = await Promise.all([
         studentService.getStudentSkills(),
@@ -29,7 +41,7 @@ export default function SkillsPage(): React.ReactElement {
       setStudentSkills(userSkills);
       setAvailableSkills(allSkills);
     } catch (err) {
-      setError('Could not fetch skills list.');
+      toast.error('Could not fetch skills list.');
     } finally {
       setIsLoading(false);
     }
@@ -38,159 +50,169 @@ export default function SkillsPage(): React.ReactElement {
   const handleAddSkill = async (skillName: string, category = 'General') => {
     if (!skillName.trim()) return;
     setIsAdding(true);
-    setError('');
     try {
       const newSkill = await studentService.addStudentSkill(skillName.trim(), proficiency, category, yearsExp);
       setStudentSkills((prev) => [...prev.filter((s) => s.skillId !== newSkill.skillId), newSkill]);
       setCustomSkillName('');
       setSearchQuery('');
+      toast.success(`${skillName} added to your skills`);
     } catch (err) {
-      setError('Failed to add skill.');
+      toast.error('Failed to add skill.');
     } finally {
       setIsAdding(false);
     }
   };
 
-  const handleRemoveSkill = async (skillId: string) => {
+  const handleRemoveSkill = async (skillId: string, skillName: string) => {
     try {
       await studentService.removeStudentSkill(skillId);
       setStudentSkills((prev) => prev.filter((s) => s.skillId !== skillId));
+      toast.success(`${skillName} removed`);
     } catch (err) {
-      setError('Failed to remove skill.');
+      toast.error('Failed to remove skill.');
     }
   };
 
   const filteredAvailableSkills = availableSkills.filter((s) =>
     s.skillName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).slice(0, 8); // limit suggestions
 
   return (
     <StudentLayout>
-      <div className="max-w-5xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="border-b border-slate-800 pb-5">
-          <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <Cpu className="h-6 w-6 text-indigo-400" />
-            Skills & Technical Competencies
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Build your skill matrix for automated AI matching and resume verification
-          </p>
-        </div>
+      <div className="max-w-5xl mx-auto space-y-6 pb-20">
+        <SectionHeader
+          title="Skills & Technologies"
+          subtitle="Build your technical competency matrix for AI matching and resume optimization."
+          badge="Profile Data"
+          icon={<Cpu className="h-6 w-6" />}
+        />
 
-        {error && (
-          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5" />
-            <span>{error}</span>
+        {/* Add Skill Form */}
+        <GlassCard padding="lg">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="h-8 w-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+              <Plus className="h-4.5 w-4.5" />
+            </div>
+            <h3 className="text-lg font-bold text-white">Add New Skill</h3>
           </div>
-        )}
 
-        {/* Add Skill Form & Search */}
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-6">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <Plus className="h-5 w-5 text-indigo-400" />
-            Add New Skill
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2">
-              <label className="block text-xs font-semibold uppercase text-slate-400 mb-1">Skill Name</label>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="lg:col-span-2 space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Skill Name</label>
               <div className="relative">
-                <Search className="absolute left-3 top-3.5 h-4 w-4 text-slate-500" />
+                <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
                 <input
                   type="text"
-                  placeholder="e.g. React, Python, Spring Boot, Machine Learning..."
+                  placeholder="e.g. React, Python, Spring Boot..."
                   value={customSkillName || searchQuery}
                   onChange={(e) => {
                     setCustomSkillName(e.target.value);
                     setSearchQuery(e.target.value);
                   }}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950/70 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:border-indigo-500 focus:bg-slate-900 focus:ring-1 focus:ring-indigo-500 transition-all"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold uppercase text-slate-400 mb-1">Proficiency Level</label>
-              <select
-                value={proficiency}
-                onChange={(e) => setProficiency(e.target.value)}
-                className="w-full rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
-              >
-                <option value="BEGINNER">Beginner</option>
-                <option value="INTERMEDIATE">Intermediate</option>
-                <option value="ADVANCED">Advanced</option>
-                <option value="EXPERT">Expert</option>
-              </select>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Proficiency Level</label>
+              <div className="relative">
+                <Zap className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500 pointer-events-none" />
+                <select
+                  value={proficiency}
+                  onChange={(e) => setProficiency(e.target.value)}
+                  className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-10 text-sm text-white focus:border-indigo-500 focus:bg-slate-900 focus:ring-1 focus:ring-indigo-500 transition-all appearance-none cursor-pointer"
+                >
+                  <option value="BEGINNER">Beginner</option>
+                  <option value="INTERMEDIATE">Intermediate</option>
+                  <option value="ADVANCED">Advanced</option>
+                  <option value="EXPERT">Expert</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Quick Skill Chips to add */}
+          {/* Smart Suggestions */}
           {searchQuery && filteredAvailableSkills.length > 0 && (
-            <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
-              <p className="text-xs text-slate-400">Available Suggestions:</p>
+            <div className="mt-4 p-4 rounded-xl border border-indigo-500/20 bg-indigo-500/5">
+              <p className="text-xs font-semibold text-indigo-300 mb-3 flex items-center gap-1.5">
+                <Zap className="h-3.5 w-3.5" /> Suggested Matches
+              </p>
               <div className="flex flex-wrap gap-2">
                 {filteredAvailableSkills.map((sk) => (
                   <button
                     key={sk.id}
                     onClick={() => handleAddSkill(sk.skillName, sk.category)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-xs font-medium text-slate-200 hover:border-indigo-500 hover:text-white transition"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700/60 bg-slate-800/60 text-xs font-medium text-slate-300 hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-white transition-all shadow-sm group"
                   >
-                    <Plus className="h-3.5 w-3.5 text-indigo-400" />
-                    {sk.skillName} <span className="text-[10px] text-slate-500">({sk.category})</span>
+                    <Plus className="h-3 w-3 text-indigo-400 group-hover:text-indigo-300" />
+                    {sk.skillName} <span className="opacity-50 font-normal">({sk.category})</span>
                   </button>
                 ))}
               </div>
             </div>
           )}
 
-          <div className="flex justify-end">
-            <button
+          <div className="flex justify-end mt-5">
+            <Button
               onClick={() => handleAddSkill(customSkillName || searchQuery)}
               disabled={isAdding || !(customSkillName || searchQuery).trim()}
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:from-indigo-500 hover:to-purple-500 transition duration-300 disabled:opacity-50"
+              isLoading={isAdding}
+              icon={<Plus className="h-4 w-4" />}
             >
-              <Plus className="h-4 w-4" />
-              {isAdding ? 'Adding...' : 'Add Skill'}
-            </button>
+              Add Skill
+            </Button>
           </div>
-        </div>
+        </GlassCard>
 
-        {/* Current Skills List */}
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-white">Your Skill Matrix ({studentSkills.length})</h3>
+        {/* Current Skills Matrix */}
+        <GlassCard padding="lg">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <Code className="h-4.5 w-4.5" />
+              </div>
+              <h3 className="text-lg font-bold text-white">Your Skill Matrix</h3>
+            </div>
+            <Badge variant="indigo">{studentSkills.length} Verified Skills</Badge>
           </div>
 
           {isLoading ? (
-            <div className="py-12 flex justify-center">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} className="h-20" />)}
             </div>
           ) : studentSkills.length === 0 ? (
-            <div className="py-12 text-center text-slate-500">
-              <Cpu className="h-10 w-10 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No skills added yet. Add your technical competencies above!</p>
-            </div>
+            <EmptyState
+              icon={<Code />}
+              title="No skills added yet"
+              description="Start building your technical competency matrix above to unlock AI matching."
+            />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {studentSkills.map((sk) => (
                 <div
                   key={sk.id}
-                  className="group relative flex items-center justify-between p-4 rounded-2xl border border-slate-800 bg-slate-950/60 hover:border-indigo-500/40 transition duration-200"
+                  className="group relative flex items-start justify-between p-4 rounded-xl border border-slate-800/80 bg-slate-900/50 hover:bg-slate-800/50 hover:border-slate-700 transition-all duration-200"
                 >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-white text-sm">{sk.skillName}</span>
-                      <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                        {sk.proficiency}
-                      </span>
+                  <div className="flex-1 min-w-0 pr-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                      <span className="font-bold text-white text-sm truncate">{sk.skillName}</span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">{sk.category}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge variant={proficiencyColors[sk.proficiency] || 'default'} size="sm">
+                        {sk.proficiency}
+                      </Badge>
+                      <span className="text-[10px] text-slate-500 truncate">{sk.category}</span>
+                    </div>
                   </div>
                   <button
-                    onClick={() => handleRemoveSkill(sk.skillId)}
+                    onClick={() => handleRemoveSkill(sk.skillId, sk.skillName)}
                     title="Remove Skill"
-                    className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
+                    className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 shrink-0"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -198,7 +220,7 @@ export default function SkillsPage(): React.ReactElement {
               ))}
             </div>
           )}
-        </div>
+        </GlassCard>
       </div>
     </StudentLayout>
   );

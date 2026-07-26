@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Target, Save, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Save, Building2, MapPin, DollarSign, Briefcase, GraduationCap, Link2, Target } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StudentLayout from '../layouts/StudentLayout';
 import { studentService, CareerGoalData } from '../services/studentService';
+import SectionHeader from '../components/ui/SectionHeader';
+import { GlassCard } from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import { SkeletonCard } from '../components/ui/Skeleton';
 
 export default function CareerGoalsPage(): React.ReactElement {
   const [goal, setGoal] = useState<CareerGoalData>({
@@ -15,7 +20,6 @@ export default function CareerGoalsPage(): React.ReactElement {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     fetchGoal();
@@ -27,7 +31,7 @@ export default function CareerGoalsPage(): React.ReactElement {
       const data = await studentService.getCareerGoal();
       if (data) setGoal(data);
     } catch (err) {
-      setMsg({ type: 'error', text: 'Failed to load career goals.' });
+      toast.error('Failed to load career goals.');
     } finally {
       setIsLoading(false);
     }
@@ -46,13 +50,12 @@ export default function CareerGoalsPage(): React.ReactElement {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setMsg(null);
     try {
       const updated = await studentService.updateCareerGoal(goal);
       setGoal(updated);
-      setMsg({ type: 'success', text: 'Career goals saved successfully!' });
+      toast.success('Career goals saved successfully!');
     } catch (err) {
-      setMsg({ type: 'error', text: 'Failed to update career goals.' });
+      toast.error('Failed to update career goals.');
     } finally {
       setIsSaving(false);
     }
@@ -60,136 +63,164 @@ export default function CareerGoalsPage(): React.ReactElement {
 
   return (
     <StudentLayout>
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-5">
-          <div>
-            <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-              <Target className="h-6 w-6 text-purple-400" />
-              Career Aspirations & Target Goals
-            </h2>
-            <p className="text-xs text-slate-400 mt-1">Configure parameters used by our AI matching engine for placement recommendations</p>
-          </div>
-          <button
-            onClick={handleSubmit}
-            disabled={isSaving}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:from-purple-500 hover:to-indigo-500 transition duration-300 disabled:opacity-50"
-          >
-            <Save className="h-4 w-4" />
-            {isSaving ? 'Saving...' : 'Save Goals'}
-          </button>
-        </div>
-
-        {msg && (
-          <div className={`p-4 rounded-xl border flex items-center gap-3 text-sm ${
-            msg.type === 'success' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400' : 'border-red-500/30 bg-red-500/10 text-red-400'
-          }`}>
-            {msg.type === 'success' ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-            <span>{msg.text}</span>
-          </div>
-        )}
+      <div className="max-w-4xl mx-auto space-y-6 pb-20">
+        <SectionHeader
+          title="Career Aspirations"
+          subtitle="Configure parameters used by our AI engine for matching and recommendations."
+          badge="Profile Data"
+          icon={<Target className="h-6 w-6" />}
+          action={
+            <Button
+              onClick={handleSubmit}
+              isLoading={isSaving}
+              variant="primary"
+              icon={<Save className="h-4 w-4" />}
+            >
+              Save Goals
+            </Button>
+          }
+        />
 
         {isLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-500 border-t-transparent" />
+          <div className="space-y-6">
+            <SkeletonCard className="h-[400px]" />
+            <SkeletonCard className="h-48" />
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-              <h3 className="text-lg font-bold text-white mb-4">Job Role & Work Preferences</h3>
+            <GlassCard padding="lg">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                  <Briefcase className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Job Role & Work Preferences</h3>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold uppercase text-slate-400 mb-1">Preferred Role</label>
-                  <input
-                    type="text"
-                    name="preferredRole"
-                    placeholder="e.g. Software Engineer, Machine Learning Engineer"
-                    value={goal.preferredRole || ''}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-sm text-white focus:border-purple-500 focus:outline-none"
-                  />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Preferred Role</label>
+                  <div className="relative">
+                    <Briefcase className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
+                    <input
+                      type="text"
+                      name="preferredRole"
+                      placeholder="e.g. Software Engineer"
+                      value={goal.preferredRole || ''}
+                      onChange={handleChange}
+                      className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:bg-slate-900 focus:ring-1 focus:ring-purple-500 transition-all"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold uppercase text-slate-400 mb-1">Preferred Industry / Domain</label>
-                  <input
-                    type="text"
-                    name="preferredDomain"
-                    placeholder="e.g. Artificial Intelligence, Fintech, Cloud Computing"
-                    value={goal.preferredDomain || ''}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-sm text-white focus:border-purple-500 focus:outline-none"
-                  />
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Preferred Industry</label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
+                    <input
+                      type="text"
+                      name="preferredDomain"
+                      placeholder="e.g. AI, Fintech, Cloud"
+                      value={goal.preferredDomain || ''}
+                      onChange={handleChange}
+                      className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:bg-slate-900 focus:ring-1 focus:ring-purple-500 transition-all"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold uppercase text-slate-400 mb-1">Preferred Location</label>
-                  <input
-                    type="text"
-                    name="preferredLocation"
-                    placeholder="e.g. San Francisco, CA or Remote"
-                    value={goal.preferredLocation || ''}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-sm text-white focus:border-purple-500 focus:outline-none"
-                  />
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Preferred Location</label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
+                    <input
+                      type="text"
+                      name="preferredLocation"
+                      placeholder="e.g. San Francisco, CA"
+                      value={goal.preferredLocation || ''}
+                      onChange={handleChange}
+                      className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:border-purple-500 focus:bg-slate-900 focus:ring-1 focus:ring-purple-500 transition-all"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold uppercase text-slate-400 mb-1">Work Mode</label>
-                  <select
-                    name="workMode"
-                    value={goal.workMode || 'HYBRID'}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-sm text-white focus:border-purple-500 focus:outline-none"
-                  >
-                    <option value="REMOTE">Remote</option>
-                    <option value="HYBRID">Hybrid</option>
-                    <option value="ONSITE">Onsite</option>
-                  </select>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Work Mode</label>
+                  <div className="relative">
+                    <Link2 className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500 pointer-events-none" />
+                    <select
+                      name="workMode"
+                      value={goal.workMode || 'HYBRID'}
+                      onChange={handleChange}
+                      className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-10 text-sm text-white focus:border-purple-500 focus:bg-slate-900 focus:ring-1 focus:ring-purple-500 transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="REMOTE">Remote</option>
+                      <option value="HYBRID">Hybrid</option>
+                      <option value="ONSITE">Onsite</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                      <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold uppercase text-slate-400 mb-1">Expected Annual Salary ($ USD)</label>
-                  <input
-                    type="number"
-                    name="expectedSalary"
-                    value={goal.expectedSalary || 100000}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-sm text-white focus:border-purple-500 focus:outline-none"
-                  />
+                <div className="space-y-1.5 md:col-span-2 lg:col-span-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Expected Salary ($ USD)</label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
+                    <input
+                      type="number"
+                      name="expectedSalary"
+                      value={goal.expectedSalary || ''}
+                      onChange={handleChange}
+                      className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-4 text-sm text-white focus:border-purple-500 focus:bg-slate-900 focus:ring-1 focus:ring-purple-500 transition-all"
+                    />
+                  </div>
                 </div>
+              </div>
 
-                <div className="flex items-center gap-3 pt-6">
+              <div className="pt-4 border-t border-slate-800/60 flex items-center gap-4">
+                <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    id="higherStudies"
                     name="higherStudies"
                     checked={!!goal.higherStudies}
                     onChange={handleChange}
-                    className="h-5 w-5 rounded border-slate-800 bg-slate-950 text-purple-600 focus:ring-purple-500"
+                    className="sr-only peer"
                   />
-                  <label htmlFor="higherStudies" className="text-sm text-slate-300 font-medium cursor-pointer">
-                    Planning for Higher Studies (Master's / Ph.D.)
-                  </label>
-                </div>
+                  <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                  <span className="ml-3 text-sm font-medium text-slate-300 flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4 text-purple-400" /> Planning for Higher Studies
+                  </span>
+                </label>
               </div>
-            </div>
+            </GlassCard>
 
             {/* Target Companies */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-4">
-              <h3 className="text-lg font-bold text-white mb-4">Target & Dream Companies</h3>
-              <div>
-                <label className="block text-xs font-semibold uppercase text-slate-400 mb-1">Target Companies (comma separated)</label>
-                <input
-                  type="text"
-                  name="targetCompanies"
-                  placeholder="e.g. Google, Microsoft, Apple, NVIDIA, OpenAI"
-                  value={goal.targetCompanies || ''}
-                  onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-sm text-white focus:border-purple-500 focus:outline-none"
-                />
+            <GlassCard padding="lg">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-8 w-8 rounded-lg bg-pink-500/20 flex items-center justify-center text-pink-400">
+                  <Target className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Target Companies</h3>
               </div>
-            </div>
+              
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Dream Companies (comma separated)</label>
+                <div className="relative">
+                  <Target className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
+                  <input
+                    type="text"
+                    name="targetCompanies"
+                    placeholder="e.g. Google, Apple, Stripe, Linear"
+                    value={goal.targetCompanies || ''}
+                    onChange={handleChange}
+                    className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:border-pink-500 focus:bg-slate-900 focus:ring-1 focus:ring-pink-500 transition-all"
+                  />
+                </div>
+                <p className="text-xs text-slate-500 mt-2 ml-1">
+                  We use these targets to tailor your interview prep and resume scoring.
+                </p>
+              </div>
+            </GlassCard>
           </form>
         )}
       </div>

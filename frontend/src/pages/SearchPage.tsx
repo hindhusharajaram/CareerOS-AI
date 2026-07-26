@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
-import { Search, Cpu, FolderGit2, Award, Briefcase, GraduationCap } from 'lucide-react';
+import { Search, Cpu, FolderGit2, Award, Briefcase, GraduationCap, ChevronRight, X } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
 import { searchService, SearchResultData } from '../services/searchService';
+import SectionHeader from '../components/ui/SectionHeader';
+import { GlassCard } from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
+import { SkeletonCard } from '../components/ui/Skeleton';
+import EmptyState from '../components/ui/EmptyState';
 
 export default function SearchPage(): React.ReactElement {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResultData | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!query.trim()) return;
+    
     setIsSearching(true);
+    setHasSearched(true);
     try {
       const data = await searchService.search(query.trim());
       setResults(data);
@@ -22,122 +30,219 @@ export default function SearchPage(): React.ReactElement {
     }
   };
 
+  const clearSearch = () => {
+    setQuery('');
+    setResults(null);
+    setHasSearched(false);
+  };
+
+  const hasResults = results && (
+    results.matchingSkills.length > 0 ||
+    results.matchingProjects.length > 0 ||
+    results.matchingExperience.length > 0 ||
+    results.matchingCertificates.length > 0 ||
+    results.matchingEducation.length > 0
+  );
+
   return (
     <StudentLayout>
-      <div className="max-w-5xl mx-auto space-y-8">
-        <div className="border-b border-slate-800 pb-5">
-          <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <Search className="h-6 w-6 text-indigo-400" />
-            Universal Search Engine
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">Search across your skills, projects, technologies, experience, and credentials</p>
-        </div>
+      <div className="max-w-5xl mx-auto space-y-8 pb-20">
+        <SectionHeader
+          title="Universal Search Engine"
+          subtitle="Search across your entire profile: skills, projects, experience, and credentials."
+          badge="Global Search"
+          icon={<Search className="h-6 w-6" />}
+        />
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="relative">
-          <Search className="absolute left-4 top-4 h-5 w-5 text-slate-500" />
-          <input
-            type="text"
-            placeholder="Search keywords (e.g. React, Python, OpenAI, Stanford, AWS)..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full rounded-2xl border border-slate-800 bg-slate-900/60 py-3.5 pl-12 pr-28 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none backdrop-blur-md shadow-xl"
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+          <form onSubmit={handleSearch} className="relative">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-indigo-400" />
+            <input
+              type="text"
+              placeholder="Search keywords (e.g. React, Python, OpenAI, Stanford, AWS)..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full rounded-3xl border border-slate-700/50 bg-slate-900/80 py-5 pl-16 pr-32 text-base text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none backdrop-blur-xl shadow-2xl transition-all"
+            />
+            
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+              {query && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  className="p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={isSearching || !query.trim()}
+                className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-bold text-white hover:from-indigo-500 hover:to-purple-500 transition-all disabled:opacity-50 shadow-lg shadow-indigo-500/20"
+              >
+                {isSearching ? 'Searching...' : 'Search'}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Loading State */}
+        {isSearching && (
+          <div className="space-y-6 pt-4">
+            <SkeletonCard className="h-40" />
+            <SkeletonCard className="h-60" />
+          </div>
+        )}
+
+        {/* No Results State */}
+        {!isSearching && hasSearched && !hasResults && (
+          <EmptyState
+            icon={<Search />}
+            title={`No results found for "${query}"`}
+            description="We couldn't find anything matching your search. Try different keywords or check your spelling."
+            className="mt-8"
           />
-          <button
-            type="submit"
-            disabled={isSearching || !query.trim()}
-            className="absolute right-2 top-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-xs font-semibold text-white hover:from-indigo-500 hover:to-purple-500 transition disabled:opacity-50"
-          >
-            {isSearching ? 'Searching...' : 'Search'}
-          </button>
-        </form>
+        )}
+
+        {/* Initial Empty State */}
+        {!isSearching && !hasSearched && (
+          <div className="pt-12 text-center text-slate-500 flex flex-col items-center justify-center">
+            <div className="h-20 w-20 rounded-full bg-slate-900/50 flex items-center justify-center mb-4 border border-slate-800">
+              <Search className="h-8 w-8 text-indigo-400 opacity-50" />
+            </div>
+            <p className="text-base font-medium text-slate-400">Enter a keyword to search your profile</p>
+            <p className="text-sm mt-2 max-w-sm">Find specific technologies you've used, companies you've worked at, or projects you've built.</p>
+          </div>
+        )}
 
         {/* Results View */}
-        {results && (
-          <div className="space-y-6">
+        {!isSearching && results && hasResults && (
+          <div className="space-y-6 pt-4 animate-fade-up">
+            <div className="flex items-center justify-between mb-2 px-2">
+              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Search Results</h3>
+              <Badge variant="indigo">
+                {results.matchingSkills.length + results.matchingProjects.length + results.matchingExperience.length + results.matchingCertificates.length + results.matchingEducation.length} Matches
+              </Badge>
+            </div>
+
             {/* Skills */}
             {results.matchingSkills.length > 0 && (
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Cpu className="h-4 w-4 text-indigo-400" /> Matching Skills ({results.matchingSkills.length})
-                </h3>
-                <div className="flex flex-wrap gap-2">
+              <GlassCard padding="lg">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-8 w-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                    <Cpu className="h-4.5 w-4.5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">Matching Skills</h3>
+                  <Badge variant="indigo" className="ml-auto">{results.matchingSkills.length}</Badge>
+                </div>
+                <div className="flex flex-wrap gap-2.5">
                   {results.matchingSkills.map((sk) => (
-                    <span key={sk.id} className="px-3 py-1 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-xs font-medium">
-                      {sk.skillName} • <span className="text-[10px] uppercase font-mono">{sk.proficiency}</span>
+                    <span key={sk.id} className="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-sm font-semibold flex items-center gap-2">
+                      {sk.skillName}
+                      <span className="text-[10px] uppercase font-mono bg-indigo-500/20 px-1.5 py-0.5 rounded text-indigo-400">{sk.proficiency}</span>
                     </span>
                   ))}
                 </div>
-              </div>
+              </GlassCard>
             )}
 
             {/* Projects */}
             {results.matchingProjects.length > 0 && (
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <FolderGit2 className="h-4 w-4 text-purple-400" /> Matching Projects ({results.matchingProjects.length})
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <GlassCard padding="lg">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-8 w-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                    <FolderGit2 className="h-4.5 w-4.5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">Matching Projects</h3>
+                  <Badge variant="purple" className="ml-auto">{results.matchingProjects.length}</Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {results.matchingProjects.map((p) => (
-                    <div key={p.id} className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800">
-                      <p className="text-sm font-bold text-white">{p.title}</p>
-                      <p className="text-xs text-slate-400 line-clamp-2 mt-1">{p.description}</p>
+                    <div key={p.id} className="group p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:bg-slate-800/60 hover:border-purple-500/30 transition-all cursor-pointer flex justify-between items-start">
+                      <div>
+                        <p className="text-base font-bold text-white">{p.title}</p>
+                        <p className="text-sm text-slate-400 line-clamp-2 mt-1.5 leading-relaxed">{p.description}</p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-slate-600 group-hover:text-purple-400 transition-colors shrink-0 mt-1" />
                     </div>
                   ))}
                 </div>
-              </div>
+              </GlassCard>
             )}
 
             {/* Experience */}
             {results.matchingExperience.length > 0 && (
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Briefcase className="h-4 w-4 text-amber-400" /> Matching Experience ({results.matchingExperience.length})
-                </h3>
-                <div className="space-y-2">
+              <GlassCard padding="lg">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-8 w-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
+                    <Briefcase className="h-4.5 w-4.5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">Matching Experience</h3>
+                  <Badge variant="amber" className="ml-auto">{results.matchingExperience.length}</Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {results.matchingExperience.map((e) => (
-                    <div key={e.id} className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                    <div key={e.id} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:bg-slate-800/60 hover:border-amber-500/30 transition-all flex items-center justify-between group cursor-pointer">
                       <div>
-                        <p className="text-sm font-bold text-white">{e.company}</p>
-                        <p className="text-xs text-indigo-400">{e.role}</p>
+                        <p className="text-base font-bold text-white">{e.company}</p>
+                        <p className="text-sm font-semibold text-amber-400 mt-0.5">{e.role}</p>
                       </div>
+                      <ChevronRight className="h-5 w-5 text-slate-600 group-hover:text-amber-400 transition-colors" />
                     </div>
                   ))}
                 </div>
-              </div>
+              </GlassCard>
             )}
 
             {/* Certificates */}
             {results.matchingCertificates.length > 0 && (
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Award className="h-4 w-4 text-emerald-400" /> Matching Certificates ({results.matchingCertificates.length})
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <GlassCard padding="lg">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <Award className="h-4.5 w-4.5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">Matching Certificates</h3>
+                  <Badge variant="emerald" className="ml-auto">{results.matchingCertificates.length}</Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {results.matchingCertificates.map((c) => (
-                    <div key={c.id} className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800">
-                      <p className="text-sm font-bold text-white">{c.title}</p>
-                      <p className="text-xs text-emerald-400 mt-0.5">{c.provider}</p>
+                    <div key={c.id} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:bg-slate-800/60 hover:border-emerald-500/30 transition-all flex items-center justify-between group cursor-pointer">
+                      <div>
+                        <p className="text-base font-bold text-white">{c.title}</p>
+                        <p className="text-sm font-medium text-emerald-400 mt-1 uppercase tracking-wider text-[10px]">{c.provider}</p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-slate-600 group-hover:text-emerald-400 transition-colors" />
                     </div>
                   ))}
                 </div>
-              </div>
+              </GlassCard>
             )}
 
             {/* Education */}
             {results.matchingEducation.length > 0 && (
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md space-y-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4 text-indigo-400" /> Matching Education ({results.matchingEducation.length})
-                </h3>
-                <div className="space-y-2">
+              <GlassCard padding="lg">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-8 w-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
+                    <GraduationCap className="h-4.5 w-4.5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">Matching Education</h3>
+                  <Badge variant="default" className="ml-auto">{results.matchingEducation.length}</Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {results.matchingEducation.map((e) => (
-                    <div key={e.id} className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800">
-                      <p className="text-sm font-bold text-white">{e.degree} - {e.institution}</p>
+                    <div key={e.id} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:bg-slate-800/60 hover:border-blue-500/30 transition-all flex flex-col group cursor-pointer">
+                      <p className="text-base font-bold text-white">{e.degree}</p>
+                      <p className="text-sm font-semibold text-blue-400 mt-0.5">{e.institution}</p>
+                      <div className="mt-2 text-xs text-slate-500 flex items-center justify-between">
+                         <span>{e.startYear} - {e.endYear}</span>
+                         <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-blue-400 transition-colors" />
+                      </div>
                     </div>
                   ))}
                 </div>
-              </div>
+              </GlassCard>
             )}
           </div>
         )}

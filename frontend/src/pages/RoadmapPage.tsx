@@ -1,27 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { Compass, Calendar } from 'lucide-react';
+import { Compass, Calendar, ChevronRight, Target, Zap } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
 import { intelligenceService, CareerRoadmapData, RoadmapTask } from '../services/intelligenceService';
+import SectionHeader from '../components/ui/SectionHeader';
+import { GlassCard } from '../components/ui/Card';
+import { SkeletonCard } from '../components/ui/Skeleton';
+
+const categoryColors: Record<string, string> = {
+  SKILLS: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+  PROJECTS: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  NETWORKING: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  PREPARATION: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  APPLICATIONS: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
+  CERTIFICATIONS: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+  INTERVIEW: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
+};
+
+const weekColors = [
+  'from-indigo-500 to-purple-500',
+  'from-purple-500 to-violet-500',
+  'from-violet-500 to-indigo-600',
+  'from-emerald-500 to-teal-500',
+  'from-amber-500 to-orange-500',
+  'from-sky-500 to-cyan-500',
+  'from-rose-500 to-pink-500',
+  'from-indigo-600 to-blue-600',
+  'from-emerald-600 to-green-500',
+  'from-purple-600 to-pink-500',
+  'from-amber-600 to-yellow-500',
+  'from-sky-600 to-blue-500',
+  'from-violet-600 to-purple-600',
+];
 
 export default function RoadmapPage(): React.ReactElement {
   const [roadmap, setRoadmap] = useState<CareerRoadmapData | null>(null);
   const [activeTab, setActiveTab] = useState<'30' | '60' | '90'>('30');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchRoadmap();
-  }, []);
+  useEffect(() => { fetchRoadmap(); }, []);
 
   const fetchRoadmap = async () => {
     setIsLoading(true);
     try {
       const data = await intelligenceService.getRoadmap();
       setRoadmap(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setIsLoading(false); }
   };
 
   const getTasks = (): RoadmapTask[] => {
@@ -31,69 +55,105 @@ export default function RoadmapPage(): React.ReactElement {
     return roadmap.day90Roadmap;
   };
 
+  const tasks = getTasks();
+
   return (
     <StudentLayout>
       <div className="max-w-5xl mx-auto space-y-8">
-        <div className="border-b border-slate-800 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-              <Compass className="h-6 w-6 text-purple-400" />
-              Career Roadmap Generator
-            </h2>
-            <p className="text-xs text-slate-400 mt-1">Structured 30-Day, 60-Day, and 90-Day weekly action items for {roadmap?.targetRole || 'Target Role'}</p>
-          </div>
-
-          <div className="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-800 shrink-0">
-            <button
-              onClick={() => setActiveTab('30')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${activeTab === '30' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}
-            >
-              30 Days
-            </button>
-            <button
-              onClick={() => setActiveTab('60')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${activeTab === '60' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}
-            >
-              60 Days
-            </button>
-            <button
-              onClick={() => setActiveTab('90')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${activeTab === '90' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}
-            >
-              90 Days
-            </button>
-          </div>
-        </div>
-
-        {isLoading ? (
-          <div className="py-20 flex justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent" />
-          </div>
-        ) : (
-          <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 backdrop-blur-md space-y-6">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-purple-400" />
-              {activeTab}-Day Execution Timeline
-            </h3>
-
-            <div className="space-y-4">
-              {getTasks().map((task, idx) => (
-                <div key={idx} className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-start gap-4 transition hover:border-purple-500/40">
-                  <div className="h-10 w-10 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0 font-bold text-xs border border-purple-500/20">
-                    {task.week}
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-base font-bold text-white">{task.title}</h4>
-                      <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-300">
-                        {task.category}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-400 leading-relaxed">{task.description}</p>
-                  </div>
-                </div>
+        <SectionHeader
+          title="Career Roadmap Generator"
+          subtitle={`Structured week-by-week execution plan for ${roadmap?.targetRole || 'your target role'}`}
+          badge="Intelligence"
+          icon={<Compass className="h-6 w-6" />}
+          action={
+            <div className="flex bg-slate-900/80 p-1 rounded-2xl border border-slate-800 shrink-0 gap-1">
+              {(['30', '60', '90'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+                    activeTab === tab
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {tab} Days
+                </button>
               ))}
             </div>
+          }
+        />
+
+        {isLoading ? (
+          <div className="space-y-4">
+            {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} className="h-28" />)}
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Summary Banner */}
+            <div className="rounded-2xl border border-purple-500/20 bg-purple-500/5 p-5 flex items-center gap-4">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-white shrink-0">
+                <Target className="h-6 w-6" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Target Role · {activeTab}-Day Execution Plan</p>
+                <h3 className="text-lg font-black text-white mt-0.5 truncate">{roadmap?.targetRole || 'Software Engineering'}</h3>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-2xl font-black text-white">{tasks.length}</p>
+                <p className="text-xs text-slate-500">Tasks</p>
+              </div>
+            </div>
+
+            {/* Timeline */}
+            <div className="space-y-4">
+              {tasks.length === 0 ? (
+                <GlassCard>
+                  <div className="py-8 text-center text-slate-500">
+                    <Calendar className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                    <p className="text-sm">No tasks found for this timeline. Set your career goal to generate a roadmap.</p>
+                  </div>
+                </GlassCard>
+              ) : tasks.map((task, idx) => {
+                const gradient = weekColors[idx % weekColors.length];
+                const catStyle = categoryColors[task.category] || 'bg-slate-500/10 text-slate-400 border-slate-500/20';
+
+                return (
+                  <div
+                    key={idx}
+                    className="group relative flex items-start gap-4 p-5 rounded-2xl border border-slate-800/80 bg-slate-900/50 backdrop-blur-sm hover:border-slate-700/60 hover:bg-slate-900/80 transition-all duration-200 card-interactive"
+                  >
+                    {/* Week badge */}
+                    <div className={`h-12 w-12 rounded-2xl bg-gradient-to-br ${gradient} flex flex-col items-center justify-center shrink-0 shadow-lg text-white`}>
+                      <span className="text-[9px] font-bold uppercase opacity-70">Wk</span>
+                      <span className="text-sm font-black leading-none">{task.week}</span>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-3 mb-1.5">
+                        <h4 className="text-sm font-bold text-white group-hover:text-indigo-100 transition-colors">{task.title}</h4>
+                        <span className={`shrink-0 px-2 py-0.5 rounded-lg text-[10px] font-bold border ${catStyle}`}>
+                          {task.category}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 leading-relaxed">{task.description}</p>
+                    </div>
+
+                    <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-300 group-hover:translate-x-0.5 transition-all shrink-0 mt-1" />
+                  </div>
+                );
+              })}
+            </div>
+
+            {tasks.length > 0 && (
+              <div className="glass-card rounded-2xl p-4 flex items-center gap-3">
+                <Zap className="h-5 w-5 text-indigo-400 shrink-0" />
+                <p className="text-sm text-slate-400">
+                  <span className="text-white font-semibold">Pro Tip:</span> Complete high-priority tasks first. Aim for 2–3 tasks per week for maximum career velocity.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
