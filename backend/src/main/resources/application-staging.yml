@@ -4,9 +4,9 @@ spring:
     activate:
       on-profile: staging
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/careeros_ai_db}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
+    url: ${DATABASE_URL:jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}}
+    username: ${DATABASE_USERNAME:${PGUSER}}
+    password: ${DATABASE_PASSWORD:${PGPASSWORD}}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 15
