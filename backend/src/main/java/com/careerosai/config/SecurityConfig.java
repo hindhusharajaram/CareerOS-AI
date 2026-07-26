@@ -3,6 +3,7 @@ package com.careerosai.config;
 import com.careerosai.security.CustomAccessDeniedHandler;
 import com.careerosai.security.CustomAuthenticationEntryPoint;
 import com.careerosai.security.JwtAuthenticationFilter;
+import com.careerosai.security.RateLimitingFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,9 +27,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Main Spring Security Configuration Class.
+ * Production Hardened Spring Security Configuration.
  * Configures stateless JWT authentication, SecurityFilterChain rules, CORS, password encoder,
- * custom error handlers, and security headers.
+ * custom error handlers, rate limiting, and comprehensive security headers.
  */
 @Configuration
 @EnableWebSecurity
@@ -36,17 +37,20 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RateLimitingFilter rateLimitingFilter;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final List<String> allowedOrigins;
 
     public SecurityConfig(
         final JwtAuthenticationFilter jwtAuthenticationFilter,
+        final RateLimitingFilter rateLimitingFilter,
         final CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
         final CustomAccessDeniedHandler customAccessDeniedHandler,
         @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:5173}") final List<String> allowedOrigins
     ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.rateLimitingFilter = rateLimitingFilter;
         this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
         this.customAccessDeniedHandler = customAccessDeniedHandler;
         this.allowedOrigins = allowedOrigins;
@@ -69,7 +73,7 @@ public class SecurityConfig {
     }
 
     /**
-     * Configures the primary Spring Security Filter Chain.
+     * Configures the primary Spring Security Filter Chain with security hardening.
      */
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
@@ -84,15 +88,22 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .frameOptions(frame -> frame.deny())
                 .contentTypeOptions(contentType -> {})
+                .httpStrictTransportSecurity(hsts -> hsts
+                    .includeSubDomains(true)
+                    .maxAgeInSeconds(31536000)
+                )
                 .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
+                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self';"))
+                .permissionsPolicy(permissions -> permissions.policy("geolocation=(), microphone=(), camera=()"))
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/auth/**", "/api/auth/**", "/api/v1/student/**").permitAll()
+                .requestMatchers("/api/v1/version", "/api/v1/observability/**").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 .anyRequest().authenticated()
             )
+            .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -106,8 +117,8 @@ public class SecurityConfig {
         final CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
-        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "X-Correlation-Id", "X-Trace-Id"));
+        configuration.setExposedHeaders(List.of("Authorization", "X-Trace-Id", "X-Span-Id", "X-Correlation-Id"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
