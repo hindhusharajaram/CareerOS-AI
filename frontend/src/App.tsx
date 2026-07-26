@@ -35,6 +35,7 @@ import AiProjectAdvisorPage from './pages/AiProjectAdvisorPage';
 import AiCareerChatPage from './pages/AiCareerChatPage';
 import AnalyticsAdminPage from './pages/AnalyticsAdminPage';
 import WarehouseDashboardPage from './pages/WarehouseDashboardPage';
+import SystemMonitorPage from './pages/SystemMonitorPage';
 
 /**
  * Root Application Shell Component — CareerOS AI
@@ -86,6 +87,9 @@ export default function App(): React.ReactElement {
 
         {/* Sprint 6.2: Analytics Warehouse & Data Engineering Route */}
         <Route path="/warehouse-dashboard" element={<WarehouseDashboardPage />} />
+
+        {/* Sprint 6.3: Observability & Production Monitoring Route */}
+        <Route path="/system-monitor" element={<SystemMonitorPage />} />
 
         <Route path="/settings" element={<Navigate to="/profile" replace />} />
       </Routes>

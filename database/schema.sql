@@ -568,10 +568,40 @@ CREATE TABLE IF NOT EXISTS data_quality_reports (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS warehouse_metadata (
+-- =============================================================================
+-- 16. OBSERVABILITY & PRODUCTION MONITORING TABLES
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS audit_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    table_name VARCHAR(100) NOT NULL UNIQUE,
-    table_type VARCHAR(50) NOT NULL, -- DIMENSION, FACT, METADATA
-    row_count BIGINT NOT NULL DEFAULT 0,
-    last_refreshed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    user_id UUID,
+    action VARCHAR(100) NOT NULL,
+    resource VARCHAR(100) NOT NULL,
+    details_json TEXT,
+    ip_address VARCHAR(50),
+    trace_id VARCHAR(100),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS system_metrics (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    metric_name VARCHAR(100) NOT NULL,
+    metric_value DOUBLE PRECISION NOT NULL,
+    metric_unit VARCHAR(50),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS system_alerts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    alert_level VARCHAR(50) NOT NULL, -- INFO, WARNING, CRITICAL
+    source_module VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    is_resolved BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS health_snapshots (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    status VARCHAR(50) NOT NULL, -- UP, DOWN, DEGRADED
+    health_json TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -5,6 +5,7 @@ import com.careerosai.dto.CompanyRegisterRequest;
 import com.careerosai.dto.LoginRequest;
 import com.careerosai.dto.StudentRegisterRequest;
 import com.careerosai.dto.UserSummaryDto;
+import com.careerosai.observability.audit.AuditLogService;
 import com.careerosai.security.CustomUserPrincipal;
 import com.careerosai.service.AuthService;
 import com.careerosai.util.ApiResponse;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final AuditLogService auditLogService;
 
     /**
      * Register a new Student Account and Profile.
@@ -40,6 +42,7 @@ public class AuthController {
         final HttpServletRequest servletRequest
     ) {
         final AuthResponse authResponse = authService.registerStudent(request);
+        auditLogService.logAction(authResponse.getUser().getId(), "STUDENT_REGISTER", "AUTH", "{\"email\":\"" + request.getEmail() + "\"}", servletRequest.getRemoteAddr());
         final ApiResponse<AuthResponse> response = ApiResponse.success(
             "Student account registered successfully.",
             authResponse,
@@ -57,6 +60,7 @@ public class AuthController {
         final HttpServletRequest servletRequest
     ) {
         final AuthResponse authResponse = authService.registerCompany(request);
+        auditLogService.logAction(authResponse.getUser().getId(), "COMPANY_REGISTER", "AUTH", "{\"companyName\":\"" + request.getCompanyName() + "\"}", servletRequest.getRemoteAddr());
         final ApiResponse<AuthResponse> response = ApiResponse.success(
             "Company account registered successfully.",
             authResponse,
@@ -74,6 +78,7 @@ public class AuthController {
         final HttpServletRequest servletRequest
     ) {
         final AuthResponse authResponse = authService.login(request);
+        auditLogService.logLogin(authResponse.getUser().getId(), request.getEmail(), servletRequest.getRemoteAddr());
         final ApiResponse<AuthResponse> response = ApiResponse.success(
             "User authenticated successfully.",
             authResponse,
