@@ -1,0 +1,26 @@
+# Staging Profile Configuration — CareerOS AI Backend
+spring:
+  config:
+    activate:
+      on-profile: staging
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/careeros_ai_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 3
+      idle-timeout: 30000
+      pool-name: CareerOS-StagingHikariPool
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+logging:
+  level:
+    root: INFO
+    com.careerosai: INFO
