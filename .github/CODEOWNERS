@@ -1,0 +1,20 @@
+# CareerOS-AI Code Owners
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owners (Fallback)
+* @hindhusharajaram
+
+# Backend Code
+/backend/ @hindhusharajaram
+
+# Frontend Code
+/frontend/ @hindhusharajaram
+
+# Infrastructure, CI/CD, & Deployments
+/.github/ @hindhusharajaram
+/docker/ @hindhusharajaram
+/render.yaml @hindhusharajaram
+/docker-compose*.yml @hindhusharajaram
+
+# Database 
+/database/ @hindhusharajaram
