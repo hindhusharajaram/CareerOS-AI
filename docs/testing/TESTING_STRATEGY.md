@@ -15,4 +15,4 @@ To maintain FAANG-level stability and security, CareerOS-AI enforces a multi-lay
 - **Dependency Review:** GitHub Actions automatically blocks PRs that introduce vulnerable transitive dependencies.
 
 ## 4. E2E Testing (Future Roadmap)
-End-to-End tests simulating real user interactions across the full Vercel-Render-Neon stack using **Playwright**.
+End-to-End tests simulating real user interactions across the full Vercel-Render-Neon stack using **Playwright**. Once implemented, these tests will reside in a dedicated `tests/e2e` directory.

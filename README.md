@@ -55,8 +55,7 @@ A highly interactive, dynamic, and intelligent platform that acts as a 24/7 pers
 | :--- | :--- | :--- |
 | **Backend** | Java 21, Spring Boot 3 | High-performance core API architecture |
 | **Frontend** | React 18, Vite, TypeScript | Lightning-fast, premium UI with TailwindCSS |
-| **Database** | PostgreSQL, Flyway | Relational data persistence and schema migrations |
-| **Caching** | Redis | High-speed data caching and session management |
+| **Database** | PostgreSQL | Relational data persistence |
 | **DevOps** | Docker, Docker Compose | Containerized deployments and local environments |
 | **CI/CD** | GitHub Actions | Automated build, test, and release pipelines |
 
@@ -84,7 +83,6 @@ graph TD
     
     Auth --> DB[(PostgreSQL Primary)]
     Profile --> DB
-    AI --> Redis[(Redis Cache)]
     
     ETL --> DW[(PostgreSQL Warehouse)]
     Analytics --> DW
@@ -140,7 +138,7 @@ CareerOS-AI/
 │   │   ├── repository/       # Data Access Layer
 │   │   ├── model/            # JPA Entities & DTOs
 │   │   └── observability/    # Metrics & Tracing
-│   └── src/main/resources/   # Application properties & Flyway
+│   └── src/main/resources/   # Application properties & schemas
 ├── frontend/                 # React + Vite Application
 │   ├── src/
 │   │   ├── components/       # Reusable UI (Cards, Buttons, Charts)
@@ -169,15 +167,15 @@ CareerOS-AI/
    cd CareerOS-AI
    ```
 
-2. **Spin up Infrastructure (Database & Cache)**
+2. **Spin up Infrastructure (Database)**
    ```bash
-   docker-compose up -d
+   docker-compose up -d postgres
    ```
 
 3. **Run the Backend**
    ```bash
    cd backend
-   ./gradlew bootRun
+   mvn spring-boot:run
    ```
 
 4. **Run the Frontend**
@@ -197,7 +195,7 @@ CareerOS-AI/
 To run the entire application stack in containers for a production-like environment:
 
 ```bash
-docker-compose -f docker-compose.prod.yml up --build -d
+docker-compose up --build -d
 ```
 
 ---
