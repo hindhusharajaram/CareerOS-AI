@@ -43,7 +43,7 @@ jobs:
           npm run build
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             backend/target/careeros-ai-backend-1.0.0.jar
