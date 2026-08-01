@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +41,7 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
 
-        return new ResponseEntity<>(response, ex.getStatus());
+        return ResponseEntity.status(Objects.requireNonNull(ex.getStatus())).body(response);
     }
 
     /**
@@ -55,8 +56,8 @@ public class GlobalExceptionHandler {
 
         final List<ValidationErrorDetail> validationErrors = ex.getBindingResult().getAllErrors().stream()
             .map(error -> {
-                final String fieldName = (error instanceof FieldError) ? ((FieldError) error).getField() : error.getObjectName();
-                final Object rejectedValue = (error instanceof FieldError) ? ((FieldError) error).getRejectedValue() : null;
+                final String fieldName = (error instanceof FieldError fieldError) ? fieldError.getField() : error.getObjectName();
+                final Object rejectedValue = (error instanceof FieldError fieldError) ? fieldError.getRejectedValue() : null;
                 return ValidationErrorDetail.builder()
                     .field(fieldName)
                     .rejectedValue(rejectedValue)
@@ -74,7 +75,7 @@ public class GlobalExceptionHandler {
             .status(HttpStatus.BAD_REQUEST.value())
             .build();
 
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(response);
     }
 
     /**
@@ -93,7 +94,7 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
 
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     /**
@@ -112,7 +113,7 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
 
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
     /**
@@ -132,6 +133,6 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
 
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

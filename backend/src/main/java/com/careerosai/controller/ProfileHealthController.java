@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -40,11 +41,15 @@ public class ProfileHealthController {
         @AuthenticationPrincipal final CustomUserPrincipal currentUser,
         final HttpServletRequest request
     ) {
-        final UUID userId = getEffectiveUserId(currentUser);
+        final UUID userId = Objects.requireNonNull(getEffectiveUserId(currentUser));
         final StudentProfile profile = studentProfileRepository.findByUserId(userId)
-            .orElseGet(() -> studentProfileRepository.save(StudentProfile.builder()
-                .user(userRepository.findById(userId).orElseThrow())
-                .firstName("Student").lastName("User").universityName("University").major("CS").graduationYear(2026).build()));
+            .orElseGet(() -> {
+                final User userEntity = userRepository.findById(userId).orElseThrow();
+                final StudentProfile newProfile = StudentProfile.builder()
+                    .user(userEntity)
+                    .firstName("Student").lastName("User").universityName("University").major("CS").graduationYear(2026).build();
+                return Objects.requireNonNull(studentProfileRepository.save(Objects.requireNonNull(newProfile)));
+            });
 
         final ProfileHealthDto health = profileHealthEngine.calculateHealth(profile);
         return ResponseEntity.ok(ApiResponse.success("Profile health details calculated successfully", health, request.getRequestURI()));

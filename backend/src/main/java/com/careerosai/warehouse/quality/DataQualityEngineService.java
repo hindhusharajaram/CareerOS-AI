@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -43,7 +44,7 @@ public class DataQualityEngineService {
 
         final int qualityScore = (int) ((double) passedAssertions / totalAssertions * 100);
 
-        final DataQualityReport report = dataQualityReportRepository.save(DataQualityReport.builder()
+        final DataQualityReport targetReport = DataQualityReport.builder()
             .jobId(jobId)
             .totalAssertions(totalAssertions)
             .passedAssertions(passedAssertions)
@@ -56,7 +57,8 @@ public class DataQualityEngineService {
                 + "{\"name\":\"FK_REFERENTIAL_INTEGRITY\",\"status\":\"PASSED\"}"
                 + "],\"score\":" + qualityScore + "}")
             .createdAt(LocalDateTime.now())
-            .build());
+            .build();
+        final DataQualityReport report = dataQualityReportRepository.save(Objects.requireNonNull(targetReport));
 
         log.info("Data Quality Report Generated: Score = {}%", qualityScore);
         return report;

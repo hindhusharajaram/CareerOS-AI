@@ -1,7 +1,6 @@
 package com.careerosai.mapper;
 
 import com.careerosai.dto.UserSummaryDto;
-import com.careerosai.entity.Role;
 import com.careerosai.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -35,9 +34,10 @@ public class UserMapper {
 
         final Set<String> roleNames = (user.getRoles() != null)
             ? user.getRoles().stream()
-                .map(Role::getName)
                 .filter(Objects::nonNull)
-                .map(Enum::name)
+                .map(r -> r.getName())
+                .filter(Objects::nonNull)
+                .map(roleType -> roleType.name())
                 .collect(Collectors.toSet())
             : Collections.emptySet();
 

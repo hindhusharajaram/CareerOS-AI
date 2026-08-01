@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -56,11 +57,15 @@ public class FileController {
         @RequestParam(value = "uploadType", defaultValue = "GENERAL") final String uploadType,
         final HttpServletRequest request
     ) {
-        final UUID userId = getEffectiveUserId(currentUser);
+        final UUID userId = Objects.requireNonNull(getEffectiveUserId(currentUser));
         final StudentProfile profile = studentProfileRepository.findByUserId(userId)
-            .orElseGet(() -> studentProfileRepository.save(StudentProfile.builder()
-                .user(userRepository.findById(userId).orElseThrow())
-                .firstName("Student").lastName("User").universityName("University").major("CS").graduationYear(2026).build()));
+            .orElseGet(() -> {
+                final User userEntity = userRepository.findById(userId).orElseThrow();
+                final StudentProfile newProfile = StudentProfile.builder()
+                    .user(userEntity)
+                    .firstName("Student").lastName("User").universityName("University").major("CS").graduationYear(2026).build();
+                return Objects.requireNonNull(studentProfileRepository.save(Objects.requireNonNull(newProfile)));
+            });
 
         final String storedPath = storageService.store(file, uploadType.toLowerCase(), null);
 
@@ -74,7 +79,7 @@ public class FileController {
             .uploadType(uploadType)
             .build();
 
-        final FileMetadata saved = fileMetadataRepository.save(metadata);
+        final FileMetadata saved = Objects.requireNonNull(fileMetadataRepository.save(Objects.requireNonNull(metadata)));
         analyticsService.trackEvent(userId, "FILE_UPLOADED", uploadType + ": " + file.getOriginalFilename());
 
         final FileMetadataDto dto = toDto(saved);
@@ -83,13 +88,15 @@ public class FileController {
 
     @GetMapping("/{id}/download")
     public ResponseEntity<Resource> downloadFile(@PathVariable final UUID id) {
-        final FileMetadata metadata = fileMetadataRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("File metadata not found: " + id));
+        final UUID targetId = Objects.requireNonNull(id);
+        final FileMetadata metadata = fileMetadataRepository.findById(targetId)
+            .orElseThrow(() -> new IllegalArgumentException("File metadata not found: " + targetId));
 
         final Resource resource = storageService.loadAsResource(metadata.getFilePath());
 
+        final String contentType = metadata.getContentType() != null ? metadata.getContentType() : "application/octet-stream";
         return ResponseEntity.ok()
-            .contentType(MediaType.parseMediaType(metadata.getContentType()))
+            .contentType(MediaType.parseMediaType(Objects.requireNonNull(contentType)))
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + metadata.getOriginalFilename() + "\"")
             .body(resource);
     }

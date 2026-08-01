@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -70,29 +71,36 @@ public class ResumeController {
         @RequestParam("file") final MultipartFile file,
         final HttpServletRequest request
     ) {
-        final UUID userId = getEffectiveUserId(currentUser);
+        final UUID userId = Objects.requireNonNull(getEffectiveUserId(currentUser));
         final StudentProfile profile = studentProfileRepository.findByUserId(userId)
-            .orElseGet(() -> studentProfileRepository.save(StudentProfile.builder()
-                .user(userRepository.findById(userId).orElseThrow())
-                .firstName("Student").lastName("User").universityName("University").major("CS").graduationYear(2026).build()));
+            .orElseGet(() -> {
+                final User userEntity = userRepository.findById(userId).orElseThrow();
+                final StudentProfile newProfile = StudentProfile.builder()
+                    .user(userEntity)
+                    .firstName("Student").lastName("User").universityName("University").major("CS").graduationYear(2026).build();
+                return Objects.requireNonNull(studentProfileRepository.save(Objects.requireNonNull(newProfile)));
+            });
 
         // Validate File Format
-        final String orig = file.getOriginalFilename() != null ? file.getOriginalFilename().toLowerCase() : "";
+        final String rawFilename = file.getOriginalFilename();
+        final String originalFilename = (rawFilename != null && !rawFilename.isBlank()) ? rawFilename : "resume.pdf";
+        final String orig = originalFilename.toLowerCase();
         if (!orig.endsWith(".pdf") && !orig.endsWith(".docx") && !orig.endsWith(".doc")) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Invalid file format. Only PDF and DOCX resumes are supported.", 400, request.getRequestURI()));
         }
 
         // Store File
         final String storedPath = storageService.store(file, "resumes", null);
-        final FileMetadata metadata = fileMetadataRepository.save(FileMetadata.builder()
+        final FileMetadata metadataBuilder = FileMetadata.builder()
             .studentProfile(profile)
             .fileName(storedPath)
-            .originalFilename(file.getOriginalFilename())
+            .originalFilename(originalFilename)
             .filePath(storedPath)
             .fileSize(file.getSize())
             .contentType(file.getContentType() != null ? file.getContentType() : "application/pdf")
             .uploadType("RESUME")
-            .build());
+            .build();
+        final FileMetadata metadata = Objects.requireNonNull(fileMetadataRepository.save(Objects.requireNonNull(metadataBuilder)));
 
         // Parse Resume
         final ParsedResumeDto parsed = resumeParserService.parseResume(file);
@@ -107,13 +115,14 @@ public class ResumeController {
             resumeRepository.save(r);
         });
 
-        final Resume resume = resumeRepository.save(Resume.builder()
+        final Resume resumeBuilder = Resume.builder()
             .studentProfile(profile)
             .fileMetadata(metadata)
             .version(nextVersion)
             .isActive(true)
             .parsedContent(parsed.getRawText())
-            .build());
+            .build();
+        final Resume resume = Objects.requireNonNull(resumeRepository.save(Objects.requireNonNull(resumeBuilder)));
 
         // Auto-Enrich Profile & Skills
         if (parsed.getExtractedSkills() != null) {
@@ -123,8 +132,8 @@ public class ResumeController {
             }
         }
 
-        analyticsService.trackEvent(userId, "RESUME_UPLOADED", "Version " + nextVersion + ": " + file.getOriginalFilename());
-        eventPublisherService.publishEvent(new ResumeUploadedEvent(userId, file.getOriginalFilename(), nextVersion));
+        analyticsService.trackEvent(userId, "RESUME_UPLOADED", "Version " + nextVersion + ": " + originalFilename);
+        eventPublisherService.publishEvent(new ResumeUploadedEvent(userId, originalFilename, nextVersion));
 
         final ResumeDto dto = toDto(resume);
         return new ResponseEntity<>(ApiResponse.success("Resume uploaded, parsed, and set as active version", dto, request.getRequestURI()), HttpStatus.CREATED);
@@ -158,9 +167,10 @@ public class ResumeController {
             resumeRepository.save(r);
         });
 
-        final Resume target = resumeRepository.findById(id).orElseThrow();
+        final UUID targetId = Objects.requireNonNull(id);
+        final Resume target = resumeRepository.findById(targetId).orElseThrow();
         target.setIsActive(true);
-        final Resume updated = resumeRepository.save(target);
+        final Resume updated = Objects.requireNonNull(resumeRepository.save(target));
 
         return ResponseEntity.ok(ApiResponse.success("Active resume version updated", toDto(updated), request.getRequestURI()));
     }
@@ -168,7 +178,8 @@ public class ResumeController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<ApiResponse<Void>> deleteResume(@PathVariable final UUID id, final HttpServletRequest request) {
-        resumeRepository.deleteById(id);
+        final UUID targetId = Objects.requireNonNull(id);
+        resumeRepository.deleteById(targetId);
         return ResponseEntity.ok(ApiResponse.success("Resume version deleted", null, request.getRequestURI()));
     }
 

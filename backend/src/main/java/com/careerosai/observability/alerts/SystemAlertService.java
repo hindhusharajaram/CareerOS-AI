@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -19,19 +20,21 @@ public class SystemAlertService {
 
     public SystemAlert createAlert(final String level, final String sourceModule, final String message) {
         log.warn("System Alert Raised [{} - {}]: {}", level, sourceModule, message);
-        return systemAlertRepository.save(SystemAlert.builder()
+        final SystemAlert alert = SystemAlert.builder()
             .alertLevel(level)
             .sourceModule(sourceModule)
             .message(message)
             .isResolved(false)
             .createdAt(LocalDateTime.now())
-            .build());
+            .build();
+        return Objects.requireNonNull(systemAlertRepository.save(Objects.requireNonNull(alert)));
     }
 
     public SystemAlert resolveAlert(final UUID alertId) {
-        return systemAlertRepository.findById(alertId).map(alert -> {
+        final UUID targetId = Objects.requireNonNull(alertId);
+        return systemAlertRepository.findById(targetId).map(alert -> {
             alert.setResolved(true);
-            log.info("System Alert Resolved [{}]", alertId);
+            log.info("System Alert Resolved [{}]", targetId);
             return systemAlertRepository.save(alert);
         }).orElse(null);
     }

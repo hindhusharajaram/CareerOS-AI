@@ -24,7 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -45,7 +45,7 @@ public class EtlPipelineService {
         final LocalDateTime startTime = LocalDateTime.now();
         log.info("Starting Incremental ETL Pipeline Run at {}", startTime);
 
-        final EtlExecutionHistory job = etlExecutionHistoryRepository.save(EtlExecutionHistory.builder()
+        final EtlExecutionHistory initialJob = EtlExecutionHistory.builder()
             .pipelineName("INCREMENTAL_EVENTS_ETL")
             .pipelineVersion("v1.0.0")
             .recordsExtracted(0)
@@ -54,7 +54,8 @@ public class EtlPipelineService {
             .recordsRejected(0)
             .status("RUNNING")
             .startedAt(startTime)
-            .build());
+            .build();
+        final EtlExecutionHistory job = etlExecutionHistoryRepository.save(Objects.requireNonNull(initialJob));
 
         try {
             // 1. EXTRACT: Read operational users and analytics_events
@@ -67,26 +68,32 @@ public class EtlPipelineService {
             // Ensure DimDate exists for today
             final LocalDate today = LocalDate.now();
             final int dateKey = Integer.parseInt(today.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-            dimDateRepository.findByDateKey(dateKey).orElseGet(() -> dimDateRepository.save(DimDate.builder()
-                .dateKey(dateKey)
-                .fullDate(today)
-                .dayOfWeek(today.getDayOfWeek().name())
-                .dayOfMonth(today.getDayOfMonth())
-                .monthNumber(today.getMonthValue())
-                .monthName(today.getMonth().name())
-                .quarter((today.getMonthValue() - 1) / 3 + 1)
-                .yearNumber(today.getYear())
-                .isWeekend(today.getDayOfWeek().getValue() >= 6)
-                .build()));
+            dimDateRepository.findByDateKey(dateKey).orElseGet(() -> {
+                final DimDate dimDate = DimDate.builder()
+                    .dateKey(dateKey)
+                    .fullDate(today)
+                    .dayOfWeek(today.getDayOfWeek().name())
+                    .dayOfMonth(today.getDayOfMonth())
+                    .monthNumber(today.getMonthValue())
+                    .monthName(today.getMonth().name())
+                    .quarter((today.getMonthValue() - 1) / 3 + 1)
+                    .yearNumber(today.getYear())
+                    .isWeekend(today.getDayOfWeek().getValue() >= 6)
+                    .build();
+                return dimDateRepository.save(Objects.requireNonNull(dimDate));
+            });
 
             for (User u : users) {
-                dimUserRepository.findByUserId(u.getId()).orElseGet(() -> dimUserRepository.save(DimUser.builder()
-                    .userId(u.getId())
-                    .email(u.getEmail())
-                    .fullName(u.getFullName())
-                    .role(u.getRole() != null ? u.getRole() : "STUDENT")
-                    .graduationYear(2025)
-                    .build()));
+                dimUserRepository.findByUserId(u.getId()).orElseGet(() -> {
+                    final DimUser dimUser = DimUser.builder()
+                        .userId(u.getId())
+                        .email(u.getEmail())
+                        .fullName(u.getFullName())
+                        .role(u.getRole() != null ? u.getRole() : "STUDENT")
+                        .graduationYear(2025)
+                        .build();
+                    return dimUserRepository.save(Objects.requireNonNull(dimUser));
+                });
             }
 
             int loadedCount = 0;
@@ -95,14 +102,17 @@ public class EtlPipelineService {
                 final String evtType = ev.getEventType() != null ? ev.getEventType() : "GENERIC_ACTIVITY";
 
                 final DimFeature feat = dimFeatureRepository.findByFeatureName(evtType)
-                    .orElseGet(() -> dimFeatureRepository.save(DimFeature.builder()
-                        .featureName(evtType)
-                        .module("ANALYTICS")
-                        .build()));
+                    .orElseGet(() -> {
+                        final DimFeature dimFeature = DimFeature.builder()
+                            .featureName(evtType)
+                            .module("ANALYTICS")
+                            .build();
+                        return dimFeatureRepository.save(Objects.requireNonNull(dimFeature));
+                    });
 
                 final DimUser dimUser = ev.getUser() != null ? dimUserRepository.findByUserId(ev.getUser().getId()).orElse(null) : null;
 
-                factUserActivityRepository.save(FactUserActivity.builder()
+                final FactUserActivity activity = FactUserActivity.builder()
                     .userKey(dimUser != null ? dimUser.getUserKey() : null)
                     .dateKey(dateKey)
                     .featureKey(feat.getFeatureKey())
@@ -111,7 +121,8 @@ public class EtlPipelineService {
                     .durationMs(25L)
                     .etlJobId(job.getJobId())
                     .createdAt(LocalDateTime.now())
-                    .build());
+                    .build();
+                factUserActivityRepository.save(Objects.requireNonNull(activity));
 
                 loadedCount++;
             }

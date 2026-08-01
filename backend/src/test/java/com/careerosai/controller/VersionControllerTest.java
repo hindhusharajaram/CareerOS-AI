@@ -36,9 +36,12 @@ class VersionControllerTest {
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCode().value());
-        assertTrue(response.getBody().isSuccess());
+        ApiResponse<VersionInfoDto> body = response.getBody();
+        assertNotNull(body);
+        assertTrue(body.isSuccess());
 
-        VersionInfoDto info = response.getBody().getData();
+        VersionInfoDto info = body.getData();
+        assertNotNull(info);
         assertEquals("1.0.0", info.getVersion());
         assertNotNull(info.getReleaseName());
         assertNotNull(info.getCommitHash());

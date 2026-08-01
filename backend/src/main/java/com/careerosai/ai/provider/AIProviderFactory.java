@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @RequiredArgsConstructor
 public class AIProviderFactory {
@@ -15,9 +17,11 @@ public class AIProviderFactory {
     private String configuredProviderBean;
 
     public AIProvider getProvider() {
-        if (applicationContext.containsBean(configuredProviderBean)) {
-            return applicationContext.getBean(configuredProviderBean, AIProvider.class);
+        final String raw = configuredProviderBean;
+        final String beanName = Objects.requireNonNull((raw != null && !raw.isBlank()) ? raw : "mockAIProvider");
+        if (applicationContext.containsBean(beanName)) {
+            return Objects.requireNonNull(applicationContext.getBean(beanName, AIProvider.class));
         }
-        return applicationContext.getBean("mockAIProvider", AIProvider.class);
+        return Objects.requireNonNull(applicationContext.getBean("mockAIProvider", AIProvider.class));
     }
 }

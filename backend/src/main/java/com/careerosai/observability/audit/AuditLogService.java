@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -21,7 +22,7 @@ public class AuditLogService {
     public AuditLog logAction(final UUID userId, final String action, final String resource, final String detailsJson, final String ipAddress) {
         try {
             final String traceId = MDC.get("traceId");
-            final AuditLog auditLog = auditLogRepository.save(AuditLog.builder()
+            final AuditLog entity = AuditLog.builder()
                 .userId(userId)
                 .action(action)
                 .resource(resource)
@@ -29,7 +30,8 @@ public class AuditLogService {
                 .ipAddress(ipAddress != null ? ipAddress : "127.0.0.1")
                 .traceId(traceId)
                 .createdAt(LocalDateTime.now())
-                .build());
+                .build();
+            final AuditLog auditLog = auditLogRepository.save(Objects.requireNonNull(entity));
             log.info("Audit Action Logged: [{}] on [{}] by User [{}] TraceID [{}]", action, resource, userId, traceId);
             return auditLog;
         } catch (Exception e) {
