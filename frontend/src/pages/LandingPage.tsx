@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Sparkles,
   TrendingUp,
@@ -104,15 +105,6 @@ function BetaPlaceholderCard({ icon: Icon, title, body }: { icon: React.ElementT
   );
 }
 
-function ComingSoonBadge() {
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-800/60 px-3 py-1 text-xs font-semibold text-slate-400">
-      <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" aria-hidden="true" />
-      Beta Access Coming Soon
-    </span>
-  );
-}
-
 export default function LandingPage(): React.ReactElement {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#020817] text-slate-100 font-sans selection:bg-indigo-500/30 selection:text-white">
@@ -149,7 +141,21 @@ export default function LandingPage(): React.ReactElement {
             <a href="#faq" className="hover:text-white transition-colors nav-underline">FAQ</a>
           </div>
 
-          <ComingSoonBadge />
+          <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              className="text-sm font-semibold text-slate-300 hover:text-white px-4 py-2 rounded-xl transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            >
+              Get Started
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
         </nav>
       </header>
 
@@ -184,31 +190,30 @@ export default function LandingPage(): React.ReactElement {
             your actual profile data.
           </p>
 
-          {/* CTAs — auth disabled until backend deploys */}
+          {/* CTAs */}
           <div
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4 animate-fade-up"
             style={{ animationDelay: '200ms' }}
           >
-            <button
-              disabled
-              className="group relative inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-indigo-500/25 opacity-60 cursor-not-allowed select-none"
-              aria-disabled="true"
-              title="Registration opens when the hosted backend launches"
+            <Link
+              to="/register"
+              className="group relative inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               <Sparkles className="h-5 w-5" aria-hidden="true" />
-              Get Early Access
+              Get Started Now
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </button>
-            <a
-              href="#features"
+            </Link>
+            <Link
+              to="/login"
               className="inline-flex items-center gap-2 rounded-2xl border border-slate-700/60 bg-slate-900/40 px-8 py-4 text-base font-semibold text-slate-300 hover:text-white hover:border-slate-600 hover:bg-slate-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
             >
-              Explore Features
-            </a>
+              Sign In to Dashboard
+            </Link>
           </div>
 
-          <p className="text-xs text-slate-600 mb-14 animate-fade-up" style={{ animationDelay: '250ms' }}>
-            Authentication is not yet available in the hosted environment. The full platform runs locally via Docker.
+          <p className="text-xs text-emerald-400 font-medium mb-14 animate-fade-up flex items-center justify-center gap-1.5" style={{ animationDelay: '250ms' }}>
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+            Hosted backend live on Render & Neon PostgreSQL
           </p>
 
           {/* Real capability stats — verifiable from the codebase */}
@@ -242,44 +247,56 @@ export default function LandingPage(): React.ReactElement {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <FeatureCard
-              icon={<Award className="h-6 w-6" />}
-              title="Career Score Engine"
-              description="0–1000 weighted score computed from 9 indicators including projects, skills, experience, education, and AI readiness."
-              color="indigo"
-              badge="Core"
-            />
-            <FeatureCard
-              icon={<FileText className="h-6 w-6" />}
-              title="ATS Resume Analysis"
-              description="Deep ATS scoring with keyword matching, formatting analysis, quantifiable achievements detection, and fix recommendations."
-              color="purple"
-            />
-            <FeatureCard
-              icon={<Cpu className="h-6 w-6" />}
-              title="Skill Gap Detection"
-              description="AI-powered comparison of your current skills against role requirements with priority learning recommendations."
-              color="emerald"
-            />
-            <FeatureCard
-              icon={<Target className="h-6 w-6" />}
-              title="90-Day Roadmaps"
-              description="Structured week-by-week execution plans for 30, 60, and 90-day windows tailored to your target role and domain."
-              color="amber"
-            />
-            <FeatureCard
-              icon={<Brain className="h-6 w-6" />}
-              title="Intelligence Dashboard"
-              description="Unified intelligence hub with placement eligibility scoring, trend analytics, and project competitiveness analysis."
-              color="sky"
-            />
-            <FeatureCard
-              icon={<Database className="h-6 w-6" />}
-              title="Data Engineering"
-              description="Production-grade ETL pipelines, Star Schema warehouse, event-driven analytics, and real-time observability platform."
-              color="violet"
-              badge="Enterprise"
-            />
+            <Link to="/intelligence/score" className="block h-full">
+              <FeatureCard
+                icon={<Award className="h-6 w-6" />}
+                title="Career Score Engine"
+                description="0–1000 weighted score computed from 9 indicators including projects, skills, experience, education, and AI readiness."
+                color="indigo"
+                badge="Core"
+              />
+            </Link>
+            <Link to="/intelligence/ats" className="block h-full">
+              <FeatureCard
+                icon={<FileText className="h-6 w-6" />}
+                title="ATS Resume Analysis"
+                description="Deep ATS scoring with keyword matching, formatting analysis, quantifiable achievements detection, and fix recommendations."
+                color="purple"
+              />
+            </Link>
+            <Link to="/intelligence/skill-gap" className="block h-full">
+              <FeatureCard
+                icon={<Cpu className="h-6 w-6" />}
+                title="Skill Gap Detection"
+                description="AI-powered comparison of your current skills against role requirements with priority learning recommendations."
+                color="emerald"
+              />
+            </Link>
+            <Link to="/intelligence/roadmap" className="block h-full">
+              <FeatureCard
+                icon={<Target className="h-6 w-6" />}
+                title="90-Day Roadmaps"
+                description="Structured week-by-week execution plans for 30, 60, and 90-day windows tailored to your target role and domain."
+                color="amber"
+              />
+            </Link>
+            <Link to="/intelligence" className="block h-full">
+              <FeatureCard
+                icon={<Brain className="h-6 w-6" />}
+                title="Intelligence Dashboard"
+                description="Unified intelligence hub with placement eligibility scoring, trend analytics, and project competitiveness analysis."
+                color="sky"
+              />
+            </Link>
+            <Link to="/warehouse-dashboard" className="block h-full">
+              <FeatureCard
+                icon={<Database className="h-6 w-6" />}
+                title="Data Engineering"
+                description="Production-grade ETL pipelines, Star Schema warehouse, event-driven analytics, and real-time observability platform."
+                color="violet"
+                badge="Enterprise"
+              />
+            </Link>
           </div>
         </section>
 
@@ -602,15 +619,13 @@ export default function LandingPage(): React.ReactElement {
                   View on GitHub
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </a>
-                <button
-                  disabled
-                  className="inline-flex items-center gap-2 rounded-2xl border border-slate-700/60 bg-slate-900/40 px-8 py-4 text-base font-semibold text-slate-400 opacity-60 cursor-not-allowed select-none"
-                  aria-disabled="true"
-                  title="Hosted sign-up opens when the backend deployment launches"
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 px-8 py-4 text-base font-semibold text-indigo-300 hover:bg-indigo-500/20 hover:text-white transition-all"
                 >
                   <Sparkles className="h-5 w-5" aria-hidden="true" />
-                  Join Waitlist
-                </button>
+                  Create Free Account
+                </Link>
               </div>
             </div>
           </div>
