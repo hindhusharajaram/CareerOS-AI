@@ -35,7 +35,7 @@ jobs:
           mvn package -DskipTests -B
 
       - name: Upload Backend Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: careeros-backend-jar
           path: backend/target/careeros-ai-backend-1.0.0.jar
