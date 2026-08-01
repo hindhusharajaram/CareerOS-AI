@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,12 +55,13 @@ class ObservabilityMetricsEngineTest {
 
     @Test
     @DisplayName("Should persist metrics snapshot to repository")
+    @SuppressWarnings("null")
     void testPersistMetricsSnapshot() {
         when(userRepository.count()).thenReturn(10L);
-        when(systemMetricRepository.save(any(SystemMetric.class))).thenAnswer(i -> i.getArgument(0));
+        when(systemMetricRepository.save(any())).thenAnswer(i -> Objects.requireNonNull((SystemMetric) i.getArgument(0)));
 
         metricsEngine.persistMetricsSnapshot();
 
-        verify(systemMetricRepository, atLeast(5)).save(any(SystemMetric.class));
+        verify(systemMetricRepository, atLeast(5)).save(any());
     }
 }

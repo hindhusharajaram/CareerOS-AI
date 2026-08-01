@@ -4,7 +4,6 @@ import com.careerosai.dto.ProfileHealthDto;
 import com.careerosai.entity.CareerGoal;
 import com.careerosai.entity.StudentProfile;
 import com.careerosai.repository.CareerGoalRepository;
-import com.careerosai.repository.CertificateRepository;
 import com.careerosai.repository.EducationRepository;
 import com.careerosai.repository.ExperienceRepository;
 import com.careerosai.repository.ProjectRepository;
@@ -27,7 +26,6 @@ public class ProfileHealthEngine {
     private final StudentSkillRepository studentSkillRepository;
     private final EducationRepository educationRepository;
     private final ProjectRepository projectRepository;
-    private final CertificateRepository certificateRepository;
     private final ExperienceRepository experienceRepository;
     private final CareerGoalRepository careerGoalRepository;
     private final ResumeRepository resumeRepository;
@@ -38,7 +36,6 @@ public class ProfileHealthEngine {
         final long skillsCount = studentSkillRepository.countByStudentProfileId(profileId);
         final long eduCount = educationRepository.countByStudentProfileId(profileId);
         final long projCount = projectRepository.countByStudentProfileId(profileId);
-        final long certCount = certificateRepository.countByStudentProfileId(profileId);
         final long expCount = experienceRepository.countByStudentProfileId(profileId);
         final long resumeCount = resumeRepository.countByStudentProfileId(profileId);
         final Optional<CareerGoal> goalOpt = careerGoalRepository.findByStudentProfileId(profileId);
@@ -100,7 +97,7 @@ public class ProfileHealthEngine {
             priorityImprovements.add("Configure your target role, preferred work mode, and expected salary.");
         }
 
-        final int totalScore = scores.values().stream().mapToInt(Integer::intValue).sum();
+        final int totalScore = scores.values().stream().mapToInt(v -> v != null ? v : 0).sum();
         final String grade = calculateGrade(totalScore);
 
         return ProfileHealthDto.builder()

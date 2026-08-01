@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +51,7 @@ public class SkillGapEngine {
 
         final List<String> required = ROLE_REQUIRED_SKILLS.entrySet().stream()
             .filter(e -> targetRole.contains(e.getKey()) || e.getKey().contains(targetRole))
-            .map(Map.Entry::getValue)
+            .map(entry -> entry.getValue())
             .findFirst()
             .orElse(Arrays.asList("Java", "Python", "React", "SQL", "Git", "Data Structures"));
 

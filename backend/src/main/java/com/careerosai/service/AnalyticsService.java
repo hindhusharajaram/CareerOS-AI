@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -20,14 +21,16 @@ public class AnalyticsService {
 
     public void trackEvent(final UUID userId, final String eventType, final String eventDetails) {
         try {
-            final User user = userRepository.findById(userId).orElse(null);
+            final UUID targetUserId = Objects.requireNonNull(userId);
+            final User user = userRepository.findById(targetUserId).orElse(null);
             if (user != null) {
-                analyticsEventRepository.save(AnalyticsEvent.builder()
+                final AnalyticsEvent event = AnalyticsEvent.builder()
                     .user(user)
                     .eventType(eventType)
                     .eventDetails(eventDetails)
-                    .build());
-                log.info("Analytics Event tracked: [{}] for user [{}]", eventType, userId);
+                    .build();
+                analyticsEventRepository.save(Objects.requireNonNull(event));
+                log.info("Analytics Event tracked: [{}] for user [{}]", eventType, targetUserId);
             }
         } catch (Exception e) {
             log.warn("Failed to persist analytics event [{}]: {}", eventType, e.getMessage());

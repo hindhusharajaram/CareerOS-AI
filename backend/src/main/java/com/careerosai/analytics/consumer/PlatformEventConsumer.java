@@ -17,7 +17,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -37,14 +39,16 @@ public class PlatformEventConsumer {
         try {
             if (event == null || event.getUserId() == null) return;
 
-            final Optional<User> userOpt = userRepository.findById(event.getUserId());
+            final UUID userId = Objects.requireNonNull(event.getUserId());
+            final Optional<User> userOpt = userRepository.findById(userId);
             if (userOpt.isPresent()) {
                 // 1. Persist Event
-                analyticsEventRepository.save(AnalyticsEvent.builder()
+                final AnalyticsEvent eventEntity = AnalyticsEvent.builder()
                     .user(userOpt.get())
                     .eventType(event.getEventType())
                     .eventDetails(event.getPayloadJson())
-                    .build());
+                    .build();
+                analyticsEventRepository.save(Objects.requireNonNull(eventEntity));
 
                 // 2. Increment Feature Usage Counter
                 final String featureName = event.getEventType();
@@ -67,12 +71,13 @@ public class PlatformEventConsumer {
             log.error("Error processing event [{}]: {}", event != null ? event.getEventType() : "NULL", e.getMessage(), e);
             metricsService.recordEventFailed();
             try {
-                analyticsFailureRepository.save(AnalyticsFailure.builder()
+                final AnalyticsFailure failureEntity = AnalyticsFailure.builder()
                     .eventId(event != null ? event.getEventId() : null)
                     .eventType(event != null ? event.getEventType() : "UNKNOWN")
                     .errorMessage(e.getMessage())
                     .retryCount(1)
-                    .build());
+                    .build();
+                analyticsFailureRepository.save(Objects.requireNonNull(failureEntity));
             } catch (Exception ex) {
                 log.error("Failed to log event failure to database: {}", ex.getMessage());
             }

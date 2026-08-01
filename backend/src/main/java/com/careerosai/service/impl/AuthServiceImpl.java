@@ -32,13 +32,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Concrete implementation of AuthService managing User Registration, Login, and Profile details.
+ * Service implementation handling user registration, authentication, and JWT lifecycle management.
  */
 @Slf4j
 @Service
@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
             throw new EmailAlreadyExistsException(request.getEmail());
         }
 
-        RoleType roleType;
+        final RoleType roleType;
         try {
             roleType = RoleType.valueOf("ROLE_" + request.getRole().toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e) {
@@ -70,6 +70,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         final Role userRole = getOrCreateRole(roleType);
+
         final User user = User.builder()
             .fullName(request.getFullName())
             .role(request.getRole().toUpperCase())
@@ -78,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
             .roles(Set.of(userRole))
             .build();
 
-        final User savedUser = userRepository.save(user);
+        final User savedUser = Objects.requireNonNull(userRepository.save(Objects.requireNonNull(user)));
 
         log.info("Successfully registered new user account with User ID: {}", savedUser.getId());
 
@@ -89,7 +90,7 @@ public class AuthServiceImpl implements AuthService {
         return AuthResponse.builder()
             .accessToken(token)
             .tokenType("Bearer")
-            .expiresInMs(900000L) // 15 Minutes
+            .expiresInMs(jwtTokenProvider.getExpirationInMs())
             .user(userSummary)
             .build();
     }
@@ -110,9 +111,9 @@ public class AuthServiceImpl implements AuthService {
             .roles(Set.of(studentRole))
             .build();
 
-        final User savedUser = userRepository.save(user);
+        final User savedUser = Objects.requireNonNull(userRepository.save(Objects.requireNonNull(user)));
         final StudentProfile studentProfile = studentProfileMapper.toEntity(request, savedUser);
-        final StudentProfile savedProfile = studentProfileRepository.save(studentProfile);
+        final StudentProfile savedProfile = Objects.requireNonNull(studentProfileRepository.save(Objects.requireNonNull(studentProfile)));
 
         log.info("Successfully registered new Student account with User ID: {}", savedUser.getId());
 
@@ -123,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
         return AuthResponse.builder()
             .accessToken(token)
             .tokenType("Bearer")
-            .expiresInMs(900000L) // 15 Minutes
+            .expiresInMs(jwtTokenProvider.getExpirationInMs())
             .user(userSummary)
             .build();
     }
@@ -148,9 +149,9 @@ public class AuthServiceImpl implements AuthService {
             .roles(Set.of(companyRole))
             .build();
 
-        final User savedUser = userRepository.save(user);
+        final User savedUser = Objects.requireNonNull(userRepository.save(Objects.requireNonNull(user)));
         final CompanyProfile companyProfile = companyProfileMapper.toEntity(request, savedUser);
-        final CompanyProfile savedProfile = companyProfileRepository.save(companyProfile);
+        final CompanyProfile savedProfile = Objects.requireNonNull(companyProfileRepository.save(Objects.requireNonNull(companyProfile)));
 
         log.info("Successfully registered new Company account with User ID: {}", savedUser.getId());
 
@@ -161,7 +162,7 @@ public class AuthServiceImpl implements AuthService {
         return AuthResponse.builder()
             .accessToken(token)
             .tokenType("Bearer")
-            .expiresInMs(900000L) // 15 Minutes
+            .expiresInMs(jwtTokenProvider.getExpirationInMs())
             .user(userSummary)
             .build();
     }
@@ -198,7 +199,7 @@ public class AuthServiceImpl implements AuthService {
         return AuthResponse.builder()
             .accessToken(token)
             .tokenType("Bearer")
-            .expiresInMs(900000L)
+            .expiresInMs(jwtTokenProvider.getExpirationInMs())
             .user(userSummary)
             .build();
     }
@@ -206,8 +207,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = true)
     public UserSummaryDto getCurrentUser(final UUID userId) {
-        final User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        final UUID targetUserId = Objects.requireNonNull(userId);
+        final User user = userRepository.findById(targetUserId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", targetUserId));
 
         final String profileType = determineProfileType(user);
         final Object profileDetails = fetchProfileDetails(user, profileType);
@@ -217,7 +219,7 @@ public class AuthServiceImpl implements AuthService {
 
     private Role getOrCreateRole(final RoleType roleType) {
         return roleRepository.findByName(roleType)
-            .orElseGet(() -> roleRepository.save(Role.builder().name(roleType).build()));
+            .orElseGet(() -> Objects.requireNonNull(roleRepository.save(Objects.requireNonNull(Role.builder().name(roleType).build()))));
     }
 
     private String determineProfileType(final User user) {

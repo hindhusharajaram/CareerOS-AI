@@ -1,221 +1,146 @@
 <div align="center">
   <img src="assets/banner.png" alt="CareerOS AI Banner" width="100%" />
-  
+
   <h1>CareerOS AI</h1>
-  <p><b>The Next-Generation Intelligent Career Acceleration Platform</b></p>
+  <p><b>An open-source, AI-powered Career Operating System for engineering students.</b></p>
 
   <p>
-    <img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=java&logoColor=white" alt="Java" />
-    <img src="https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" alt="Spring Boot" />
-    <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
-    <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-    <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-    <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
-    <img src="https://img.shields.io/github/actions/workflow/status/your-username/CareerOS-AI/build.yml?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions" />
-    <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License" />
+    <a href="https://java.com"><img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=java&logoColor=white" alt="Java 21" /></a>
+    <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring_Boot-3.4-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" alt="Spring Boot 3.4" /></a>
+    <a href="https://react.dev"><img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 18" /></a>
+    <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 5.7" /></a>
+    <a href="https://www.postgresql.org"><img src="https://img.shields.io/badge/PostgreSQL-17-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL 17" /></a>
+    <a href="https://www.docker.com"><img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License MIT" /></a>
   </p>
 </div>
 
 ---
 
-## 📖 Project Overview
+## 📌 What is CareerOS AI?
 
-**CareerOS AI** is an enterprise-grade, AI-powered career acceleration platform designed to bridge the gap between students, educators, and recruiters. By leveraging artificial intelligence, data analytics, and modern software architecture, CareerOS AI provides actionable insights, automated resume parsing, mock interviews, and career trajectory mapping.
+**CareerOS AI** is an open-source, AI-powered Career Operating System built specifically for computer science and engineering students preparing for competitive software engineering roles.
 
-### The Problem
-Students often lack data-driven feedback on their resumes and career readiness. Traditional university career portals are static, manual, and unengaging.
-
-### The Solution
-A highly interactive, dynamic, and intelligent platform that acts as a 24/7 personal career coach, analyzing profiles against industry standards and providing concrete, actionable recommendations.
+Rather than relying on static job portals or generic templates, CareerOS AI connects directly to a student's actual career profile — analyzing project portfolios, technical skills, coursework, and work experience to calculate an objective readiness score and generate personalized, actionable preparation roadmaps.
 
 ---
 
-## ✨ Key Features
+## 🎯 The 5 Pillars of Identity
 
-### 🧠 Intelligence & AI
-- **AI Resume Parser**: Automatically extracts entities, skills, and experiences from uploaded resumes.
-- **Career Score Engine**: Proprietary algorithm generating a holistic placement readiness score (0-100).
-- **Smart Recommendations**: Context-aware suggestions for skill gaps and project improvements.
+CareerOS AI is designed around five core pillars of career intelligence:
 
-### 📊 Data & Analytics
-- **Data Warehouse**: Dedicated ETL pipelines streaming events into a structured analytics warehouse.
-- **Admin Dashboard**: Real-time observability of system health, active users, and global career metrics.
-- **Trend Analytics**: Visual graphs mapping skill demands and profile improvements over time.
-
-### 🔐 Security & Architecture
-- **Role-Based Access Control (RBAC)**: Secure separation between Student and Admin boundaries.
-- **Stateless JWT Auth**: High-performance, scalable authentication mechanism.
-- **Enterprise Observability**: Prometheus metrics, structured logging, and distributed tracing readiness.
-
----
-
-## 🛠️ Tech Stack
-
-| Domain | Technology | Description |
+| Pillar | Focus | Capability |
 | :--- | :--- | :--- |
-| **Backend** | Java 21, Spring Boot 3 | High-performance core API architecture |
-| **Frontend** | React 18, Vite, TypeScript | Lightning-fast, premium UI with TailwindCSS |
-| **Database** | PostgreSQL | Relational data persistence |
-| **DevOps** | Docker, Docker Compose | Containerized deployments and local environments |
-| **CI/CD** | GitHub Actions | Automated build, test, and release pipelines |
+| 📊 **Assess** | **Career Readiness** | Calculates an objective, 9-factor weighted **Career Score (0–1000)** based on actual profile data. |
+| 📄 **Analyze** | **ATS Compatibility** | Evaluates resumes against recruiter ATS patterns, keyword coverage, and quantifiable achievement density. |
+| 🎯 **Recommend** | **Skill Gap Detection** | Identifies missing technologies and skills relative to target engineering job roles. |
+| 🗺️ **Prepare** | **Structured Roadmaps** | Generates week-by-week 30, 60, and 90-day learning execution plans and mock interview prompts. |
+| 📈 **Track** | **Analytics & Growth** | Tracks skill progression over time with a Star Schema data warehouse and ETL pipelines. |
 
 ---
 
-## 🏗️ Architecture
+## 🛠️ Architecture & Technology Stack
 
-### System Architecture
+CareerOS AI is built with modern, production-tested software engineering standards:
+
+- **Backend**: Java 21 LTS, Spring Boot 3.4, Spring Security (Stateless JWT + Rate Limiting), Spring Data JPA, Apache Tika.
+- **Frontend**: React 18, TypeScript 5.7, Vite 6, TailwindCSS 3, Recharts, Lucide Icons.
+- **Database**: PostgreSQL 17 (Relational Store + Star Schema Data Warehouse).
+- **DevOps**: Docker, Docker Compose, GitHub Actions CI/CD.
 
 ```mermaid
 graph TD
-    Client[Web Client - React] -->|HTTPS / REST| API[API Gateway / Spring Security]
+    Client[React 18 SPA] -->|HTTP / REST| Security[Spring Security 6 + JWT]
     
     subgraph Spring Boot Backend
-        API --> Auth[Auth Service]
-        API --> Profile[Profile Service]
-        API --> AI[AI Processing Engine]
-        API --> Analytics[Analytics Service]
+        Security --> Auth[Auth Service]
+        Security --> Intell[Intelligence Engines]
+        Security --> AI[AI Context Engine]
         
-        Profile --> EventBus[Internal Event Bus]
-        AI --> EventBus
+        Intell --> CoreDB[(PostgreSQL Primary)]
+        AI --> CoreDB
         
-        EventBus --> ETL[ETL Worker]
+        Intell --> ETL[ETL Worker Pipeline]
     end
     
-    Auth --> DB[(PostgreSQL Primary)]
-    Profile --> DB
-    
-    ETL --> DW[(PostgreSQL Warehouse)]
-    Analytics --> DW
-```
-
-### Entity Relationship Diagram (ERD)
-
-```mermaid
-erDiagram
-    USER ||--o{ PROFILE : owns
-    USER {
-        uuid id PK
-        string email
-        string password_hash
-        string role
-        timestamp created_at
-    }
-    PROFILE ||--o{ EXPERIENCE : has
-    PROFILE ||--o{ PROJECT : builds
-    PROFILE ||--o{ EDUCATION : attends
-    PROFILE {
-        uuid id PK
-        uuid user_id FK
-        string full_name
-        string headline
-        integer career_score
-    }
-    EXPERIENCE {
-        uuid id PK
-        string company
-        string title
-        boolean is_current
-    }
-    PROJECT {
-        uuid id PK
-        string name
-        string description
-        string tech_stack
-    }
+    ETL --> DW[(PostgreSQL Star Schema Warehouse)]
 ```
 
 ---
 
-## 📁 Folder Structure
+## 🚀 Quick Start (Local Setup)
 
-```text
-CareerOS-AI/
-├── backend/                  # Spring Boot Application
-│   ├── src/main/java/        # Java Source Code
-│   │   ├── config/           # Security & App Configurations
-│   │   ├── controller/       # REST API Endpoints
-│   │   ├── service/          # Business Logic & AI Engines
-│   │   ├── repository/       # Data Access Layer
-│   │   ├── model/            # JPA Entities & DTOs
-│   │   └── observability/    # Metrics & Tracing
-│   └── src/main/resources/   # Application properties & schemas
-├── frontend/                 # React + Vite Application
-│   ├── src/
-│   │   ├── components/       # Reusable UI (Cards, Buttons, Charts)
-│   │   ├── pages/            # Page Views (Dashboard, Analytics)
-│   │   ├── services/         # API Integration & Axios clients
-│   │   └── utils/            # Helper functions
-├── assets/                   # README graphics and diagrams
-├── docker-compose.yml        # Local infrastructure orchestration
-└── README.md
+The quickest way to launch CareerOS AI locally is using **Docker Compose**:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/hindhusharajaram/CareerOS-AI.git
+cd CareerOS-AI
+
+# 2. Start all containers (PostgreSQL, Backend API, Frontend UI)
+docker-compose up --build -d
+
+# 3. Access the application
+# Frontend UI: http://localhost:5173 (or http://localhost)
+# Backend API: http://localhost:8080/api/v1/version
+# Health Check: http://localhost:8080/api/v1/observability/health
 ```
 
----
+### Manual Development Setup
 
-## 🚀 Getting Started
+If you prefer running services directly:
 
-### Prerequisites
-- Docker & Docker Compose
-- Node.js 20+
-- Java 21
-
-### Local Development Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/CareerOS-AI.git
-   cd CareerOS-AI
-   ```
-
-2. **Spin up Infrastructure (Database)**
-   ```bash
-   docker-compose up -d postgres
-   ```
-
-3. **Run the Backend**
+1. **Database**: Ensure PostgreSQL 17 is running on `localhost:5432` with database `careeros_ai_db`.
+2. **Backend**:
    ```bash
    cd backend
    mvn spring-boot:run
    ```
-
-4. **Run the Frontend**
+3. **Frontend**:
    ```bash
    cd frontend
    npm install
    npm run dev
    ```
 
-5. **Access the Application**
-   Open your browser and navigate to `http://localhost:5173`.
+---
+
+## 📸 Screenshots
+
+| Page / Interface | Preview |
+| :--- | :--- |
+| **Landing Page** | ![Landing Page](assets/screenshots/landing-page.png) |
+| **Student Dashboard** | ![Student Dashboard](assets/screenshots/dashboard.png) |
+| **Career Score Engine** | ![Career Score](assets/screenshots/career-score.png) |
+| **AI Career Chat** | ![AI Chat](assets/screenshots/ai-chat.png) |
+| **Analytics & Data Warehouse** | ![Analytics](assets/screenshots/analytics.png) |
 
 ---
 
-## 🐳 Docker Deployment
+## 📚 Detailed Documentation
 
-To run the entire application stack in containers for a production-like environment:
+For technical deep dives, architectural specs, and deployment guides, explore the `docs/` directory:
 
-```bash
-docker-compose up --build -d
-```
-
----
-
-## 🗺️ Roadmap & Documentation
-
-- [Project Roadmap](ROADMAP.md) - View completed milestones and future enhancements.
-- [Contributing Guidelines](CONTRIBUTING.md) - Learn how to contribute to CareerOS AI.
-- [Security Policy](SECURITY.md) - Information on reporting vulnerabilities.
-- [Code of Conduct](CODE_OF_CONDUCT.md) - Our community standards.
+- 🏗️ [System Architecture](docs/architecture/ARCHITECTURE.md)
+- 🔐 [Spring Security & Auth Design](docs/architecture/spring_security_architecture.md)
+- 🚀 [Deployment Guide](docs/deployment/DEPLOYMENT_GUIDE.md)
+- 🧪 [Testing Strategy](docs/testing/TESTING_STRATEGY.md)
+- 📋 [Disaster Recovery Plan](docs/Disaster_Recovery_Plan.md)
+- 📝 [Sprint Notes & Walkthroughs](docs/sprint-notes/)
 
 ---
 
-## 👨‍💻 Author
+## 🤝 Contributing & Community
 
-**Hindhusha P.R.**  
-*Software Engineer & Architect*
+We welcome open-source contributions from engineering students and software developers!
+
+- 📖 [Contributing Guidelines](CONTRIBUTING.md)
+- 🛡️ [Security Policy](SECURITY.md)
+- 📜 [Code of Conduct](CODE_OF_CONDUCT.md)
+- 🗺️ [Project Roadmap](ROADMAP.md)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+CareerOS AI is licensed under the [MIT License](LICENSE).

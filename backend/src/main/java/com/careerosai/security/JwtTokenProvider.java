@@ -10,14 +10,12 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +36,10 @@ public class JwtTokenProvider {
         this.expirationInMs = expirationInMs;
     }
 
+    public long getExpirationInMs() {
+        return expirationInMs;
+    }
+
     /**
      * Generate short-lived JWT Access Token from Spring Security Authentication.
      *
@@ -47,7 +49,7 @@ public class JwtTokenProvider {
     public String generateAccessToken(final Authentication authentication) {
         final String email = authentication.getName();
         final List<String> roles = authentication.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
+            .map(auth -> auth.getAuthority())
             .collect(Collectors.toList());
 
         final Date now = new Date();

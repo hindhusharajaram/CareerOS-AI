@@ -1,24 +1,13 @@
 package com.careerosai.intelligence.analytics;
 
 import com.careerosai.intelligence.dto.TrendAnalyticsDto;
-import com.careerosai.repository.CertificateRepository;
-import com.careerosai.repository.ProjectRepository;
-import com.careerosai.repository.SkillRepository;
-import com.careerosai.repository.StudentSkillRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 public class TrendAnalyticsEngine {
-
-    private final SkillRepository skillRepository;
-    private final StudentSkillRepository studentSkillRepository;
-    private final ProjectRepository projectRepository;
-    private final CertificateRepository certificateRepository;
 
     public TrendAnalyticsDto getPlatformAnalytics() {
         final Map<String, Integer> mostCommonSkills = new LinkedHashMap<>();

@@ -14,6 +14,7 @@ import java.lang.management.OperatingSystemMXBean;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -98,7 +99,7 @@ public class HealthCheckService {
                 .healthJson(json)
                 .createdAt(LocalDateTime.now())
                 .build();
-            return healthSnapshotRepository.save(snapshot);
+            return healthSnapshotRepository.save(Objects.requireNonNull(snapshot));
         } catch (Exception e) {
             log.error("Failed to record health snapshot: {}", e.getMessage());
             return null;

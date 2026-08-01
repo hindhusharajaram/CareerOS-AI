@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -53,16 +54,28 @@ public class AIPlatformController {
     private final AIChatMessageRepository chatMessageRepository;
 
     private StudentProfile getProfile(final CustomUserPrincipal currentUser) {
-        UUID userId = currentUser != null && currentUser.getId() != null ? currentUser.getId() : null;
+        UUID userId = currentUser != null ? currentUser.getId() : null;
         if (userId == null) {
             final List<User> users = userRepository.findAll();
             if (!users.isEmpty()) userId = users.get(0).getId();
         }
-        final UUID finalUserId = userId;
-        return studentProfileRepository.findByUserId(finalUserId)
-            .orElseGet(() -> studentProfileRepository.save(StudentProfile.builder()
-                .user(userRepository.findById(finalUserId).orElseThrow())
-                .firstName("Student").lastName("User").universityName("University").major("CS").graduationYear(2026).build()));
+        if (userId == null) {
+            throw new IllegalStateException("No authenticated user or system user found.");
+        }
+        final UUID validUserId = userId;
+        return studentProfileRepository.findByUserId(validUserId)
+            .orElseGet(() -> {
+                final User userEntity = userRepository.findById(validUserId).orElseThrow();
+                final StudentProfile newProfile = StudentProfile.builder()
+                    .user(userEntity)
+                    .firstName("Student")
+                    .lastName("User")
+                    .universityName("University")
+                    .major("CS")
+                    .graduationYear(2026)
+                    .build();
+                return Objects.requireNonNull(studentProfileRepository.save(Objects.requireNonNull(newProfile)));
+            });
     }
 
     @GetMapping("/copilot/explain")
@@ -95,7 +108,7 @@ public class AIPlatformController {
         final StudentProfile profile = getProfile(currentUser);
         final String contextJson = contextEngine.buildStructuredContextJson(profile);
         final Optional<Resume> activeResume = resumeRepository.findByStudentProfileIdAndIsActiveTrue(profile.getId());
-        final String resumeText = activeResume.map(Resume::getParsedContent).orElse("");
+        final String resumeText = activeResume.map(r -> r.getParsedContent() != null ? r.getParsedContent() : "").orElse("");
 
         final AIProvider provider = providerFactory.getProvider();
         final AIResumeReviewDto review = provider.reviewResume(resumeText, contextJson);
@@ -174,16 +187,18 @@ public class AIPlatformController {
     ) {
         final StudentProfile profile = getProfile(currentUser);
         final List<AIChatSession> sessions = chatSessionRepository.findByStudentProfileIdOrderByCreatedAtDesc(profile.getId());
+        final AIChatSession newSession = AIChatSession.builder().studentProfile(profile).sessionTitle("Career Chat").build();
         final AIChatSession session = sessions.isEmpty()
-            ? chatSessionRepository.save(AIChatSession.builder().studentProfile(profile).sessionTitle("Career Chat").build())
+            ? Objects.requireNonNull(chatSessionRepository.save(Objects.requireNonNull(newSession)))
             : sessions.get(0);
 
         // Save User Message
-        chatMessageRepository.save(AIChatMessage.builder()
+        final AIChatMessage userMessage = AIChatMessage.builder()
             .session(session)
             .senderRole("USER")
             .messageText(messageText)
-            .build());
+            .build();
+        chatMessageRepository.save(Objects.requireNonNull(userMessage));
 
         // Generate Grounded AI Response
         final String contextJson = contextEngine.buildStructuredContextJson(profile);
@@ -191,12 +206,13 @@ public class AIPlatformController {
         final String aiResponseText = provider.generateChatResponse(messageText, "", contextJson);
 
         // Save AI Message
-        final AIChatMessage aiMsg = chatMessageRepository.save(AIChatMessage.builder()
+        final AIChatMessage aiMessageEntity = AIChatMessage.builder()
             .session(session)
             .senderRole("AI")
             .messageText(aiResponseText)
             .contextSnapshotJson(contextJson)
-            .build());
+            .build();
+        final AIChatMessage aiMsg = Objects.requireNonNull(chatMessageRepository.save(Objects.requireNonNull(aiMessageEntity)));
 
         final AIChatMessageDto dto = AIChatMessageDto.builder()
             .id(aiMsg.getId())

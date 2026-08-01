@@ -1,9 +1,7 @@
 package com.careerosai.intelligence.eligibility;
 
 import com.careerosai.entity.StudentProfile;
-import com.careerosai.entity.StudentSkill;
 import com.careerosai.intelligence.dto.EligibilityReportDto;
-import com.careerosai.repository.EducationRepository;
 import com.careerosai.repository.ProjectRepository;
 import com.careerosai.repository.StudentSkillRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +19,6 @@ public class InternshipEligibilityEngine {
 
     private final StudentSkillRepository studentSkillRepository;
     private final ProjectRepository projectRepository;
-    private final EducationRepository educationRepository;
 
     public EligibilityReportDto evaluateEligibility(final StudentProfile profile) {
         final UUID profileId = profile.getId();

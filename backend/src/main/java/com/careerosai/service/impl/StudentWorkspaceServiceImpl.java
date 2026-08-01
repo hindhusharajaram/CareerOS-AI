@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -93,7 +94,7 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
         if (dto.getGithub() != null) profile.setGithub(dto.getGithub());
         if (dto.getPortfolio() != null) profile.setPortfolio(dto.getPortfolio());
 
-        final StudentProfile saved = studentProfileRepository.save(profile);
+        final StudentProfile saved = Objects.requireNonNull(studentProfileRepository.save(Objects.requireNonNull(profile)));
         return studentProfileMapper.toDto(saved);
     }
 
@@ -146,7 +147,7 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
         int goalScore = goalOpt.isPresent() && goalOpt.get().getPreferredRole() != null ? 10 : 0;
         breakdown.put("Career Goal", goalScore);
 
-        final int totalCompletion = breakdown.values().stream().mapToInt(Integer::intValue).sum();
+        final int totalCompletion = breakdown.values().stream().mapToInt(v -> v != null ? v : 0).sum();
 
         final List<String> recentActivity = new ArrayList<>();
         recentActivity.add("Account authenticated successfully");
@@ -195,11 +196,11 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
         final StudentProfile profile = getOrCreateProfile(userId);
         
         final Skill skill = skillRepository.findBySkillNameIgnoreCase(request.getSkillName())
-            .orElseGet(() -> skillRepository.save(Skill.builder()
+            .orElseGet(() -> Objects.requireNonNull(skillRepository.save(Objects.requireNonNull(Skill.builder()
                 .skillName(request.getSkillName())
                 .category(request.getCategory() != null ? request.getCategory() : "General")
                 .icon(request.getIcon() != null ? request.getIcon() : "code")
-                .build()));
+                .build()))));
 
         final Optional<StudentSkill> existing = studentSkillRepository.findByStudentProfileIdAndSkillId(profile.getId(), skill.getId());
         StudentSkill entity;
@@ -216,7 +217,7 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
                 .build();
         }
 
-        final StudentSkill saved = studentSkillRepository.save(entity);
+        final StudentSkill saved = Objects.requireNonNull(studentSkillRepository.save(Objects.requireNonNull(entity)));
         return toStudentSkillDto(saved);
     }
 
@@ -249,27 +250,29 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
             .endYear(dto.getEndYear())
             .cgpa(dto.getCgpa())
             .build();
-        return toEducationDto(educationRepository.save(edu));
+        return toEducationDto(Objects.requireNonNull(educationRepository.save(Objects.requireNonNull(edu))));
     }
 
     @Override
     @Transactional
     public EducationDto updateEducation(final UUID userId, final UUID educationId, final EducationDto dto) {
-        final Education edu = educationRepository.findById(educationId)
-            .orElseThrow(() -> new ResourceNotFoundException("Education", "id", educationId));
+        final UUID id = Objects.requireNonNull(educationId);
+        final Education edu = educationRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Education", "id", id));
         if (dto.getInstitution() != null) edu.setInstitution(dto.getInstitution());
         if (dto.getDegree() != null) edu.setDegree(dto.getDegree());
         if (dto.getSpecialization() != null) edu.setSpecialization(dto.getSpecialization());
         if (dto.getStartYear() != null) edu.setStartYear(dto.getStartYear());
         if (dto.getEndYear() != null) edu.setEndYear(dto.getEndYear());
         if (dto.getCgpa() != null) edu.setCgpa(dto.getCgpa());
-        return toEducationDto(educationRepository.save(edu));
+        return toEducationDto(Objects.requireNonNull(educationRepository.save(Objects.requireNonNull(edu))));
     }
 
     @Override
     @Transactional
     public void deleteEducation(final UUID userId, final UUID educationId) {
-        educationRepository.deleteById(educationId);
+        final UUID id = Objects.requireNonNull(educationId);
+        educationRepository.deleteById(id);
     }
 
     @Override
@@ -295,14 +298,15 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
             .startDate(dto.getStartDate())
             .endDate(dto.getEndDate())
             .build();
-        return toProjectDto(projectRepository.save(proj));
+        return toProjectDto(Objects.requireNonNull(projectRepository.save(Objects.requireNonNull(proj))));
     }
 
     @Override
     @Transactional
     public ProjectDto updateProject(final UUID userId, final UUID projectId, final ProjectDto dto) {
-        final Project proj = projectRepository.findById(projectId)
-            .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+        final UUID id = Objects.requireNonNull(projectId);
+        final Project proj = projectRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id));
         if (dto.getTitle() != null) proj.setTitle(dto.getTitle());
         if (dto.getDescription() != null) proj.setDescription(dto.getDescription());
         if (dto.getTechnologies() != null) proj.setTechnologies(dto.getTechnologies());
@@ -310,13 +314,14 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
         if (dto.getLiveLink() != null) proj.setLiveLink(dto.getLiveLink());
         if (dto.getStartDate() != null) proj.setStartDate(dto.getStartDate());
         if (dto.getEndDate() != null) proj.setEndDate(dto.getEndDate());
-        return toProjectDto(projectRepository.save(proj));
+        return toProjectDto(Objects.requireNonNull(projectRepository.save(Objects.requireNonNull(proj))));
     }
 
     @Override
     @Transactional
     public void deleteProject(final UUID userId, final UUID projectId) {
-        projectRepository.deleteById(projectId);
+        final UUID id = Objects.requireNonNull(projectId);
+        projectRepository.deleteById(id);
     }
 
     @Override
@@ -339,25 +344,27 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
             .issueDate(dto.getIssueDate())
             .credentialUrl(dto.getCredentialUrl())
             .build();
-        return toCertificateDto(certificateRepository.save(cert));
+        return toCertificateDto(Objects.requireNonNull(certificateRepository.save(Objects.requireNonNull(cert))));
     }
 
     @Override
     @Transactional
     public CertificateDto updateCertificate(final UUID userId, final UUID certificateId, final CertificateDto dto) {
-        final Certificate cert = certificateRepository.findById(certificateId)
-            .orElseThrow(() -> new ResourceNotFoundException("Certificate", "id", certificateId));
+        final UUID id = Objects.requireNonNull(certificateId);
+        final Certificate cert = certificateRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Certificate", "id", id));
         if (dto.getTitle() != null) cert.setTitle(dto.getTitle());
         if (dto.getProvider() != null) cert.setProvider(dto.getProvider());
         if (dto.getIssueDate() != null) cert.setIssueDate(dto.getIssueDate());
         if (dto.getCredentialUrl() != null) cert.setCredentialUrl(dto.getCredentialUrl());
-        return toCertificateDto(certificateRepository.save(cert));
+        return toCertificateDto(Objects.requireNonNull(certificateRepository.save(Objects.requireNonNull(cert))));
     }
 
     @Override
     @Transactional
     public void deleteCertificate(final UUID userId, final UUID certificateId) {
-        certificateRepository.deleteById(certificateId);
+        final UUID id = Objects.requireNonNull(certificateId);
+        certificateRepository.deleteById(id);
     }
 
     @Override
@@ -381,26 +388,28 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
             .startDate(dto.getStartDate())
             .endDate(dto.getEndDate())
             .build();
-        return toExperienceDto(experienceRepository.save(exp));
+        return toExperienceDto(Objects.requireNonNull(experienceRepository.save(Objects.requireNonNull(exp))));
     }
 
     @Override
     @Transactional
     public ExperienceDto updateExperience(final UUID userId, final UUID experienceId, final ExperienceDto dto) {
-        final Experience exp = experienceRepository.findById(experienceId)
-            .orElseThrow(() -> new ResourceNotFoundException("Experience", "id", experienceId));
+        final UUID id = Objects.requireNonNull(experienceId);
+        final Experience exp = experienceRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Experience", "id", id));
         if (dto.getCompany() != null) exp.setCompany(dto.getCompany());
         if (dto.getRole() != null) exp.setRole(dto.getRole());
         if (dto.getDescription() != null) exp.setDescription(dto.getDescription());
         if (dto.getStartDate() != null) exp.setStartDate(dto.getStartDate());
         if (dto.getEndDate() != null) exp.setEndDate(dto.getEndDate());
-        return toExperienceDto(experienceRepository.save(exp));
+        return toExperienceDto(Objects.requireNonNull(experienceRepository.save(Objects.requireNonNull(exp))));
     }
 
     @Override
     @Transactional
     public void deleteExperience(final UUID userId, final UUID experienceId) {
-        experienceRepository.deleteById(experienceId);
+        final UUID id = Objects.requireNonNull(experienceId);
+        experienceRepository.deleteById(id);
     }
 
     @Override
@@ -427,14 +436,15 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
         if (dto.getTargetCompanies() != null) goal.setTargetCompanies(dto.getTargetCompanies());
         if (dto.getWorkMode() != null) goal.setWorkMode(dto.getWorkMode());
 
-        return toCareerGoalDto(careerGoalRepository.save(goal));
+        return toCareerGoalDto(Objects.requireNonNull(careerGoalRepository.save(Objects.requireNonNull(goal))));
     }
 
     private StudentProfile getOrCreateProfile(final UUID userId) {
-        return studentProfileRepository.findByUserId(userId)
+        final UUID id = Objects.requireNonNull(userId);
+        return studentProfileRepository.findByUserId(id)
             .orElseGet(() -> {
-                final User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+                final User user = userRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
                 String fName = "Student";
                 String lName = "User";
                 if (user.getFullName() != null && !user.getFullName().isBlank()) {
@@ -442,14 +452,14 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
                     fName = parts[0];
                     if (parts.length > 1) lName = parts[1];
                 }
-                return studentProfileRepository.save(StudentProfile.builder()
+                return Objects.requireNonNull(studentProfileRepository.save(Objects.requireNonNull(StudentProfile.builder()
                     .user(user)
                     .firstName(fName)
                     .lastName(lName)
                     .universityName("CareerOS University")
                     .major("Computer Science")
                     .graduationYear(2026)
-                    .build());
+                    .build())));
             });
     }
 

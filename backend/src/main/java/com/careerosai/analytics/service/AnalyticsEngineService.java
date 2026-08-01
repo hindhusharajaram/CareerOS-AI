@@ -3,7 +3,6 @@ package com.careerosai.analytics.service;
 import com.careerosai.analytics.dto.AnalyticsSummaryDto;
 import com.careerosai.analytics.metrics.MetricsService;
 import com.careerosai.entity.AnalyticsFeatureUsage;
-import com.careerosai.repository.AnalyticsDailySummaryRepository;
 import com.careerosai.repository.AnalyticsEventRepository;
 import com.careerosai.repository.AnalyticsFeatureUsageRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ public class AnalyticsEngineService {
 
     private final AnalyticsEventRepository analyticsEventRepository;
     private final AnalyticsFeatureUsageRepository analyticsFeatureUsageRepository;
-    private final AnalyticsDailySummaryRepository dailySummaryRepository;
     private final MetricsService metricsService;
 
     public AnalyticsSummaryDto getSummaryReport() {

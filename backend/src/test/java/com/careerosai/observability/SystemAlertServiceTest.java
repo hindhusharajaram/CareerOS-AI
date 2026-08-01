@@ -10,8 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,8 +33,9 @@ class SystemAlertServiceTest {
 
     @Test
     @DisplayName("Should create alert and save to repository")
+    @SuppressWarnings("null")
     void testCreateAlert() {
-        when(systemAlertRepository.save(any(SystemAlert.class))).thenAnswer(i -> i.getArgument(0));
+        when(systemAlertRepository.save(any())).thenAnswer(i -> Objects.requireNonNull((SystemAlert) i.getArgument(0)));
 
         SystemAlert alert = systemAlertService.createAlert("WARNING", "ETL", "Job timed out");
 
@@ -48,8 +48,9 @@ class SystemAlertServiceTest {
 
     @Test
     @DisplayName("Should mark alert as resolved")
+    @SuppressWarnings("null")
     void testResolveAlert() {
-        UUID alertId = UUID.randomUUID();
+        UUID alertId = Objects.requireNonNull(UUID.randomUUID());
         SystemAlert alert = SystemAlert.builder()
             .id(alertId)
             .alertLevel("CRITICAL")
@@ -59,7 +60,7 @@ class SystemAlertServiceTest {
             .build();
 
         when(systemAlertRepository.findById(alertId)).thenReturn(Optional.of(alert));
-        when(systemAlertRepository.save(any(SystemAlert.class))).thenAnswer(i -> i.getArgument(0));
+        when(systemAlertRepository.save(any())).thenAnswer(i -> Objects.requireNonNull((SystemAlert) i.getArgument(0)));
 
         SystemAlert resolved = systemAlertService.resolveAlert(alertId);
 

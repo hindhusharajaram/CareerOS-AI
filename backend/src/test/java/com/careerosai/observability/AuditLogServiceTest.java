@@ -31,6 +31,7 @@ class AuditLogServiceTest {
 
     @Test
     @DisplayName("Should create immutable audit log record")
+    @SuppressWarnings("null")
     void testLogAction() {
         UUID userId = UUID.randomUUID();
         when(auditLogRepository.save(any(AuditLog.class))).thenAnswer(i -> i.getArgument(0));

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Sparkles,
   TrendingUp,
@@ -13,66 +12,49 @@ import {
   Bot,
   CheckCircle,
   ArrowRight,
-  Star,
   Globe,
   Lock,
   Cpu,
   Database,
   GitBranch,
+  FlaskConical,
+  Users,
 } from 'lucide-react';
-import AnimatedCounter from '../components/ui/AnimatedCounter';
 import { FeatureCard } from '../components/ui/Card';
 
 const faqs = [
   {
     q: 'What is CareerOS AI?',
-    a: 'CareerOS AI is a comprehensive career intelligence platform that uses AI to analyze your profile, score your career readiness, identify skill gaps, match you with opportunities, and generate personalized 90-day roadmaps.',
+    a: 'CareerOS AI is an AI-powered career intelligence platform built for engineering students. It computes a structured Career Score, analyses resumes against ATS patterns, detects skill gaps relative to target roles, and generates 90-day learning roadmaps — all grounded in your actual profile data.',
   },
   {
     q: 'How does the Career Score work?',
-    a: 'The Career Score (0–1000) is computed using 9 weighted indicators: Projects (20%), Skills (20%), Experience (15%), Profile Completeness (15%), Education (10%), Certificates (10%), Goals (5%), Resume Quality (3%), and Engagement (2%).',
+    a: 'The Career Score (0–1000) is computed from 9 weighted indicators: Projects (20%), Skills (20%), Experience (15%), Profile Completeness (15%), Education (10%), Certificates (10%), Resume Quality (5%), GitHub Presence (3%), and LinkedIn Presence (2%). Each factor is calculated from data you enter in your profile.',
   },
   {
     q: 'Is my data secure?',
-    a: 'Yes. CareerOS AI uses JWT-based authentication, bcrypt password hashing, HTTPS enforcement with HSTS headers, rate limiting on auth endpoints, Content Security Policy, and role-based access control.',
+    a: 'Yes. CareerOS AI uses JWT-based authentication, bcrypt password hashing, HTTPS enforcement with HSTS headers, rate limiting on auth endpoints, Content Security Policy headers, and role-based access control. Security is implemented at the infrastructure level, not as an afterthought.',
   },
   {
-    q: 'What AI models are used?',
-    a: 'CareerOS AI features a local AI engine with fine-tuned modules for resume analysis, skill gap detection, ATS scoring, career roadmap generation, and explainable recommendations — all running on your infrastructure.',
+    q: 'What AI modules does the platform include?',
+    a: 'The platform ships with 6 AI-assisted modules: Career Copilot (explainability engine), AI Career Chat (contextual Q&A), Resume Review (ATS scoring), Learning Coach (personalised study plans), Mock Interview (structured practice), and Project Advisor (portfolio gap analysis). Each module reads from your actual profile — not generic templates.',
   },
   {
     q: 'Can I export my data?',
-    a: 'Yes. You can export your resume data, career score reports, and roadmap plans. The Resume Manager supports multi-version resume storage and ATS score comparison.',
+    a: 'Yes. You can export resume data, career score reports, and roadmap plans. The Resume Manager supports multi-version resume storage and ATS score comparison across versions.',
+  },
+  {
+    q: 'Is this a student project?',
+    a: 'Yes — CareerOS AI is an open-source platform built by a Computer Science student. It is built with production-grade technologies: Spring Boot 3, PostgreSQL, React 18, TypeScript, Docker, GitHub Actions CI/CD, JUnit 5 test coverage, and a Star Schema data warehouse with ETL pipelines.',
   },
 ];
 
-const testimonials = [
-  {
-    name: 'Aisha Patel',
-    role: 'Software Engineer at Google',
-    text: 'CareerOS AI completely transformed how I approached my job search. The Career Score gave me a clear picture of where I stood, and the 90-day roadmap helped me close every skill gap systematically.',
-    stars: 5,
-  },
-  {
-    name: 'Marcus Chen',
-    role: 'ML Engineer at Stripe',
-    text: 'The ATS analysis feature saved me countless rejections. I optimized my resume based on real scoring data and doubled my interview callback rate within 3 weeks.',
-    stars: 5,
-  },
-  {
-    name: 'Priya Sharma',
-    role: 'Product Manager at Vercel',
-    text: 'The AI Career Copilot is like having a senior mentor available 24/7. Personalized, grounded in my actual profile — not generic career advice.',
-    stars: 5,
-  },
+const targetCompanies = [
+  'Google', 'Stripe', 'Vercel', 'Linear', 'GitHub', 'Notion', 'Figma', 'Atlassian', 'Cloudflare', 'Supabase',
+  'Google', 'Stripe', 'Vercel', 'Linear', 'GitHub', 'Notion', 'Figma', 'Atlassian', 'Cloudflare', 'Supabase',
 ];
 
-const companies = [
-  'Google', 'Stripe', 'Vercel', 'Linear', 'GitHub', 'Notion', 'Figma', 'Arc', 'Framer', 'Loom',
-  'Google', 'Stripe', 'Vercel', 'Linear', 'GitHub', 'Notion', 'Figma', 'Arc', 'Framer', 'Loom',
-];
-
-const techStack = ['Spring Boot', 'PostgreSQL', 'React', 'TypeScript', 'Docker', 'GitHub Actions', 'JUnit 5', 'Vite', 'Recharts', 'Framer Motion'];
+const techStack = ['Spring Boot 3', 'PostgreSQL 17', 'React 18', 'TypeScript 5', 'Docker', 'GitHub Actions', 'JUnit 5', 'Vite', 'Apache Tika', 'JJWT'];
 
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
@@ -81,9 +63,10 @@ function FAQItem({ q, a }: { q: string; a: string }) {
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between p-5 text-left gap-4"
+        aria-expanded={open}
       >
         <span className="font-semibold text-slate-200 text-sm leading-relaxed">{q}</span>
-        <ChevronRight className={`h-4 w-4 text-slate-400 shrink-0 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
+        <ChevronRight className={`h-4 w-4 text-slate-400 shrink-0 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} aria-hidden="true" />
       </button>
       {open && (
         <div className="px-5 pb-5 text-sm text-slate-400 leading-relaxed border-t border-slate-800/60 pt-4">
@@ -91,6 +74,42 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         </div>
       )}
     </div>
+  );
+}
+
+function CapabilityStat({ value, label, sub }: { value: string; label: string; sub?: string }) {
+  return (
+    <div className="glass-card rounded-2xl p-5 text-center">
+      <p className="text-3xl sm:text-4xl font-black text-white tracking-tight">{value}</p>
+      <p className="text-sm font-semibold text-slate-300 mt-1">{label}</p>
+      {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
+    </div>
+  );
+}
+
+function BetaPlaceholderCard({ icon: Icon, title, body }: { icon: React.ElementType; title: string; body: string }) {
+  return (
+    <div className="glass-card rounded-3xl p-7 card-interactive flex flex-col gap-4 border border-dashed border-indigo-500/20">
+      <div className="flex items-center gap-3">
+        <div className="h-9 w-9 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+          <Icon className="h-4 w-4 text-indigo-400" aria-hidden="true" />
+        </div>
+        <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Open Beta</span>
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-slate-200 mb-1">{title}</p>
+        <p className="text-sm text-slate-400 leading-relaxed">{body}</p>
+      </div>
+    </div>
+  );
+}
+
+function ComingSoonBadge() {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-700 bg-slate-800/60 px-3 py-1 text-xs font-semibold text-slate-400">
+      <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" aria-hidden="true" />
+      Beta Access Coming Soon
+    </span>
   );
 }
 
@@ -109,15 +128,19 @@ export default function LandingPage(): React.ReactElement {
 
       {/* === Navigation === */}
       <header className="relative z-20 border-b border-slate-800/40 bg-[#020817]/60 backdrop-blur-xl sticky top-0">
-        <nav className="mx-auto max-w-7xl px-6 lg:px-8 flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2.5">
+        <nav
+          className="mx-auto max-w-7xl px-6 lg:px-8 flex items-center justify-between h-16"
+          role="navigation"
+          aria-label="Main navigation"
+        >
+          <a href="/" className="flex items-center gap-2.5" aria-label="CareerOS AI home">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/25">
-              <Sparkles className="h-4.5 w-4.5 text-white" />
+              <Sparkles className="h-4 w-4 text-white" aria-hidden="true" />
             </div>
             <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-300 tracking-tight">
               CareerOS AI
             </span>
-          </Link>
+          </a>
 
           <div className="hidden md:flex items-center gap-6 text-sm text-slate-400">
             <a href="#features" className="hover:text-white transition-colors nav-underline">Features</a>
@@ -126,36 +149,23 @@ export default function LandingPage(): React.ReactElement {
             <a href="#faq" className="hover:text-white transition-colors nav-underline">FAQ</a>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              to="/login"
-              className="text-sm font-semibold text-slate-300 hover:text-white transition-colors px-3 py-1.5"
-            >
-              Sign In
-            </Link>
-            <Link
-              to="/register"
-              className="group relative inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-            >
-              Get Started
-              <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
-          </div>
+          <ComingSoonBadge />
         </nav>
       </header>
 
       <main className="relative z-10">
 
         {/* === HERO SECTION === */}
-        <section className="mx-auto max-w-7xl px-6 lg:px-8 pt-20 pb-24 text-center">
-          {/* Pill badge */}
+        <section className="mx-auto max-w-7xl px-6 lg:px-8 pt-20 pb-24 text-center" aria-labelledby="hero-heading">
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/25 bg-indigo-500/8 px-4 py-1.5 text-sm text-indigo-300 mb-8 animate-fade-in">
-            <span className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
-            Next-Gen Career Intelligence Platform · v1.0 GA
+            <span className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" aria-hidden="true" />
+            AI-Powered Career Intelligence · Open Beta
           </div>
 
-          {/* Headline */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] mb-6 animate-fade-up">
+          <h1
+            id="hero-heading"
+            className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] mb-6 animate-fade-up"
+          >
             <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-400">
               Your Career,
             </span>
@@ -165,60 +175,69 @@ export default function LandingPage(): React.ReactElement {
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-up" style={{ animationDelay: '100ms' }}>
-            CareerOS AI bridges the gap between students and career success using AI-powered score engines, ATS analysis, personalized roadmaps, and 6 specialized AI assistants.
+          <p
+            className="text-lg sm:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-up"
+            style={{ animationDelay: '100ms' }}
+          >
+            CareerOS AI helps engineering students measure career readiness with a structured score engine,
+            ATS resume analysis, skill gap detection, and AI-assisted 90-day roadmaps — all grounded in
+            your actual profile data.
           </p>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-up" style={{ animationDelay: '200ms' }}>
-            <Link
-              to="/register"
-              className="group relative inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+          {/* CTAs — auth disabled until backend deploys */}
+          <div
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4 animate-fade-up"
+            style={{ animationDelay: '200ms' }}
+          >
+            <button
+              disabled
+              className="group relative inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-indigo-500/25 opacity-60 cursor-not-allowed select-none"
+              aria-disabled="true"
+              title="Registration opens when the hosted backend launches"
             >
-              <Sparkles className="h-5 w-5" />
-              Start for Free
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 rounded-2xl border border-slate-700/60 bg-slate-900/40 px-8 py-4 text-base font-semibold text-slate-300 hover:text-white hover:border-slate-600 hover:bg-slate-800/50 transition-all duration-200"
+              <Sparkles className="h-5 w-5" aria-hidden="true" />
+              Get Early Access
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <a
+              href="#features"
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-700/60 bg-slate-900/40 px-8 py-4 text-base font-semibold text-slate-300 hover:text-white hover:border-slate-600 hover:bg-slate-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
             >
-              Sign In to Dashboard
-            </Link>
+              Explore Features
+            </a>
           </div>
 
-          {/* Animated Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto animate-fade-up" style={{ animationDelay: '300ms' }}>
-            {[
-              { value: 10000, suffix: '+', label: 'Students Active', decimals: 0 },
-              { value: 98, suffix: '%', label: 'ATS Pass Rate', decimals: 0 },
-              { value: 4.9, suffix: '/5', label: 'Avg Career Score', decimals: 1 },
-              { value: 500, suffix: '+', label: 'Companies Hiring', decimals: 0 },
-            ].map((stat) => (
-              <div key={stat.label} className="glass-card rounded-2xl p-4 text-center">
-                <p className="text-2xl sm:text-3xl font-black text-white">
-                  <AnimatedCounter target={stat.value} suffix={stat.suffix} decimals={stat.decimals} />
-                </p>
-                <p className="text-xs text-slate-500 mt-1 font-medium">{stat.label}</p>
-              </div>
-            ))}
+          <p className="text-xs text-slate-600 mb-14 animate-fade-up" style={{ animationDelay: '250ms' }}>
+            Authentication is not yet available in the hosted environment. The full platform runs locally via Docker.
+          </p>
+
+          {/* Real capability stats — verifiable from the codebase */}
+          <div
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto animate-fade-up"
+            style={{ animationDelay: '300ms' }}
+            aria-label="Platform capabilities"
+          >
+            <CapabilityStat value="6" label="AI Modules" sub="Career · Resume · Chat · Interview · Coach · Advisor" />
+            <CapabilityStat value="9" label="Score Indicators" sub="Weighted 0–1000 career score" />
+            <CapabilityStat value="1,000" label="Score Range" sub="Structured readiness scale" />
+            <CapabilityStat value="6+" label="Security Layers" sub="JWT · HSTS · CSP · RBAC · Rate Limit · bcrypt" />
           </div>
         </section>
 
         {/* === FEATURES SECTION === */}
-        <section id="features" className="mx-auto max-w-7xl px-6 lg:px-8 py-24">
+        <section id="features" className="mx-auto max-w-7xl px-6 lg:px-8 py-24" aria-labelledby="features-heading">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/8 px-3 py-1 text-xs text-indigo-300 font-semibold mb-4 uppercase tracking-wider">
               Platform Features
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-              Everything You Need to{' '}
+            <h2 id="features-heading" className="text-3xl sm:text-4xl font-black text-white mb-4">
+              A complete toolkit for{' '}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-                Land Your Dream Role
+                career-focused students
               </span>
             </h2>
             <p className="text-slate-400 max-w-xl mx-auto text-base">
-              From Career Score computation to AI-powered mock interviews, CareerOS AI is your complete career operating system.
+              From career score computation to AI-assisted mock interviews — each feature maps to a real gap in how students prepare for software engineering roles.
             </p>
           </div>
 
@@ -265,7 +284,7 @@ export default function LandingPage(): React.ReactElement {
         </section>
 
         {/* === AI SECTION === */}
-        <section id="ai" className="mx-auto max-w-7xl px-6 lg:px-8 py-24">
+        <section id="ai" className="mx-auto max-w-7xl px-6 lg:px-8 py-24" aria-labelledby="ai-heading">
           <div className="rounded-3xl border border-indigo-500/15 bg-gradient-to-br from-slate-900 via-indigo-950/20 to-slate-900 p-10 lg:p-16 overflow-hidden relative">
             <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-indigo-500/10 blur-[80px]" />
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -274,20 +293,20 @@ export default function LandingPage(): React.ReactElement {
                   <Bot className="h-3.5 w-3.5" />
                   AI Suite
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-black text-white mb-5 leading-tight">
-                  6 Specialized AI Assistants Working For You
+                <h2 id="ai-heading" className="text-3xl sm:text-4xl font-black text-white mb-5 leading-tight">
+                  6 Specialised AI Modules
                 </h2>
                 <p className="text-slate-400 mb-8 leading-relaxed">
-                  Each AI module is grounded in your actual profile data — not generic advice. Get explainable, actionable insights that directly improve your career trajectory.
+                  Each module reads from your actual profile — not generic templates. Recommendations are grounded in what you have built, studied, and experienced.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
-                    { icon: Bot, name: 'Career Copilot', desc: 'Explainability engine' },
-                    { icon: MessageSquare, name: 'AI Career Chat', desc: 'Contextual conversations' },
-                    { icon: FileText, name: 'Resume Review', desc: 'ATS optimization' },
-                    { icon: Brain, name: 'Learning Coach', desc: 'Personalized paths' },
-                    { icon: Zap, name: 'Mock Interview', desc: 'Real-time feedback' },
-                    { icon: GitBranch, name: 'Project Advisor', desc: 'Portfolio analysis' },
+                    { icon: Bot, name: 'Career Copilot', desc: 'Score explainability engine' },
+                    { icon: MessageSquare, name: 'AI Career Chat', desc: 'Profile-aware Q&A' },
+                    { icon: FileText, name: 'Resume Review', desc: 'ATS scoring & feedback' },
+                    { icon: Brain, name: 'Learning Coach', desc: 'Personalised study plans' },
+                    { icon: Zap, name: 'Mock Interview', desc: 'Structured practice & feedback' },
+                    { icon: GitBranch, name: 'Project Advisor', desc: 'Portfolio gap analysis' },
                   ].map(({ icon: Icon, name, desc }) => (
                     <div key={name} className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800/60 hover:border-indigo-500/30 transition-colors">
                       <div className="h-8 w-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
@@ -349,27 +368,27 @@ export default function LandingPage(): React.ReactElement {
         </section>
 
         {/* === CAREER INTELLIGENCE SECTION === */}
-        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24">
+        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24" aria-labelledby="intelligence-heading">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/8 px-3 py-1 text-xs text-emerald-300 font-semibold uppercase tracking-wider mb-6">
                 <TrendingUp className="h-3.5 w-3.5" />
                 Career Intelligence
               </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-white mb-5 leading-tight">
-                Data-Driven Career Decisions,{' '}
+              <h2 id="intelligence-heading" className="text-3xl sm:text-4xl font-black text-white mb-5 leading-tight">
+                Structured career decisions,{' '}
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
-                  Not Guesswork
+                  not guesswork
                 </span>
               </h2>
               <p className="text-slate-400 mb-8 leading-relaxed">
-                CareerOS AI's intelligence engine analyzes your entire career profile in real-time to surface insights that would take hours of manual research.
+                The intelligence engine analyses your entire career profile to surface actionable insights that would otherwise require hours of manual self-assessment.
               </p>
               {[
-                { label: 'Career Score Computation', desc: '9-factor weighted scoring model with trend analysis' },
-                { label: 'Placement Eligibility', desc: 'Role-fit analysis against top company requirements' },
-                { label: 'Trend Analytics', desc: 'Real-time technology demand and salary insights' },
-                { label: 'Project Competitiveness', desc: 'GitHub portfolio analysis for recruiter readiness' },
+                { label: 'Career Score Computation', desc: '9-factor weighted scoring model with trend tracking' },
+                { label: 'Placement Eligibility', desc: 'Role-fit analysis against documented company requirements' },
+                { label: 'Trend Analytics', desc: 'Technology demand and market context for your target domain' },
+                { label: 'Project Competitiveness', desc: 'Portfolio gap analysis for recruiter readiness' },
               ].map(({ label, desc }) => (
                 <div key={label} className="flex items-start gap-3 mb-4">
                   <CheckCircle className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
@@ -379,18 +398,19 @@ export default function LandingPage(): React.ReactElement {
                   </div>
                 </div>
               ))}
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+              <a
+                href="#features"
+                className="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50 rounded"
               >
-                See Your Career Score <ArrowRight className="h-4 w-4" />
-              </Link>
+                See all platform features <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </a>
             </div>
 
             {/* Score Ring Visualization */}
             <div className="flex flex-col items-center gap-6">
               <div className="glass-card rounded-3xl p-8 w-full max-w-sm">
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Career Score Preview</p>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Career Score — Example Preview</p>
+                <p className="text-[10px] text-slate-600 mb-3">Illustrative data. Your score is computed from your own profile.</p>
                 <div className="flex items-center gap-6">
                   {/* SVG Ring */}
                   <div className="relative shrink-0">
@@ -416,7 +436,7 @@ export default function LandingPage(): React.ReactElement {
                   </div>
                   <div>
                     <p className="text-lg font-black text-white">Strong</p>
-                    <p className="text-xs text-slate-400 mt-0.5">Top 15% of candidates</p>
+                    <p className="text-xs text-slate-400 mt-0.5">out of 1,000</p>
                     <div className="mt-3 space-y-1.5">
                       {[['Projects', 78], ['Skills', 92], ['Experience', 65]].map(([k, v]) => (
                         <div key={k} className="flex items-center gap-2">
@@ -436,18 +456,18 @@ export default function LandingPage(): React.ReactElement {
         </section>
 
         {/* === SECURITY SECTION === */}
-        <section id="security" className="mx-auto max-w-7xl px-6 lg:px-8 py-24">
+        <section id="security" className="mx-auto max-w-7xl px-6 lg:px-8 py-24" aria-labelledby="security-heading">
           <div className="rounded-3xl border border-slate-800/60 bg-slate-900/30 p-10 lg:p-14">
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/8 px-3 py-1 text-xs text-emerald-300 font-semibold uppercase tracking-wider mb-4">
-                <Shield className="h-3.5 w-3.5" />
-                Enterprise Security
+                <Shield className="h-3.5 w-3.5" aria-hidden="true" />
+                Security Architecture
               </div>
-              <h2 className="text-3xl font-black text-white mb-3">
-                Production-Grade Security. Built-In.
+              <h2 id="security-heading" className="text-3xl font-black text-white mb-3">
+                Production-grade security. Built in.
               </h2>
               <p className="text-slate-400 max-w-xl mx-auto">
-                CareerOS AI is built with enterprise security standards from the ground up.
+                Security is implemented at the infrastructure level — not retrofitted. Every layer is verifiable in the open-source codebase.
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -468,15 +488,17 @@ export default function LandingPage(): React.ReactElement {
           </div>
         </section>
 
-        {/* === ARCHITECTURE SECTION === */}
-        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16">
+        {/* === TECH STACK === */}
+        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16" aria-labelledby="stack-heading">
           <div className="text-center mb-8">
-            <p className="text-sm font-semibold text-slate-500 mb-4 uppercase tracking-wider">Tech Stack</p>
+            <p id="stack-heading" className="text-sm font-semibold text-slate-500 mb-1 uppercase tracking-wider">Tech Stack</p>
+            <p className="text-xs text-slate-600">All technologies used in this project — verifiable in the repository.</p>
           </div>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-3" role="list" aria-label="Technologies used">
             {techStack.map((tech) => (
               <span
                 key={tech}
+                role="listitem"
                 className="px-4 py-2 rounded-xl bg-slate-900/60 border border-slate-800/80 text-sm text-slate-300 font-medium hover:border-indigo-500/30 hover:text-indigo-300 transition-all duration-200"
               >
                 {tech}
@@ -485,47 +507,54 @@ export default function LandingPage(): React.ReactElement {
           </div>
         </section>
 
-        {/* === TESTIMONIALS === */}
-        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24">
+        {/* === BETA / EARLY ACCESS (replaces fake testimonials) === */}
+        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24" aria-labelledby="beta-heading">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-white mb-3">
-              Trusted by Students at{' '}
-              <span className="gradient-text">World-Class Companies</span>
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/8 px-3 py-1 text-xs text-amber-300 font-semibold uppercase tracking-wider mb-4">
+              <FlaskConical className="h-3.5 w-3.5" aria-hidden="true" />
+              Open Beta
+            </div>
+            <h2 id="beta-heading" className="text-3xl font-black text-white mb-3">
+              Built for students targeting{' '}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">world-class engineering roles</span>
             </h2>
+            <p className="text-slate-400 max-w-xl mx-auto">
+              CareerOS AI is in open beta. Early access testers help shape the product. User feedback
+              and case studies will be featured here as they are collected.
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t) => (
-              <div key={t.name} className="glass-card rounded-3xl p-7 card-interactive">
-                <div className="flex items-center gap-1 mb-4">
-                  {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-slate-300 leading-relaxed mb-5">"{t.text}"</p>
-                <div className="flex items-center gap-3 border-t border-slate-800/60 pt-4">
-                  <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm">
-                    {t.name[0]}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">{t.name}</p>
-                    <p className="text-xs text-slate-500">{t.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <BetaPlaceholderCard
+              icon={Users}
+              title="Looking for early access testers"
+              body="If you are an engineering student preparing for internship or full-time roles, your feedback directly shapes the platform. Reach out via GitHub."
+            />
+            <BetaPlaceholderCard
+              icon={FlaskConical}
+              title="Student feedback coming soon"
+              body="This platform is currently being tested. Real user experiences and outcomes will be published here as the beta progresses."
+            />
+            <BetaPlaceholderCard
+              icon={GitBranch}
+              title="Open-source contributions welcome"
+              body="CareerOS AI is open source. Engineers who contribute to the codebase are acknowledged in the repository and this page."
+            />
           </div>
         </section>
 
-        {/* === COMPANY LOGOS MARQUEE === */}
-        <section className="py-16 border-y border-slate-800/40 overflow-hidden">
-          <p className="text-center text-xs font-semibold text-slate-600 uppercase tracking-widest mb-8">
-            Graduates placed at leading companies
+        {/* === TARGET COMPANIES — aspirational context, not placement claims === */}
+        <section className="py-16 border-y border-slate-800/40 overflow-hidden" aria-label="Target companies context">
+          <p className="text-center text-xs font-semibold text-slate-600 uppercase tracking-widest mb-1">
+            Built to prepare you for engineering careers at companies like
           </p>
-          <div className="flex gap-12 animate-marquee whitespace-nowrap">
-            {companies.map((company, i) => (
+          <p className="text-center text-[10px] text-slate-700 mb-8">
+            CareerOS AI does not have a partnership with any of these organisations. This is aspirational context only.
+          </p>
+          <div className="flex gap-12 animate-marquee whitespace-nowrap" aria-hidden="true">
+            {targetCompanies.map((company, i) => (
               <span
                 key={`${company}-${i}`}
-                className="text-slate-600 font-bold text-sm hover:text-slate-400 transition-colors shrink-0"
+                className="text-slate-700 font-bold text-sm hover:text-slate-500 transition-colors shrink-0"
               >
                 {company}
               </span>
@@ -534,10 +563,10 @@ export default function LandingPage(): React.ReactElement {
         </section>
 
         {/* === FAQ SECTION === */}
-        <section id="faq" className="mx-auto max-w-3xl px-6 lg:px-8 py-24">
+        <section id="faq" className="mx-auto max-w-3xl px-6 lg:px-8 py-24" aria-labelledby="faq-heading">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-white mb-3">Frequently Asked Questions</h2>
-            <p className="text-slate-400">Everything you need to know about CareerOS AI.</p>
+            <h2 id="faq-heading" className="text-3xl font-black text-white mb-3">Frequently Asked Questions</h2>
+            <p className="text-slate-400">Honest answers about what CareerOS AI is and how it works.</p>
           </div>
           <div className="space-y-3">
             {faqs.map((faq) => (
@@ -547,59 +576,73 @@ export default function LandingPage(): React.ReactElement {
         </section>
 
         {/* === CTA BANNER === */}
-        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16">
+        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16" aria-labelledby="cta-heading">
           <div className="relative rounded-3xl overflow-hidden border border-indigo-500/20 bg-gradient-to-r from-indigo-900/40 via-purple-900/30 to-violet-900/40 p-12 text-center">
-            <div className="absolute inset-0 dot-pattern opacity-20" />
+            <div className="absolute inset-0 dot-pattern opacity-20" aria-hidden="true" />
             <div className="relative">
               <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/25 bg-indigo-500/10 px-4 py-1.5 text-sm text-indigo-300 mb-6">
-                <Sparkles className="h-4 w-4" />
-                Begin Your Career Transformation
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
+                Open Beta · Early Access
               </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
-                Ready to Engineer Your Dream Career?
+              <h2 id="cta-heading" className="text-3xl sm:text-4xl font-black text-white mb-4">
+                Start building your career profile.
               </h2>
               <p className="text-slate-400 mb-8 max-w-xl mx-auto">
-                Join thousands of students using CareerOS AI to land their dream roles at top companies.
+                Run CareerOS AI locally from the repository, or join the waitlist to be notified when the hosted platform launches.
               </p>
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
-              >
-                <Sparkles className="h-5 w-5" />
-                Get Started — It's Free
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a
+                  href="https://github.com/hindhusharajaram/CareerOS-AI"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  aria-label="View CareerOS AI on GitHub (opens in a new tab)"
+                >
+                  <GitBranch className="h-5 w-5" aria-hidden="true" />
+                  View on GitHub
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </a>
+                <button
+                  disabled
+                  className="inline-flex items-center gap-2 rounded-2xl border border-slate-700/60 bg-slate-900/40 px-8 py-4 text-base font-semibold text-slate-400 opacity-60 cursor-not-allowed select-none"
+                  aria-disabled="true"
+                  title="Hosted sign-up opens when the backend deployment launches"
+                >
+                  <Sparkles className="h-5 w-5" aria-hidden="true" />
+                  Join Waitlist
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
         {/* === FOOTER === */}
-        <footer className="border-t border-slate-800/60 py-12">
+        <footer className="border-t border-slate-800/60 py-12" role="contentinfo">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
               <div className="col-span-1 md:col-span-2">
                 <div className="flex items-center gap-2.5 mb-4">
                   <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center">
-                    <Sparkles className="h-4 w-4 text-white" />
+                    <Sparkles className="h-4 w-4 text-white" aria-hidden="true" />
                   </div>
                   <span className="font-bold text-white">CareerOS AI</span>
                 </div>
                 <p className="text-sm text-slate-500 leading-relaxed max-w-xs">
-                  AI-powered career intelligence platform for students, companies, and academic institutions.
+                  An open-source AI-powered career intelligence platform built for engineering students.
                 </p>
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Platform</p>
                 <div className="space-y-3">
                   {['Career Score', 'ATS Analysis', 'Skill Gap', 'Roadmap', 'AI Copilot'].map((item) => (
-                    <Link key={item} to="/register" className="block text-sm text-slate-500 hover:text-slate-300 transition-colors">{item}</Link>
+                    <a key={item} href="#features" className="block text-sm text-slate-500 hover:text-slate-300 transition-colors">{item}</a>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Company</p>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Project</p>
                 <div className="space-y-3">
-                  {['About', 'Security', 'Privacy', 'Terms', 'Contact'].map((item) => (
+                  {['GitHub', 'Security', 'Open Beta', 'FAQ'].map((item) => (
                     <span key={item} className="block text-sm text-slate-500 cursor-default">{item}</span>
                   ))}
                 </div>
@@ -607,10 +650,10 @@ export default function LandingPage(): React.ReactElement {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-800/60 pt-8">
-              <p className="text-xs text-slate-600">© 2026 CareerOS AI. All rights reserved.</p>
+              <p className="text-xs text-slate-600">© 2026 CareerOS AI. Open-source project. All rights reserved.</p>
               <div className="flex items-center gap-2 text-xs text-slate-600">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                All Systems Operational
+                <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" aria-hidden="true" />
+                Open Beta — Hosted backend launching soon
               </div>
             </div>
           </div>
@@ -620,10 +663,19 @@ export default function LandingPage(): React.ReactElement {
   );
 }
 
-// Add missing import
 function MessageSquare({ className }: { className?: string }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </svg>
   );

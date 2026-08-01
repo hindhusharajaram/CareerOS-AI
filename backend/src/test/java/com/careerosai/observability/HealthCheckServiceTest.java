@@ -68,6 +68,7 @@ class HealthCheckServiceTest {
 
     @Test
     @DisplayName("Should save health snapshot correctly")
+    @SuppressWarnings("null")
     void testRecordSnapshot() {
         when(userRepository.count()).thenReturn(5L);
         when(healthSnapshotRepository.save(any(HealthSnapshot.class))).thenAnswer(i -> i.getArgument(0));

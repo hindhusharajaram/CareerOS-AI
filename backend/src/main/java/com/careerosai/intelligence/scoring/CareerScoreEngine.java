@@ -97,7 +97,7 @@ public class CareerScoreEngine {
         int linkedinScore = (profile.getLinkedin() != null && !profile.getLinkedin().isBlank()) ? 20 : 0;
         categoryScores.put("LinkedIn Presence", linkedinScore);
 
-        final int overallScore = categoryScores.values().stream().mapToInt(Integer::intValue).sum();
+        final int overallScore = categoryScores.values().stream().mapToInt(v -> v != null ? v : 0).sum();
 
         return CareerScoreDto.builder()
             .overallScore(Math.min(1000, overallScore))

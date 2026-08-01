@@ -12,6 +12,7 @@ import java.lang.management.ThreadMXBean;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
@@ -115,11 +116,12 @@ public class ObservabilityMetricsEngine {
     }
 
     private void saveMetric(final String name, final double val, final String unit) {
-        systemMetricRepository.save(SystemMetric.builder()
+        final SystemMetric metric = SystemMetric.builder()
             .metricName(name)
             .metricValue(val)
             .metricUnit(unit)
             .createdAt(LocalDateTime.now())
-            .build());
+            .build();
+        systemMetricRepository.save(Objects.requireNonNull(metric));
     }
 }

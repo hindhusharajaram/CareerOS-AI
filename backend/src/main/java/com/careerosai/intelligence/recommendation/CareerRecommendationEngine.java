@@ -1,7 +1,6 @@
 package com.careerosai.intelligence.recommendation;
 
 import com.careerosai.entity.StudentProfile;
-import com.careerosai.entity.StudentSkill;
 import com.careerosai.intelligence.dto.RecommendationDto;
 import com.careerosai.repository.StudentSkillRepository;
 import lombok.RequiredArgsConstructor;
