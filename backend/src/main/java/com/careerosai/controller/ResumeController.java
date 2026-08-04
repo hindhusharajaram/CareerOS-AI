@@ -4,6 +4,7 @@ import com.careerosai.dto.AddStudentSkillRequest;
 import com.careerosai.dto.FileMetadataDto;
 import com.careerosai.dto.ParsedResumeDto;
 import com.careerosai.dto.ResumeDto;
+import com.careerosai.dto.ResumeReviewResponseDto;
 import com.careerosai.entity.FileMetadata;
 import com.careerosai.entity.Resume;
 import com.careerosai.entity.StudentProfile;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 
 import com.careerosai.analytics.events.ResumeUploadedEvent;
 import com.careerosai.analytics.producer.EventPublisherService;
+import com.careerosai.facade.ResumeReviewFacade;
 
 @RestController
 @RequestMapping("/api/v1/student/resumes")
@@ -49,6 +51,7 @@ public class ResumeController {
 
     private final StorageService storageService;
     private final ResumeParserService resumeParserService;
+    private final ResumeReviewFacade resumeReviewFacade;
     private final FileMetadataRepository fileMetadataRepository;
     private final ResumeRepository resumeRepository;
     private final StudentProfileRepository studentProfileRepository;
@@ -181,6 +184,22 @@ public class ResumeController {
         final UUID targetId = Objects.requireNonNull(id);
         resumeRepository.deleteById(targetId);
         return ResponseEntity.ok(ApiResponse.success("Resume version deleted", null, request.getRequestURI()));
+    }
+
+    @PostMapping({"/review", "/api/v1/resume/review"})
+    public ResponseEntity<ApiResponse<ResumeReviewResponseDto>> reviewResume(
+        @RequestParam("file") final MultipartFile file,
+        final HttpServletRequest request
+    ) {
+        try {
+            final ResumeReviewResponseDto reviewResult = resumeReviewFacade.reviewResume(file);
+            return ResponseEntity.ok(ApiResponse.success("Resume review generated successfully", reviewResult, request.getRequestURI()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), 400, request.getRequestURI()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("Failed to process resume review: " + e.getMessage(), 500, request.getRequestURI()));
+        }
     }
 
     private ResumeDto toDto(final Resume r) {

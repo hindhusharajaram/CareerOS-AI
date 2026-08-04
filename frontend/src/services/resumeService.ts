@@ -1,6 +1,67 @@
 import api from '../api/axios';
 import { FileMetadataData } from './fileService';
 
+export interface ResumeHealthData {
+  score: number;
+  label: string;
+  stars: string;
+  percentile: string;
+  readinessStatus: string;
+}
+
+export interface AtsCategoryScoreData {
+  category: string;
+  currentScore: number;
+  maxScore: number;
+  explanation: string;
+}
+
+export interface SectionHeatmapData {
+  section: string;
+  status: 'Present' | 'Partial' | 'Missing' | string;
+  details: string;
+}
+
+export interface KeywordAnalysisData {
+  matchedKeywords: string[];
+  missingKeywords: string[];
+  coveragePercentage: number;
+}
+
+export interface QuantificationBulletData {
+  currentBullet: string;
+  status: 'Quantified' | 'Needs Quantification' | string;
+  suggestion: string;
+}
+
+export interface InsightData {
+  category: string;
+  description: string;
+  priority: 'HIGH' | 'MEDIUM' | 'LOW' | string;
+}
+
+export interface AtsCategoryBreakdown {
+  score: number;
+  max: number;
+  passed: boolean;
+  wordCount?: number;
+  foundCount?: number;
+  explanation?: string;
+}
+
+export interface ResumeReviewData {
+  score: number;
+  grade: 'Excellent' | 'Good' | 'Needs Improvement' | 'Poor' | string;
+  health?: ResumeHealthData;
+  atsCategoryBreakdown?: AtsCategoryScoreData[];
+  heatmap?: SectionHeatmapData[];
+  keywords: KeywordAnalysisData;
+  quantification?: QuantificationBulletData[];
+  insights: (InsightData | string)[];
+  atsBreakdown?: Record<string, AtsCategoryBreakdown>;
+  fileName?: string;
+}
+
 export interface ResumeData {
   id: string;
   studentId: string;
@@ -12,6 +73,18 @@ export interface ResumeData {
 }
 
 export const resumeService = {
+  reviewResume: async (file: File): Promise<ResumeReviewData> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await api.post('/api/v1/student/resumes/review', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.data;
+  },
+
   uploadResume: async (file: File): Promise<ResumeData> => {
     const formData = new FormData();
     formData.append('file', file);
@@ -38,3 +111,4 @@ export const resumeService = {
     await api.delete(`/api/v1/student/resumes/${id}`);
   }
 };
+
