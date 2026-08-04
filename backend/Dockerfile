@@ -4,22 +4,29 @@
 # Stage 2: Minimal JRE Runtime (Non-Root Execution)
 # =============================================================================
 
-# --- Stage 1: Build Application JAR ---
-FROM eclipse-temurin:21-jdk-alpine AS builder
+# --- Stage 1: Build Environment ---
+FROM alpine:3.19 AS builder
 WORKDIR /app
 
-# Install Maven
-RUN apk add --no-cache maven
+# Install JDK 21 and Maven
+RUN apk add --no-cache openjdk21 maven
 
-# Copy POM and download dependencies for efficient caching
+# Copy POM and Maven settings for caching layer
 COPY pom.xml ./
-RUN mvn dependency:go-offline -B
+COPY settings.xml ./
 
-# Copy application source code and compile production artifact
+# Pre-fetch dependencies with fallback resilience
+RUN mvn dependency:go-offline -s settings.xml -B || true
+
+# Copy application source code
 COPY src ./src
-RUN mvn package -DskipTests -B
 
-# --- Stage 2: Production JRE Execution Environment ---
+# Build production JAR with timeout parameters
+RUN mvn package -s settings.xml -DskipTests -B \
+    -Dhttp.connectionTimeout=60000 \
+    -Dhttp.socketTimeout=60000
+
+# --- Stage 2: Runtime Environment ---
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
@@ -30,7 +37,7 @@ RUN addgroup -S spring && adduser -S spring -G spring
 RUN mkdir -p /app/uploads && chown -R spring:spring /app
 
 # Copy executable JAR from builder stage
-COPY --from=builder /app/target/careeros-ai-backend-1.0.0.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 # Switch to non-root user
 USER spring:spring
