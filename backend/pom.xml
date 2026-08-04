@@ -74,11 +74,21 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Apache Tika for Document Text Parsing -->
+        <!-- Apache Tika & PDFBox for Document Text Parsing -->
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
             <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parsers-standard-package</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.31</version>
         </dependency>
 
         <!-- Lombok Annotation Processor -->

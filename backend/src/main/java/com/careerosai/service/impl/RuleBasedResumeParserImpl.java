@@ -3,6 +3,8 @@ package com.careerosai.service.impl;
 import com.careerosai.dto.ParsedResumeDto;
 import com.careerosai.service.ResumeParserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,12 +35,28 @@ public class RuleBasedResumeParserImpl implements ResumeParserService {
 
     @Override
     public ParsedResumeDto parseResume(final MultipartFile file) {
+        String rawText = "";
+
+        // Attempt 1: Apache Tika Extraction
         try (InputStream is = file.getInputStream()) {
-            return parseResumeStream(is, file.getOriginalFilename());
+            rawText = tika.parseToString(is);
         } catch (Exception e) {
-            log.error("Failed to parse uploaded resume file: {}", file.getOriginalFilename(), e);
-            return ParsedResumeDto.builder().rawText("Error parsing document: " + e.getMessage()).build();
+            log.warn("Tika parsing failed: {}", e.getMessage());
         }
+
+        // Attempt 2: PDFBox Fallback if Tika extracted empty/short string (< 50 chars)
+        if (rawText == null || rawText.trim().length() < 50) {
+            try (InputStream is = file.getInputStream();
+                 PDDocument document = PDDocument.load(is)) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                rawText = stripper.getText(document);
+            } catch (Exception e) {
+                log.warn("PDFBox fallback parsing failed: {}", e.getMessage());
+            }
+        }
+
+        rawText = rawText != null ? rawText.replaceAll("\\s+", " ").trim() : "";
+        return buildParsedResumeDto(rawText);
     }
 
     @Override
@@ -51,6 +69,11 @@ public class RuleBasedResumeParserImpl implements ResumeParserService {
             rawText = "Parsed Document: " + fileName;
         }
 
+        rawText = rawText != null ? rawText.replaceAll("\\s+", " ").trim() : "";
+        return buildParsedResumeDto(rawText);
+    }
+
+    private ParsedResumeDto buildParsedResumeDto(final String rawText) {
         final String email = findFirstMatch(EMAIL_PATTERN, rawText);
         final String phone = findFirstMatch(PHONE_PATTERN, rawText);
         final String linkedin = findFirstMatch(LINKEDIN_PATTERN, rawText);
