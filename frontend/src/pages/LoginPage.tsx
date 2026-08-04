@@ -47,10 +47,12 @@ export default function LoginPage(): React.ReactElement {
         setServerError(resBody.message || 'Login failed.');
       }
     } catch (err: any) {
-      if (err.response?.data) {
-        setServerError(err.response.data.message || 'Invalid email or password.');
+      if (err.response?.data?.message) {
+        setServerError(err.response.data.message);
+      } else if (err.customUserMessage) {
+        setServerError(err.customUserMessage);
       } else {
-        setServerError('Cannot connect to the authorization server.');
+        setServerError('Cannot connect to the authorization server. Please check backend availability.');
       }
     } finally {
       setIsLoading(false);

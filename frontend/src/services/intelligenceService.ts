@@ -120,6 +120,17 @@ export const intelligenceService = {
     return res.data.data;
   },
 
+  analyzeAtsResume: async (file: File): Promise<any> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await api.post('/api/v1/student/resumes/review', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res.data.data;
+  },
+
   getSkillGap: async (): Promise<SkillGapData> => {
     const res = await api.get('/api/v1/student/intelligence/skill-gap');
     return res.data.data;
