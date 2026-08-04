@@ -96,7 +96,7 @@ public class SecurityConfig {
                 .permissionsPolicyHeader(permissions -> permissions.policy("geolocation=(), microphone=(), camera=()"))
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/api/v1/auth/**", "/api/auth/**", "/api/v1/student/**").permitAll()
+                .requestMatchers("/", "/api/v1/auth/**", "/api/auth/**", "/api/v1/student/**", "/api/v1/resume/**").permitAll()
                 .requestMatchers("/api/v1/version", "/api/v1/observability/**").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
