@@ -5,10 +5,16 @@ server:
     include-binding-errors: always
 
 spring:
+  main:
+    lazy-initialization: true
   application:
     name: careeros-ai-backend
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
   jackson:
     serialization:
       write-dates-as-timestamps: false

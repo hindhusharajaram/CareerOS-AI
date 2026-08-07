@@ -3,6 +3,8 @@ spring:
   config:
     activate:
       on-profile: prod
+  main:
+    lazy-initialization: true
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}?sslmode=require}
     username: ${DATABASE_USERNAME:${PGUSER}}
@@ -17,9 +19,10 @@ spring:
       pool-name: CareerOS-ProdHikariPool
 
   jpa:
+    open-in-view: false
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: false
 
 logging:
