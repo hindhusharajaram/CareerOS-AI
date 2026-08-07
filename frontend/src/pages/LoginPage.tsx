@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, Sparkles, ArrowLeft, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -12,6 +12,12 @@ export default function LoginPage(): React.ReactElement {
   const [isLoading, setIsLoading] = useState(false);
   const [validationError, setValidationError] = useState('');
   const [serverError, setServerError] = useState('');
+
+  useEffect(() => {
+    api.get('/health').catch(() => {
+      // Silent catch for background spin-up
+    });
+  }, []);
 
   const validateForm = () => {
     setValidationError('');
