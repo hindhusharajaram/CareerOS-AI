@@ -13,37 +13,34 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses = {
   primary: `
-    bg-gradient-to-r from-indigo-600 to-purple-600
-    hover:from-indigo-500 hover:to-purple-500
-    text-white shadow-lg shadow-indigo-500/20
-    hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98]
+    bg-emerald-600 hover:bg-emerald-500
+    text-white shadow-sm shadow-emerald-950/20
+    hover:scale-[1.01] active:scale-[0.99]
   `,
   secondary: `
-    bg-slate-800 border border-slate-700/50
-    hover:bg-slate-700 hover:border-slate-600
-    text-slate-200 hover:text-white
+    bg-zinc-800/80 border border-zinc-700/60 dark:bg-zinc-800 dark:border-zinc-700
+    hover:bg-zinc-700 hover:border-zinc-600
+    text-zinc-200 hover:text-white
   `,
   ghost: `
-    text-slate-400 hover:text-white
-    hover:bg-slate-800/60
+    text-zinc-400 hover:text-zinc-100
+    hover:bg-zinc-800/50
   `,
   danger: `
-    bg-red-600/20 border border-red-500/30
-    hover:bg-red-600/30 hover:border-red-500/50
-    text-red-400 hover:text-red-300
+    bg-rose-600/10 border border-rose-500/20
+    hover:bg-rose-600/20 hover:border-rose-500/40
+    text-rose-400 hover:text-rose-300
   `,
   outline: `
-    border border-slate-700/50 hover:border-indigo-500/50
-    text-slate-300 hover:text-white
-    hover:bg-indigo-500/5
+    border border-zinc-700/60 hover:border-emerald-500/50
+    text-zinc-300 hover:text-white
+    hover:bg-emerald-500/5
   `,
   gradient: `
     relative overflow-hidden
-    bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600
-    text-white shadow-xl shadow-indigo-500/25
-    hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98]
-    before:absolute before:inset-0 before:bg-white/10 before:opacity-0 hover:before:opacity-100
-    before:transition-opacity
+    bg-gradient-to-r from-emerald-600 to-emerald-500
+    text-white shadow-md shadow-emerald-500/20
+    hover:shadow-emerald-500/30 hover:scale-[1.01] active:scale-[0.99]
   `,
 };
 
@@ -72,7 +69,7 @@ export default function Button({
       className={`
         inline-flex items-center justify-center
         font-semibold transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 focus:ring-offset-slate-950
+        focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:ring-offset-2 focus:ring-offset-zinc-950
         disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
         ${variantClasses[variant]}
         ${sizeClasses[size]}

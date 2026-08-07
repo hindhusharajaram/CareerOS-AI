@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from './contexts/ThemeContext';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -43,56 +44,58 @@ import SystemMonitorPage from './pages/SystemMonitorPage';
  */
 export default function App(): React.ReactElement {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-        {/* Student Workspace Routes */}
-        <Route path="/dashboard" element={<StudentDashboardPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/resumes" element={<ResumeManagerPage />} />
-        <Route path="/health" element={<ProfileHealthPage />} />
-        <Route path="/skills" element={<SkillsPage />} />
-        <Route path="/education" element={<EducationPage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/certificates" element={<CertificatesPage />} />
-        <Route path="/experience" element={<ExperiencePage />} />
-        <Route path="/career-goals" element={<CareerGoalsPage />} />
-        <Route path="/upload-center" element={<UploadCenterPage />} />
-        <Route path="/search" element={<SearchPage />} />
+          {/* Student Workspace Routes */}
+          <Route path="/dashboard" element={<StudentDashboardPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/resumes" element={<ResumeManagerPage />} />
+          <Route path="/health" element={<ProfileHealthPage />} />
+          <Route path="/skills" element={<SkillsPage />} />
+          <Route path="/education" element={<EducationPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/certificates" element={<CertificatesPage />} />
+          <Route path="/experience" element={<ExperiencePage />} />
+          <Route path="/career-goals" element={<CareerGoalsPage />} />
+          <Route path="/upload-center" element={<UploadCenterPage />} />
+          <Route path="/search" element={<SearchPage />} />
 
-        {/* Sprint 4: Career Intelligence Engine Routes */}
-        <Route path="/intelligence" element={<IntelligenceDashboardPage />} />
-        <Route path="/intelligence/score" element={<CareerScorePage />} />
-        <Route path="/intelligence/ats" element={<AtsAnalysisPage />} />
-        <Route path="/intelligence/skill-gap" element={<SkillGapPage />} />
-        <Route path="/intelligence/roadmap" element={<RoadmapPage />} />
-        <Route path="/intelligence/eligibility" element={<EligibilityPage />} />
-        <Route path="/intelligence/projects" element={<ProjectAnalyzerPage />} />
-        <Route path="/intelligence/recommendations" element={<RecommendationsPage />} />
-        <Route path="/intelligence/trends" element={<TrendAnalyticsPage />} />
+          {/* Sprint 4: Career Intelligence Engine Routes */}
+          <Route path="/intelligence" element={<IntelligenceDashboardPage />} />
+          <Route path="/intelligence/score" element={<CareerScorePage />} />
+          <Route path="/intelligence/ats" element={<AtsAnalysisPage />} />
+          <Route path="/intelligence/skill-gap" element={<SkillGapPage />} />
+          <Route path="/intelligence/roadmap" element={<RoadmapPage />} />
+          <Route path="/intelligence/eligibility" element={<EligibilityPage />} />
+          <Route path="/intelligence/projects" element={<ProjectAnalyzerPage />} />
+          <Route path="/intelligence/recommendations" element={<RecommendationsPage />} />
+          <Route path="/intelligence/trends" element={<TrendAnalyticsPage />} />
 
-        {/* Sprint 5: AI Augmentation Platform Routes */}
-        <Route path="/ai/copilot" element={<CareerCopilotPage />} />
-        <Route path="/ai/resume-review" element={<AiResumeReviewPage />} />
-        <Route path="/ai/learning-coach" element={<AiLearningCoachPage />} />
-        <Route path="/ai/mock-interview" element={<AiMockInterviewPage />} />
-        <Route path="/ai/project-advisor" element={<AiProjectAdvisorPage />} />
-        <Route path="/ai/chat" element={<AiCareerChatPage />} />
+          {/* Sprint 5: AI Augmentation Platform Routes */}
+          <Route path="/ai/copilot" element={<CareerCopilotPage />} />
+          <Route path="/ai/resume-review" element={<AiResumeReviewPage />} />
+          <Route path="/ai/learning-coach" element={<AiLearningCoachPage />} />
+          <Route path="/ai/mock-interview" element={<AiMockInterviewPage />} />
+          <Route path="/ai/project-advisor" element={<AiProjectAdvisorPage />} />
+          <Route path="/ai/chat" element={<AiCareerChatPage />} />
 
-        {/* Sprint 6.1: Event-Driven Analytics Platform Route */}
-        <Route path="/analytics-admin" element={<AnalyticsAdminPage />} />
+          {/* Sprint 6.1: Event-Driven Analytics Platform Route */}
+          <Route path="/analytics-admin" element={<AnalyticsAdminPage />} />
 
-        {/* Sprint 6.2: Analytics Warehouse & Data Engineering Route */}
-        <Route path="/warehouse-dashboard" element={<WarehouseDashboardPage />} />
+          {/* Sprint 6.2: Analytics Warehouse & Data Engineering Route */}
+          <Route path="/warehouse-dashboard" element={<WarehouseDashboardPage />} />
 
-        {/* Sprint 6.3: Observability & Production Monitoring Route */}
-        <Route path="/system-monitor" element={<SystemMonitorPage />} />
+          {/* Sprint 6.3: Observability & Production Monitoring Route */}
+          <Route path="/system-monitor" element={<SystemMonitorPage />} />
 
-        <Route path="/settings" element={<Navigate to="/profile" replace />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/settings" element={<Navigate to="/profile" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

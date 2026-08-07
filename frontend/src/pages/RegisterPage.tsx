@@ -91,36 +91,36 @@ export default function RegisterPage(): React.ReactElement {
   const strengthLabels = ['', 'Very Weak', 'Weak', 'Fair', 'Strong', 'Very Strong'];
 
   return (
-    <div className="relative flex min-h-screen bg-[#020817] font-sans overflow-hidden">
+    <div className="relative flex min-h-screen bg-surface-base text-content-primary font-sans overflow-hidden">
       {/* Background glows */}
-      <div className="absolute top-[-10%] right-[30%] h-[600px] w-[600px] rounded-full bg-purple-900/15 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[20%] h-[400px] w-[400px] rounded-full bg-indigo-900/15 blur-[100px] pointer-events-none" />
+      <div className="absolute top-[-10%] right-[30%] h-[600px] w-[600px] rounded-full bg-emerald-900/15 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[20%] h-[400px] w-[400px] rounded-full bg-teal-900/15 blur-[100px] pointer-events-none" />
 
       {/* Left Brand Panel */}
-      <div className="hidden lg:flex w-[45%] relative flex-col justify-between p-12 border-r border-slate-800/60 bg-slate-900/20 backdrop-blur-sm overflow-hidden">
+      <div className="hidden lg:flex w-[45%] relative flex-col justify-between p-12 border-r border-surface-border bg-surface-card overflow-hidden">
         <div className="absolute inset-0 dot-pattern opacity-30" />
-        <div className="absolute top-[-15%] right-[-15%] h-80 w-80 rounded-full border border-purple-500/15 animate-spin-slow" />
-        <div className="absolute top-[-10%] right-[-10%] h-60 w-60 rounded-full border border-indigo-500/10 animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '15s' }} />
+        <div className="absolute top-[-15%] right-[-15%] h-80 w-80 rounded-full border border-emerald-500/15 animate-spin-slow" />
+        <div className="absolute top-[-10%] right-[-10%] h-60 w-60 rounded-full border border-teal-500/10 animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '15s' }} />
 
         <div className="relative">
           <Link to="/" className="flex items-center gap-2.5 mb-16">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-              <Sparkles className="h-5 w-5 text-white" />
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/25">
+              <Sparkles className="h-5 w-5" />
             </div>
-            <span className="text-lg font-bold text-white">CareerOS AI</span>
+            <span className="text-lg font-bold text-content-primary">CareerOS AI</span>
           </Link>
 
           <div className="space-y-5">
-            <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/8 px-3 py-1 text-xs text-purple-300 font-semibold uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400 font-semibold uppercase tracking-wider">
               Start your journey
             </div>
-            <h2 className="text-4xl font-black text-white leading-tight">
+            <h2 className="text-4xl font-black text-content-primary leading-tight">
               Build your career<br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-violet-400">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300">
                 with intelligence
               </span>
             </h2>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
+            <p className="text-content-secondary text-sm leading-relaxed max-w-sm">
               Join thousands of students who use CareerOS AI to get their career score, close skill gaps, and land dream roles at top companies.
             </p>
           </div>
@@ -128,31 +128,31 @@ export default function RegisterPage(): React.ReactElement {
           {/* Visual feature cards */}
           <div className="mt-12 space-y-4">
             {[
-              { icon: Award, title: 'Career Score in minutes', desc: 'Instant 0–1000 score computed from your profile', color: 'indigo' },
-              { icon: Brain, title: '6 AI Assistants included', desc: 'Copilot, Chat, Resume Review, Mock Interview & more', color: 'purple' },
+              { icon: Award, title: 'Career Score in minutes', desc: 'Instant 0–1000 score computed from your profile', color: 'emerald' },
+              { icon: Brain, title: '6 AI Assistants included', desc: 'Copilot, Chat, Resume Review, Mock Interview & more', color: 'teal' },
               { icon: Shield, title: 'Enterprise-grade security', desc: 'JWT auth, HSTS, CSP, rate limiting built-in', color: 'emerald' },
             ].map(({ icon: Icon, title, desc, color }) => (
-              <div key={title} className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-900/40 border border-slate-800/60">
-                <div className={`h-9 w-9 rounded-lg bg-${color}-500/10 flex items-center justify-center text-${color}-400 shrink-0`}>
+              <div key={title} className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-hover/50 border border-surface-border">
+                <div className={`h-9 w-9 rounded-lg bg-${color}-500/10 flex items-center justify-center text-${color}-500 shrink-0`}>
                   <Icon className="h-4.5 w-4.5" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{title}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
+                  <p className="text-sm font-semibold text-content-primary">{title}</p>
+                  <p className="text-xs text-content-secondary mt-0.5">{desc}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <p className="relative text-xs text-slate-600">© 2026 CareerOS AI · All rights reserved</p>
+        <p className="relative text-xs text-content-muted">© 2026 CareerOS AI · All rights reserved</p>
       </div>
 
       {/* Right Form Panel */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 relative overflow-y-auto">
         <Link
           to="/"
-          className="absolute top-8 left-8 flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+          className="absolute top-8 left-8 flex items-center gap-2 text-sm text-content-secondary hover:text-content-primary transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           <span className="hidden sm:block">Back to Home</span>
@@ -161,15 +161,15 @@ export default function RegisterPage(): React.ReactElement {
         <div className="w-full max-w-[400px]">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-white" />
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white">
+              <Sparkles className="h-4 w-4" />
             </div>
-            <span className="font-bold text-white">CareerOS AI</span>
+            <span className="font-bold text-content-primary">CareerOS AI</span>
           </div>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-black text-white mb-2">Create your account</h1>
-            <p className="text-sm text-slate-400">Start building your AI-powered career profile</p>
+            <h1 className="text-2xl font-black text-content-primary mb-2">Create your account</h1>
+            <p className="text-sm text-content-secondary">Start building your AI-powered career profile</p>
           </div>
 
           {/* Error alert */}
@@ -183,11 +183,11 @@ export default function RegisterPage(): React.ReactElement {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Full Name */}
             <div>
-              <label htmlFor="fullName" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              <label htmlFor="fullName" className="block text-xs font-semibold uppercase tracking-wider text-content-secondary mb-2">
                 Full Name
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-content-muted">
                   <UserIcon className="h-4 w-4" />
                 </span>
                 <input
@@ -196,7 +196,7 @@ export default function RegisterPage(): React.ReactElement {
                   placeholder="Your full name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-900/60 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:border-indigo-500/60 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-10 pr-4 text-sm text-content-primary placeholder-content-muted focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
                   required
                   autoComplete="name"
                 />
@@ -205,11 +205,11 @@ export default function RegisterPage(): React.ReactElement {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-content-secondary mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-content-muted">
                   <Mail className="h-4 w-4" />
                 </span>
                 <input
@@ -218,7 +218,7 @@ export default function RegisterPage(): React.ReactElement {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-900/60 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:border-indigo-500/60 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-10 pr-4 text-sm text-content-primary placeholder-content-muted focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
                   required
                   autoComplete="email"
                 />
@@ -227,11 +227,11 @@ export default function RegisterPage(): React.ReactElement {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-content-secondary mb-2">
                 Password
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-content-muted">
                   <Lock className="h-4 w-4" />
                 </span>
                 <input
@@ -240,13 +240,13 @@ export default function RegisterPage(): React.ReactElement {
                   placeholder="Create a strong password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-900/60 py-3 pl-10 pr-11 text-sm text-white placeholder-slate-600 focus:border-indigo-500/60 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-10 pr-11 text-sm text-content-primary placeholder-content-muted focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 hover:text-slate-300 transition-colors"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-content-muted hover:text-content-primary transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -259,12 +259,12 @@ export default function RegisterPage(): React.ReactElement {
                     {Array.from({ length: 5 }).map((_, i) => (
                       <div
                         key={i}
-                        className={`h-1 flex-1 rounded-full transition-all duration-300 ${i < passwordStrength ? strengthColors[passwordStrength] : 'bg-slate-800'}`}
+                        className={`h-1 flex-1 rounded-full transition-all duration-300 ${i < passwordStrength ? strengthColors[passwordStrength] : 'bg-surface-hover'}`}
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-slate-500">
-                    Strength: <span className="font-semibold text-slate-300">{strengthLabels[passwordStrength]}</span>
+                  <p className="text-xs text-content-muted">
+                    Strength: <span className="font-semibold text-content-primary">{strengthLabels[passwordStrength]}</span>
                   </p>
                   <div className="grid grid-cols-2 gap-1">
                     {[
@@ -274,7 +274,7 @@ export default function RegisterPage(): React.ReactElement {
                       { met: hasDigit, label: 'Number' },
                       { met: hasSpecial, label: 'Special char' },
                     ].map(({ met, label }) => (
-                      <div key={label} className={`flex items-center gap-1.5 text-[10px] ${met ? 'text-emerald-400' : 'text-slate-600'}`}>
+                      <div key={label} className={`flex items-center gap-1.5 text-[10px] ${met ? 'text-emerald-500' : 'text-content-muted'}`}>
                         {met ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
                         {label}
                       </div>
@@ -286,7 +286,7 @@ export default function RegisterPage(): React.ReactElement {
 
             {/* Role selector */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-content-secondary mb-2">
                 Account Type
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -300,12 +300,12 @@ export default function RegisterPage(): React.ReactElement {
                     onClick={() => setRole(r.value)}
                     className={`p-3 rounded-xl border text-left transition-all ${
                       role === r.value
-                        ? 'border-indigo-500/50 bg-indigo-500/10 text-white'
-                        : 'border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700'
+                        ? 'border-emerald-500/50 bg-emerald-500/10 text-content-primary'
+                        : 'border-surface-border bg-surface-card text-content-secondary hover:border-surface-hover'
                     }`}
                   >
                     <p className="text-sm font-semibold">{r.label}</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5">{r.desc}</p>
+                    <p className="text-[10px] text-content-muted mt-0.5">{r.desc}</p>
                   </button>
                 ))}
               </div>
@@ -315,7 +315,7 @@ export default function RegisterPage(): React.ReactElement {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 hover:from-indigo-500 hover:to-purple-500 hover:shadow-indigo-500/30 hover:scale-[1.01] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mt-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 hover:shadow-emerald-500/30 hover:scale-[1.01] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -328,14 +328,14 @@ export default function RegisterPage(): React.ReactElement {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-400">
+          <p className="mt-6 text-center text-sm text-content-secondary">
             Already have an account?{' '}
-            <Link to="/login" className="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+            <Link to="/login" className="font-semibold text-emerald-500 hover:text-emerald-400 transition-colors">
               Sign in
             </Link>
           </p>
 
-          <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-slate-600">
+          <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-content-muted">
             <Lock className="h-3 w-3" />
             Your data is encrypted and secure
           </div>

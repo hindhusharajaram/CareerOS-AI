@@ -10,10 +10,10 @@ import Badge from '../components/ui/Badge';
 import EmptyState from '../components/ui/EmptyState';
 import { SkeletonCard } from '../components/ui/Skeleton';
 
-const proficiencyColors: Record<string, 'default' | 'success' | 'warning' | 'indigo' | 'purple'> = {
+const proficiencyColors: Record<string, 'default' | 'success' | 'warning' | 'emerald' | 'teal'> = {
   BEGINNER: 'default',
-  INTERMEDIATE: 'indigo',
-  ADVANCED: 'purple',
+  INTERMEDIATE: 'emerald',
+  ADVANCED: 'emerald',
   EXPERT: 'success',
 };
 
@@ -90,17 +90,17 @@ export default function SkillsPage(): React.ReactElement {
         {/* Add Skill Form */}
         <GlassCard padding="lg">
           <div className="flex items-center gap-2 mb-6">
-            <div className="h-8 w-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
               <Plus className="h-4.5 w-4.5" />
             </div>
-            <h3 className="text-lg font-bold text-white">Add New Skill</h3>
+            <h3 className="text-lg font-bold text-content-primary">Add New Skill</h3>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <div className="lg:col-span-2 space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Skill Name</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-content-secondary">Skill Name</label>
               <div className="relative">
-                <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
+                <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-content-muted" />
                 <input
                   type="text"
                   placeholder="e.g. React, Python, Spring Boot..."
@@ -109,19 +109,19 @@ export default function SkillsPage(): React.ReactElement {
                     setCustomSkillName(e.target.value);
                     setSearchQuery(e.target.value);
                   }}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:border-indigo-500 focus:bg-slate-900 focus:ring-1 focus:ring-indigo-500 transition-all"
+                  className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-10 pr-4 text-sm text-content-primary placeholder-content-muted focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Proficiency Level</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-content-secondary">Proficiency Level</label>
               <div className="relative">
-                <Zap className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500 pointer-events-none" />
+                <Zap className="absolute left-3.5 top-3.5 h-4 w-4 text-content-muted pointer-events-none" />
                 <select
                   value={proficiency}
                   onChange={(e) => setProficiency(e.target.value)}
-                  className="w-full rounded-xl border border-slate-800 bg-slate-900/50 py-3 pl-10 pr-10 text-sm text-white focus:border-indigo-500 focus:bg-slate-900 focus:ring-1 focus:ring-indigo-500 transition-all appearance-none cursor-pointer"
+                  className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-10 pr-10 text-sm text-content-primary focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all appearance-none cursor-pointer"
                 >
                   <option value="BEGINNER">Beginner</option>
                   <option value="INTERMEDIATE">Intermediate</option>
@@ -129,7 +129,7 @@ export default function SkillsPage(): React.ReactElement {
                   <option value="EXPERT">Expert</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                  <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  <svg className="w-4 h-4 text-content-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
               </div>
             </div>
@@ -137,8 +137,8 @@ export default function SkillsPage(): React.ReactElement {
 
           {/* Smart Suggestions */}
           {searchQuery && filteredAvailableSkills.length > 0 && (
-            <div className="mt-4 p-4 rounded-xl border border-indigo-500/20 bg-indigo-500/5">
-              <p className="text-xs font-semibold text-indigo-300 mb-3 flex items-center gap-1.5">
+            <div className="mt-4 p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
+              <p className="text-xs font-semibold text-emerald-400 mb-3 flex items-center gap-1.5">
                 <Zap className="h-3.5 w-3.5" /> Suggested Matches
               </p>
               <div className="flex flex-wrap gap-2">
@@ -146,9 +146,9 @@ export default function SkillsPage(): React.ReactElement {
                   <button
                     key={sk.id}
                     onClick={() => handleAddSkill(sk.skillName, sk.category)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700/60 bg-slate-800/60 text-xs font-medium text-slate-300 hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-white transition-all shadow-sm group"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-surface-border bg-surface-card text-xs font-medium text-content-secondary hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:text-content-primary transition-all shadow-sm group"
                   >
-                    <Plus className="h-3 w-3 text-indigo-400 group-hover:text-indigo-300" />
+                    <Plus className="h-3 w-3 text-emerald-500 group-hover:text-emerald-400" />
                     {sk.skillName} <span className="opacity-50 font-normal">({sk.category})</span>
                   </button>
                 ))}
@@ -175,9 +175,9 @@ export default function SkillsPage(): React.ReactElement {
               <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
                 <Code className="h-4.5 w-4.5" />
               </div>
-              <h3 className="text-lg font-bold text-white">Your Skill Matrix</h3>
+              <h3 className="text-lg font-bold text-content-primary">Your Skill Matrix</h3>
             </div>
-            <Badge variant="indigo">{studentSkills.length} Verified Skills</Badge>
+            <Badge variant="emerald">{studentSkills.length} Verified Skills</Badge>
           </div>
 
           {isLoading ? (

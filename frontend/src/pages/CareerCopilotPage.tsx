@@ -8,9 +8,9 @@ import Badge from '../components/ui/Badge';
 import { SkeletonCard } from '../components/ui/Skeleton';
 
 const topics = [
-  { id: 'CAREER_SCORE', label: 'Career Score', subtitle: '0–1000 Rating', icon: Award, color: 'from-indigo-500 to-purple-600' },
-  { id: 'ATS_SCORE', label: 'ATS Resume', subtitle: 'Optimization', icon: FileText, color: 'from-purple-500 to-violet-600' },
-  { id: 'SKILL_GAP', label: 'Skill Gap', subtitle: 'Role Alignment', icon: Brain, color: 'from-violet-500 to-indigo-600' },
+  { id: 'CAREER_SCORE', label: 'Career Score', subtitle: '0–1000 Rating', icon: Award, color: 'from-emerald-500 to-teal-600' },
+  { id: 'ATS_SCORE', label: 'ATS Resume', subtitle: 'Optimization', icon: FileText, color: 'from-teal-500 to-emerald-600' },
+  { id: 'SKILL_GAP', label: 'Skill Gap', subtitle: 'Role Alignment', icon: Brain, color: 'from-emerald-600 to-teal-500' },
   { id: 'ELIGIBILITY', label: 'Eligibility', subtitle: 'Placement Fit', icon: ShieldCheck, color: 'from-emerald-500 to-teal-600' },
   { id: 'ROADMAP', label: '90-Day Plan', subtitle: 'Execution', icon: Compass, color: 'from-amber-500 to-orange-600' },
 ];
@@ -52,8 +52,8 @@ export default function CareerCopilotPage(): React.ReactElement {
                 onClick={() => setTopic(t.id)}
                 className={`group relative overflow-hidden p-4 rounded-2xl border text-sm font-bold transition-all duration-200 flex flex-col items-center gap-2.5 ${
                   isActive
-                    ? 'border-indigo-500/30 text-white shadow-lg shadow-indigo-500/10'
-                    : 'bg-slate-900/50 text-slate-400 border-slate-800/60 hover:text-white hover:border-slate-700'
+                    ? 'border-emerald-500/30 text-content-primary shadow-lg shadow-emerald-500/10'
+                    : 'bg-surface-card text-content-secondary border-surface-border hover:text-content-primary hover:border-surface-hover'
                 }`}
               >
                 {isActive && (
@@ -61,14 +61,14 @@ export default function CareerCopilotPage(): React.ReactElement {
                 )}
                 <div className={`relative h-11 w-11 rounded-xl flex items-center justify-center transition-all duration-200 ${
                   isActive
-                    ? `bg-gradient-to-br ${t.color} shadow-md`
-                    : 'bg-slate-800/60 group-hover:bg-slate-700/60'
+                    ? `bg-gradient-to-br ${t.color} shadow-md text-white`
+                    : 'bg-surface-hover group-hover:bg-surface-hover/80 text-content-secondary'
                 }`}>
-                  <Icon className="h-5 w-5 text-white" />
+                  <Icon className="h-5 w-5" />
                 </div>
                 <div className="relative text-center">
-                  <p className={`text-xs font-bold ${isActive ? 'text-white' : ''}`}>{t.label}</p>
-                  <p className={`text-[10px] mt-0.5 ${isActive ? 'text-slate-300' : 'text-slate-600'}`}>{t.subtitle}</p>
+                  <p className={`text-xs font-bold ${isActive ? 'text-content-primary' : ''}`}>{t.label}</p>
+                  <p className={`text-[10px] mt-0.5 ${isActive ? 'text-content-secondary' : 'text-content-muted'}`}>{t.subtitle}</p>
                 </div>
               </button>
             );
@@ -86,18 +86,18 @@ export default function CareerCopilotPage(): React.ReactElement {
         ) : explanation ? (
           <div className="space-y-5">
             {/* Explanation Banner */}
-            <div className="rounded-3xl border border-indigo-500/20 bg-gradient-to-r from-slate-900 via-indigo-950/20 to-slate-900 p-8 relative overflow-hidden">
-              <div className="absolute top-0 right-0 h-32 w-32 bg-indigo-500/10 blur-[50px] rounded-full" />
+            <div className="rounded-3xl border border-emerald-500/20 bg-gradient-to-r from-surface-card via-emerald-950/20 to-surface-card p-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 h-32 w-32 bg-emerald-500/10 blur-[50px] rounded-full" />
               <div className="relative space-y-3">
                 <div className="flex items-center gap-2">
-                  <Badge variant="indigo" size="md" dot>
+                  <Badge variant="emerald" size="md" dot>
                     <Sparkles className="h-3 w-3 mr-1" />
                     Explainable AI Output
                   </Badge>
                   <Badge variant="default" size="sm">{explanation.topic}</Badge>
                 </div>
-                <p className="text-base font-bold text-slate-100 leading-relaxed">{explanation.explanationText}</p>
-                <p className="text-xs text-slate-500 italic font-mono">{explanation.groundedContextSummary}</p>
+                <p className="text-base font-bold text-content-primary leading-relaxed">{explanation.explanationText}</p>
+                <p className="text-xs text-content-muted italic font-mono">{explanation.groundedContextSummary}</p>
               </div>
             </div>
 
@@ -107,7 +107,7 @@ export default function CareerCopilotPage(): React.ReactElement {
               <GlassCard padding="lg">
                 <div className="flex items-center gap-2 mb-4">
                   <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                  <h4 className="text-sm font-bold text-white">Key Intelligence Takeaways</h4>
+                  <h4 className="text-sm font-bold text-content-primary">Key Intelligence Takeaways</h4>
                 </div>
                 <div className="space-y-2.5">
                   {explanation.keyTakeaways.map((item, idx) => (
@@ -115,7 +115,7 @@ export default function CareerCopilotPage(): React.ReactElement {
                       <div className="h-5 w-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
                         <CheckCircle2 className="h-3 w-3 text-emerald-400" />
                       </div>
-                      <span className="text-sm text-emerald-300 leading-relaxed">{item}</span>
+                      <span className="text-sm text-emerald-400 dark:text-emerald-300 leading-relaxed">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -124,16 +124,16 @@ export default function CareerCopilotPage(): React.ReactElement {
               {/* Actions */}
               <GlassCard padding="lg">
                 <div className="flex items-center gap-2 mb-4">
-                  <Zap className="h-5 w-5 text-indigo-400" />
-                  <h4 className="text-sm font-bold text-white">Immediate High-Impact Actions</h4>
+                  <Zap className="h-5 w-5 text-emerald-400" />
+                  <h4 className="text-sm font-bold text-content-primary">Immediate High-Impact Actions</h4>
                 </div>
                 <div className="space-y-2.5">
                   {explanation.immediateActionItems.map((act, idx) => (
-                    <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-indigo-500/8 border border-indigo-500/15">
-                      <div className="h-5 w-5 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                        <ArrowRight className="h-3 w-3 text-indigo-400" />
+                    <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-emerald-500/8 border border-emerald-500/15">
+                      <div className="h-5 w-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                        <ArrowRight className="h-3 w-3 text-emerald-400" />
                       </div>
-                      <span className="text-sm text-indigo-300 leading-relaxed">{act}</span>
+                      <span className="text-sm text-emerald-400 dark:text-emerald-300 leading-relaxed">{act}</span>
                     </div>
                   ))}
                 </div>

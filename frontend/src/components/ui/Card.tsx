@@ -79,15 +79,15 @@ const colorMap = {
   },
 };
 
-export function StatCard({ title, value, subtitle, icon, trend, color = 'indigo', onClick }: StatCardProps) {
-  const colors = colorMap[color];
+export function StatCard({ title, value, subtitle, icon, trend, color = 'emerald', onClick }: StatCardProps) {
+  const colors = colorMap[color] || colorMap.emerald;
   return (
     <div
       onClick={onClick}
       className={`
-        group relative rounded-2xl border border-slate-800/80 bg-slate-900/50
+        group relative rounded-2xl border border-borderMain bg-card
         p-6 backdrop-blur-md transition-all duration-300
-        hover:bg-slate-900/80 hover:shadow-lg hover:shadow-black/20
+        hover:bg-cardHover hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20
         ${colors.border}
         ${onClick ? 'cursor-pointer' : ''}
       `}
@@ -99,20 +99,20 @@ export function StatCard({ title, value, subtitle, icon, trend, color = 'indigo'
           </div>
         )}
         <div className={`text-right ${icon ? '' : 'w-full text-left'}`}>
-          <p className={`text-3xl font-black tracking-tight ${colors.value}`}>{value}</p>
+          <p className="text-3xl font-black tracking-tight text-textPrimary">{value}</p>
           {trend !== undefined && (
-            <span className={`text-xs font-semibold ${trend >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            <span className={`text-xs font-semibold ${trend >= 0 ? 'text-emerald-500 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
               {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}%
             </span>
           )}
         </div>
       </div>
       <div className="mt-4">
-        <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
-        {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+        <h3 className="text-sm font-semibold text-textPrimary">{title}</h3>
+        {subtitle && <p className="text-xs text-textSecondary mt-0.5">{subtitle}</p>}
       </div>
       {/* Bottom accent bar */}
-      <div className={`absolute bottom-0 left-0 h-0.5 w-0 rounded-b-2xl bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full`} />
+      <div className={`absolute bottom-0 left-0 h-0.5 w-0 rounded-b-2xl bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-300 group-hover:w-full`} />
     </div>
   );
 }
@@ -127,29 +127,29 @@ interface FeatureCardProps {
   className?: string;
 }
 
-export function FeatureCard({ icon, title, description, color = 'indigo', badge, className = '' }: FeatureCardProps) {
+export function FeatureCard({ icon, title, description, color = 'emerald', badge, className = '' }: FeatureCardProps) {
   const colorClasses = {
-    indigo: 'bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white border-indigo-500/10 group-hover:border-indigo-500',
-    purple: 'bg-purple-500/10 text-purple-400 group-hover:bg-purple-500 group-hover:text-white border-purple-500/10 group-hover:border-purple-500',
-    emerald: 'bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white border-emerald-500/10 group-hover:border-emerald-500',
-    amber: 'bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-white border-amber-500/10 group-hover:border-amber-500',
-    sky: 'bg-sky-500/10 text-sky-400 group-hover:bg-sky-500 group-hover:text-white border-sky-500/10 group-hover:border-sky-500',
-    rose: 'bg-rose-500/10 text-rose-400 group-hover:bg-rose-500 group-hover:text-white border-rose-500/10 group-hover:border-rose-500',
-    violet: 'bg-violet-500/10 text-violet-400 group-hover:bg-violet-500 group-hover:text-white border-violet-500/10 group-hover:border-violet-500',
+    indigo: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white border-emerald-500/10 group-hover:border-emerald-500',
+    purple: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white border-emerald-500/10 group-hover:border-emerald-500',
+    emerald: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white border-emerald-500/10 group-hover:border-emerald-500',
+    amber: 'bg-amber-500/10 text-amber-500 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white border-amber-500/10 group-hover:border-amber-500',
+    sky: 'bg-sky-500/10 text-sky-500 dark:text-sky-400 group-hover:bg-sky-500 group-hover:text-white border-sky-500/10 group-hover:border-sky-500',
+    rose: 'bg-rose-500/10 text-rose-500 dark:text-rose-400 group-hover:bg-rose-500 group-hover:text-white border-rose-500/10 group-hover:border-rose-500',
+    violet: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white border-emerald-500/10 group-hover:border-emerald-500',
   };
 
   return (
-    <div className={`group relative rounded-2xl border border-slate-800 bg-slate-900/50 p-7 text-left backdrop-blur-md hover:border-slate-700/60 hover:bg-slate-900/80 transition-all duration-300 card-interactive ${className}`}>
+    <div className={`group relative rounded-2xl border border-borderMain bg-card p-7 text-left backdrop-blur-md hover:bg-cardHover transition-all duration-300 card-interactive ${className}`}>
       {badge && (
-        <div className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold uppercase tracking-wider">
+        <div className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
           {badge}
         </div>
       )}
-      <div className={`flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-300 mb-5 ${colorClasses[color as keyof typeof colorClasses] || colorClasses.indigo}`}>
+      <div className={`flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-300 mb-5 ${colorClasses[color as keyof typeof colorClasses] || colorClasses.emerald}`}>
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-indigo-100 transition-colors">{title}</h3>
-      <p className="text-sm text-slate-400 leading-relaxed">{description}</p>
+      <h3 className="text-lg font-bold text-textPrimary mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{title}</h3>
+      <p className="text-sm text-textSecondary leading-relaxed">{description}</p>
     </div>
   );
 }
