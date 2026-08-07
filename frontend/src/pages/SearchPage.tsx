@@ -56,15 +56,15 @@ export default function SearchPage(): React.ReactElement {
 
         {/* Search Bar */}
         <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
           <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-indigo-400" />
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-emerald-500" />
             <input
               type="text"
               placeholder="Search keywords (e.g. React, Python, OpenAI, Stanford, AWS)..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full rounded-3xl border border-slate-700/50 bg-slate-900/80 py-5 pl-16 pr-32 text-base text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none backdrop-blur-xl shadow-2xl transition-all"
+              className="w-full rounded-3xl border border-surface-border bg-surface-card py-5 pl-16 pr-32 text-base text-content-primary placeholder-content-muted focus:border-emerald-500 focus:outline-none backdrop-blur-xl shadow-2xl transition-all"
             />
             
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -72,7 +72,7 @@ export default function SearchPage(): React.ReactElement {
                 <button
                   type="button"
                   onClick={clearSearch}
-                  className="p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-colors"
+                  className="p-2 text-content-muted hover:text-content-primary rounded-full hover:bg-surface-hover transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -80,7 +80,7 @@ export default function SearchPage(): React.ReactElement {
               <button
                 type="submit"
                 disabled={isSearching || !query.trim()}
-                className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-bold text-white hover:from-indigo-500 hover:to-purple-500 transition-all disabled:opacity-50 shadow-lg shadow-indigo-500/20"
+                className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:from-emerald-500 hover:to-teal-500 transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/20"
               >
                 {isSearching ? 'Searching...' : 'Search'}
               </button>
@@ -108,11 +108,11 @@ export default function SearchPage(): React.ReactElement {
 
         {/* Initial Empty State */}
         {!isSearching && !hasSearched && (
-          <div className="pt-12 text-center text-slate-500 flex flex-col items-center justify-center">
-            <div className="h-20 w-20 rounded-full bg-slate-900/50 flex items-center justify-center mb-4 border border-slate-800">
-              <Search className="h-8 w-8 text-indigo-400 opacity-50" />
+          <div className="pt-12 text-center text-content-muted flex flex-col items-center justify-center">
+            <div className="h-20 w-20 rounded-full bg-surface-card flex items-center justify-center mb-4 border border-surface-border">
+              <Search className="h-8 w-8 text-emerald-500 opacity-50" />
             </div>
-            <p className="text-base font-medium text-slate-400">Enter a keyword to search your profile</p>
+            <p className="text-base font-medium text-content-secondary">Enter a keyword to search your profile</p>
             <p className="text-sm mt-2 max-w-sm">Find specific technologies you've used, companies you've worked at, or projects you've built.</p>
           </div>
         )}
@@ -121,8 +121,8 @@ export default function SearchPage(): React.ReactElement {
         {!isSearching && results && hasResults && (
           <div className="space-y-6 pt-4 animate-fade-up">
             <div className="flex items-center justify-between mb-2 px-2">
-              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Search Results</h3>
-              <Badge variant="indigo">
+              <h3 className="text-sm font-bold text-content-muted uppercase tracking-wider">Search Results</h3>
+              <Badge variant="emerald">
                 {results.matchingSkills.length + results.matchingProjects.length + results.matchingExperience.length + results.matchingCertificates.length + results.matchingEducation.length} Matches
               </Badge>
             </div>
@@ -131,17 +131,17 @@ export default function SearchPage(): React.ReactElement {
             {results.matchingSkills.length > 0 && (
               <GlassCard padding="lg">
                 <div className="flex items-center gap-2 mb-5">
-                  <div className="h-8 w-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                  <div className="h-8 w-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-500">
                     <Cpu className="h-4.5 w-4.5" />
                   </div>
-                  <h3 className="text-lg font-bold text-white">Matching Skills</h3>
-                  <Badge variant="indigo" className="ml-auto">{results.matchingSkills.length}</Badge>
+                  <h3 className="text-lg font-bold text-content-primary">Matching Skills</h3>
+                  <Badge variant="emerald" className="ml-auto">{results.matchingSkills.length}</Badge>
                 </div>
                 <div className="flex flex-wrap gap-2.5">
                   {results.matchingSkills.map((sk) => (
-                    <span key={sk.id} className="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-sm font-semibold flex items-center gap-2">
+                    <span key={sk.id} className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 dark:text-emerald-300 border border-emerald-500/20 text-sm font-semibold flex items-center gap-2">
                       {sk.skillName}
-                      <span className="text-[10px] uppercase font-mono bg-indigo-500/20 px-1.5 py-0.5 rounded text-indigo-400">{sk.proficiency}</span>
+                      <span className="text-[10px] uppercase font-mono bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-500">{sk.proficiency}</span>
                     </span>
                   ))}
                 </div>
@@ -152,20 +152,20 @@ export default function SearchPage(): React.ReactElement {
             {results.matchingProjects.length > 0 && (
               <GlassCard padding="lg">
                 <div className="flex items-center gap-2 mb-5">
-                  <div className="h-8 w-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                  <div className="h-8 w-8 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-400">
                     <FolderGit2 className="h-4.5 w-4.5" />
                   </div>
-                  <h3 className="text-lg font-bold text-white">Matching Projects</h3>
-                  <Badge variant="purple" className="ml-auto">{results.matchingProjects.length}</Badge>
+                  <h3 className="text-lg font-bold text-content-primary">Matching Projects</h3>
+                  <Badge variant="emerald" className="ml-auto">{results.matchingProjects.length}</Badge>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {results.matchingProjects.map((p) => (
-                    <div key={p.id} className="group p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:bg-slate-800/60 hover:border-purple-500/30 transition-all cursor-pointer flex justify-between items-start">
+                    <div key={p.id} className="group p-4 rounded-2xl bg-surface-card border border-surface-border hover:bg-surface-hover hover:border-teal-500/30 transition-all cursor-pointer flex justify-between items-start">
                       <div>
-                        <p className="text-base font-bold text-white">{p.title}</p>
-                        <p className="text-sm text-slate-400 line-clamp-2 mt-1.5 leading-relaxed">{p.description}</p>
+                        <p className="text-base font-bold text-content-primary">{p.title}</p>
+                        <p className="text-sm text-content-secondary line-clamp-2 mt-1.5 leading-relaxed">{p.description}</p>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-slate-600 group-hover:text-purple-400 transition-colors shrink-0 mt-1" />
+                      <ChevronRight className="h-5 w-5 text-content-muted group-hover:text-teal-400 transition-colors shrink-0 mt-1" />
                     </div>
                   ))}
                 </div>

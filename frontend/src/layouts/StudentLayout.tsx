@@ -28,6 +28,7 @@ import {
   Bell,
   Zap,
 } from 'lucide-react';
+import { ThemeToggle } from '../components/ui/ThemeToggle';
 
 interface StudentLayoutProps {
   children: React.ReactNode;
@@ -120,7 +121,7 @@ function NavGroupSection({
       <button
         onClick={() => setOpen(!open)}
         className={`w-full flex items-center justify-between px-3 py-1.5 mb-1 rounded-lg transition-colors ${
-          isAnyActive ? 'text-indigo-400' : 'text-slate-500 hover:text-slate-300'
+          isAnyActive ? 'text-emerald-500 font-semibold' : 'text-textSecondary hover:text-textPrimary'
         }`}
       >
         <span className="text-[10px] font-bold uppercase tracking-widest">{group.label}</span>
@@ -140,14 +141,14 @@ function NavGroupSection({
                 to={item.path}
                 className={`group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150 ${
                   isActive
-                    ? 'bg-gradient-to-r from-indigo-600/80 to-purple-600/80 text-white shadow-sm shadow-indigo-500/10'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                    ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-950/20'
+                    : 'text-textSecondary hover:text-textPrimary hover:bg-cardHover'
                 }`}
               >
-                <Icon className={`h-4 w-4 shrink-0 transition-colors ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                <Icon className={`h-4 w-4 shrink-0 transition-colors ${isActive ? 'text-white' : 'text-textSecondary group-hover:text-textPrimary'}`} />
                 <span className="truncate">{item.name}</span>
                 {isActive && (
-                  <span className="ml-auto h-1.5 w-1.5 rounded-full bg-indigo-300" />
+                  <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white" />
                 )}
               </Link>
             );
@@ -183,14 +184,14 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
     <div className="flex flex-col h-full">
       {/* Logo */}
       <Link to="/" className="flex items-center gap-2.5 px-4 py-4 mb-4 shrink-0">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/25">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-500 shadow-md shadow-emerald-950/20">
           <Sparkles className="h-4.5 w-4.5 text-white" />
         </div>
         <div>
-          <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-indigo-300">
+          <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-600 dark:from-white dark:to-emerald-400">
             CareerOS AI
           </span>
-          <p className="text-[9px] text-slate-500 font-mono tracking-widest uppercase -mt-0.5">
+          <p className="text-[9px] text-textSecondary font-mono tracking-widest uppercase -mt-0.5">
             v1.0 · Production
           </p>
         </div>
@@ -206,28 +207,33 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
         <div className="mt-2 space-y-0.5 px-1">
           <Link
             to="/settings"
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-all"
+            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-cardHover transition-all"
           >
-            <Settings className="h-4 w-4 text-slate-500" />
+            <Settings className="h-4 w-4 text-textSecondary" />
             Settings
           </Link>
         </div>
       </nav>
 
       {/* User Footer */}
-      <div className="shrink-0 border-t border-slate-800/80 p-3 mt-2">
-        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-800/40 transition-colors group cursor-default">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-xs shrink-0">
+      <div className="shrink-0 border-t border-borderMain p-3 mt-2 space-y-2">
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-textSecondary">Theme</span>
+          <ThemeToggle variant="dropdown" />
+        </div>
+
+        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-cardHover transition-colors group cursor-default">
+          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-500 flex items-center justify-center font-bold text-white text-xs shrink-0">
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-white truncate">{userName}</p>
-            <p className="text-[10px] text-indigo-400/80 font-mono tracking-wider">{userRole}</p>
+            <p className="text-xs font-semibold text-textPrimary truncate">{userName}</p>
+            <p className="text-[10px] text-emerald-500 font-mono tracking-wider">{userRole}</p>
           </div>
           <button
             onClick={handleLogout}
             title="Sign Out"
-            className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+            className="p-1.5 text-textSecondary hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
           >
             <LogOut className="h-3.5 w-3.5" />
           </button>
@@ -237,9 +243,9 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
   );
 
   return (
-    <div className="min-h-screen bg-[#020817] text-slate-100 font-sans flex">
+    <div className="min-h-screen bg-background text-textPrimary font-sans flex transition-colors duration-200">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-60 shrink-0 border-r border-slate-800/60 bg-slate-900/40 backdrop-blur-xl flex-col sticky top-0 h-screen z-20">
+      <aside className="hidden lg:flex w-60 shrink-0 border-r border-borderMain bg-card/70 backdrop-blur-xl flex-col sticky top-0 h-screen z-20">
         <SidebarContent />
       </aside>
 
@@ -254,19 +260,19 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
       {/* Mobile Sidebar Drawer */}
       <aside
         className={`
-          fixed top-0 left-0 h-full w-60 z-50 bg-slate-900 border-r border-slate-800/80 flex flex-col
+          fixed top-0 left-0 h-full w-60 z-50 bg-card border-r border-borderMain flex flex-col
           transition-transform duration-300 ease-out lg:hidden
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-500 flex items-center justify-center">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <span className="font-bold text-white">CareerOS AI</span>
+            <span className="font-bold text-textPrimary">CareerOS AI</span>
           </div>
-          <button onClick={() => setMobileOpen(false)} className="p-1.5 text-slate-400 hover:text-white">
+          <button onClick={() => setMobileOpen(false)} className="p-1.5 text-textSecondary hover:text-textPrimary">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -278,42 +284,45 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="h-14 border-b border-slate-800/60 bg-slate-900/30 backdrop-blur-xl px-4 lg:px-6 flex items-center justify-between sticky top-0 z-10">
+        <header className="h-14 border-b border-borderMain bg-card/60 backdrop-blur-xl px-4 lg:px-6 flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center gap-3">
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/60 transition-colors"
+              className="lg:hidden p-1.5 text-textSecondary hover:text-textPrimary rounded-lg hover:bg-cardHover transition-colors"
             >
               <Menu className="h-5 w-5" />
             </button>
 
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-slate-500 hidden sm:block">Workspace</span>
-              <span className="text-slate-600 hidden sm:block">/</span>
-              <h1 className="font-bold text-white">{currentPage}</h1>
+              <span className="text-textSecondary hidden sm:block">Workspace</span>
+              <span className="text-textSecondary/50 hidden sm:block">/</span>
+              <h1 className="font-bold text-textPrimary">{currentPage}</h1>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Theme Toggle Component */}
+            <ThemeToggle variant="buttons" />
+
             {/* AI status badge */}
-            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-indigo-500/25 bg-indigo-500/8 px-2.5 py-1 text-[11px] text-indigo-300 font-semibold">
-              <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" />
+            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               AI Engine Active
             </span>
 
             {/* Notifications */}
-            <button className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-xl transition-colors">
+            <button className="relative p-2 text-textSecondary hover:text-textPrimary hover:bg-cardHover rounded-xl transition-colors border border-borderMain">
               <Bell className="h-4 w-4" />
-              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500" />
+              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />
             </button>
 
             {/* Avatar */}
             <button
               onClick={handleLogout}
               title="Sign Out"
-              className="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-xs hover:shadow-lg hover:shadow-indigo-500/20 transition-all"
+              className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-500 flex items-center justify-center font-bold text-white text-xs hover:shadow-md hover:shadow-emerald-500/20 transition-all"
             >
               {initials}
             </button>

@@ -2,7 +2,7 @@ import tailwindcssAnimate from 'tailwindcss-animate';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: ['class'],
+  darkMode: 'class',
   content: [
     './index.html',
     './src/**/*.{ts,tsx,js,jsx}',
@@ -21,10 +21,45 @@ export default {
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       colors: {
+        surface: {
+          base: 'var(--surface-base)',
+          card: 'var(--surface-card)',
+          hover: 'var(--surface-hover)',
+          border: 'var(--surface-border)',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          800: '#18181b',
+          850: '#141417',
+          900: '#09090b',
+          950: '#020817',
+        },
+        content: {
+          primary: 'var(--content-primary)',
+          secondary: 'var(--content-secondary)',
+          muted: 'var(--content-muted)',
+        },
+        brand: {
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          200: '#a7f3d0',
+          300: '#6ee7b7',
+          400: '#34d399',
+          500: '#10b981',
+          600: '#059669',
+          700: '#047857',
+          800: '#065f46',
+          900: '#064e3b',
+          950: '#022c22',
+        },
+        background: 'var(--bg-main)',
+        card: 'var(--bg-card)',
+        cardHover: 'var(--bg-card-hover)',
+        borderMain: 'var(--border-color)',
+        textPrimary: 'var(--text-primary)',
+        textSecondary: 'var(--text-secondary)',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
@@ -45,41 +80,18 @@ export default {
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
+          50: '#ecfdf5',
+          500: '#10b981',
+          600: '#059669',
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))',
         },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-        /* CareerOS Design Tokens */
-        brand: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
-        },
         violet: {
           400: '#a78bfa',
           500: '#8b5cf6',
           600: '#7c3aed',
-        },
-        surface: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          800: '#1e293b',
-          850: '#172033',
-          900: '#0f172a',
-          950: '#020817',
         },
       },
       borderRadius: {

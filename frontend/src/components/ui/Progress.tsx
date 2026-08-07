@@ -42,7 +42,7 @@ export function ProgressBar({
   max = 100,
   label,
   sublabel,
-  color = 'indigo',
+  color = 'emerald',
   size = 'md',
   showValue = true,
   animated = true,
@@ -105,7 +105,7 @@ export function ProgressRing({
   max = 100,
   size = 120,
   strokeWidth = 8,
-  color = 'indigo',
+  color = 'emerald',
   children,
   className = '',
 }: ProgressRingProps) {

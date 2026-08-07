@@ -109,7 +109,6 @@ export default function AtsAnalysisPage(): React.ReactElement {
       setUploadProgress(100);
       setDetailedReview(result);
 
-      // Dynamically update primary ATS Score Data
       if (result) {
         const sectionMap: Record<string, boolean> = {};
         if (result.heatmap && Array.isArray(result.heatmap)) {
@@ -150,9 +149,9 @@ export default function AtsAnalysisPage(): React.ReactElement {
   };
 
   const getScoreGradient = (score: number) => {
-    if (score >= 80) return 'from-emerald-500/20 to-teal-500/5';
-    if (score >= 60) return 'from-amber-500/20 to-orange-500/5';
-    return 'from-rose-500/20 to-pink-500/5';
+    if (score >= 80) return 'from-emerald-500/20 to-emerald-500/5';
+    if (score >= 60) return 'from-amber-500/20 to-amber-500/5';
+    return 'from-rose-500/20 to-rose-500/5';
   };
 
   return (
@@ -162,19 +161,19 @@ export default function AtsAnalysisPage(): React.ReactElement {
           title="ATS Resume Analyzer"
           subtitle="Deterministic ATS compatibility evaluation of keyword density, section headers, formatting, and machine readability."
           badge="Intelligence Engine"
-          icon={<FileText className="h-6 w-6 text-purple-400" />}
+          icon={<FileText className="h-6 w-6 text-emerald-500" />}
         />
 
         {/* INTERACTIVE RESUME UPLOADER ZONE */}
-        <GlassCard padding="lg" className="border-purple-500/20 shadow-xl shadow-purple-950/20">
+        <GlassCard padding="lg" className="border-surface-border shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+              <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
                 <Upload className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">Upload Resume for Real-time ATS Parsing</h3>
-                <p className="text-xs text-slate-400">Upload PDF or DOCX format (Max 5 MB)</p>
+                <h3 className="text-base font-bold text-content-primary">Upload Resume for Real-time ATS Parsing</h3>
+                <p className="text-xs text-content-secondary">Upload PDF or DOCX format (Max 5 MB)</p>
               </div>
             </div>
             {selectedFile && (
@@ -183,7 +182,7 @@ export default function AtsAnalysisPage(): React.ReactElement {
                   setSelectedFile(null);
                   setDetailedReview(null);
                 }}
-                className="text-xs text-slate-400 hover:text-rose-400 transition-colors"
+                className="text-xs text-content-secondary hover:text-rose-500 transition-colors"
               >
                 Clear file
               </button>
@@ -195,8 +194,8 @@ export default function AtsAnalysisPage(): React.ReactElement {
             onDrop={handleDrop}
             className={`border-2 border-dashed rounded-2xl p-6 text-center transition-all ${
               selectedFile
-                ? 'border-purple-500/50 bg-purple-500/5'
-                : 'border-slate-800 hover:border-purple-500/30 bg-slate-950/40 hover:bg-slate-950/80'
+                ? 'border-emerald-500/50 bg-emerald-500/5'
+                : 'border-surface-border hover:border-emerald-500/30 bg-surface-card hover:bg-surface-hover'
             }`}
           >
             <input
@@ -209,39 +208,39 @@ export default function AtsAnalysisPage(): React.ReactElement {
 
             {selectedFile ? (
               <div className="space-y-3">
-                <div className="h-12 w-12 mx-auto rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <div className="h-12 w-12 mx-auto rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500">
                   <FileCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white">{selectedFile.name}</p>
-                  <p className="text-xs text-slate-400 font-mono mt-0.5">
+                  <p className="text-sm font-bold text-content-primary">{selectedFile.name}</p>
+                  <p className="text-xs text-content-secondary font-mono mt-0.5">
                     {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • {selectedFile.type || 'Document'}
                   </p>
                 </div>
                 <label
                   htmlFor="ats-resume-input"
-                  className="inline-block text-xs text-purple-400 hover:underline cursor-pointer font-medium"
+                  className="inline-block text-xs text-emerald-500 hover:underline cursor-pointer font-medium"
                 >
                   Change file
                 </label>
               </div>
             ) : (
               <label htmlFor="ats-resume-input" className="cursor-pointer space-y-3 block">
-                <div className="h-12 w-12 mx-auto rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                <div className="h-12 w-12 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
                   <Upload className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-200">
+                  <p className="text-sm font-semibold text-content-primary">
                     Click to upload or drag & drop your resume file
                   </p>
-                  <p className="text-xs text-slate-500 mt-1">PDF or DOCX documents up to 5 MB</p>
+                  <p className="text-xs text-content-secondary mt-1">PDF or DOCX documents up to 5 MB</p>
                 </div>
               </label>
             )}
           </div>
 
           {uploadError && (
-            <div className="mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center gap-2 text-rose-300 text-xs font-medium">
+            <div className="mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center gap-2 text-rose-500 text-xs font-medium">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{uploadError}</span>
             </div>
@@ -249,13 +248,13 @@ export default function AtsAnalysisPage(): React.ReactElement {
 
           {isUploading && (
             <div className="mt-4 space-y-1.5">
-              <div className="flex justify-between text-xs text-purple-300 font-medium">
+              <div className="flex justify-between text-xs text-emerald-500 font-medium">
                 <span>Analyzing document with Apache Tika...</span>
                 <span>{uploadProgress}%</span>
               </div>
-              <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+              <div className="w-full h-2 bg-surface-hover rounded-full overflow-hidden border border-surface-border">
                 <div
-                  className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300"
+                  className="h-full bg-emerald-500 transition-all duration-300"
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>
@@ -266,7 +265,7 @@ export default function AtsAnalysisPage(): React.ReactElement {
             <button
               onClick={handleUploadResume}
               disabled={!selectedFile || isUploading}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-600/25 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isUploading ? (
                 <>
@@ -298,7 +297,7 @@ export default function AtsAnalysisPage(): React.ReactElement {
               padding="none"
               className={`overflow-hidden border-2 transition-colors ${
                 ats.atsScore >= 80
-                  ? 'border-emerald-500/30 shadow-lg shadow-emerald-500/10'
+                  ? 'border-emerald-500/30 shadow-sm'
                   : ats.atsScore >= 60
                   ? 'border-amber-500/30'
                   : 'border-rose-500/30'
@@ -315,19 +314,19 @@ export default function AtsAnalysisPage(): React.ReactElement {
 
                 <div className="relative z-10 text-center md:text-left flex-1 max-w-xl">
                   <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
-                    <Badge variant={ats.atsScore >= 80 ? 'emerald' : ats.atsScore >= 60 ? 'amber' : 'error'}>
+                    <Badge variant={ats.atsScore >= 80 ? 'emerald' : ats.atsScore >= 60 ? 'warning' : 'error'}>
                       ATS Compatibility
                     </Badge>
                     {detailedReview?.grade && (
-                      <Badge variant="indigo" size="md">
+                      <Badge variant="emerald" size="md">
                         Grade: {detailedReview.grade}
                       </Badge>
                     )}
                   </div>
-                  <h3 className="text-4xl sm:text-5xl font-black text-white mt-4 mb-3 tracking-tight">
+                  <h3 className="text-4xl sm:text-5xl font-black text-content-primary mt-4 mb-3 tracking-tight">
                     Resume Quality Score
                   </h3>
-                  <p className="text-base text-slate-300/90 leading-relaxed font-medium">
+                  <p className="text-base text-content-secondary leading-relaxed font-medium">
                     Measures whether applicant tracking systems (ATS) can parse your contact info, technical skills, and project history cleanly without data loss.
                   </p>
                 </div>
@@ -336,7 +335,7 @@ export default function AtsAnalysisPage(): React.ReactElement {
                   <div className="relative flex items-center justify-center">
                     <svg className="w-48 h-48 transform -rotate-90">
                       <circle
-                        className="text-slate-800"
+                        className="text-surface-hover"
                         strokeWidth="12"
                         stroke="currentColor"
                         fill="transparent"
@@ -365,10 +364,10 @@ export default function AtsAnalysisPage(): React.ReactElement {
                       />
                     </svg>
                     <div className="absolute flex flex-col items-center justify-center text-center">
-                      <span className="text-5xl font-black text-white tabular-nums tracking-tighter">
+                      <span className="text-5xl font-black text-content-primary tabular-nums tracking-tighter">
                         <AnimatedCounter target={ats.atsScore} />
                       </span>
-                      <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mt-1">/ 100</span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-content-secondary mt-1">/ 100</span>
                     </div>
                   </div>
                 </div>
@@ -377,27 +376,27 @@ export default function AtsAnalysisPage(): React.ReactElement {
 
             {/* DETAILED CATEGORY BREAKDOWN (IF AVAILABLE) */}
             {detailedReview?.atsCategoryBreakdown && (
-              <GlassCard padding="lg" className="border-indigo-500/20 shadow-xl space-y-4">
+              <GlassCard padding="lg" className="border-surface-border shadow-sm space-y-4">
                 <div className="flex items-center gap-2 mb-4">
-                  <Activity className="h-5 w-5 text-indigo-400" />
-                  <h3 className="text-lg font-bold text-white">Detailed Category Breakdown</h3>
+                  <Activity className="h-5 w-5 text-emerald-500" />
+                  <h3 className="text-lg font-bold text-content-primary">Detailed Category Breakdown</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {detailedReview.atsCategoryBreakdown.map((cat: any) => {
                     const pct = Math.round((cat.currentScore / cat.maxScore) * 100);
                     return (
-                      <div key={cat.category} className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1.5">
+                      <div key={cat.category} className="p-3.5 rounded-xl bg-surface-hover border border-surface-border space-y-1.5">
                         <div className="flex justify-between text-xs">
-                          <span className="font-bold text-white">{cat.category}</span>
-                          <span className="font-mono font-bold text-indigo-400">{cat.currentScore} / {cat.maxScore}</span>
+                          <span className="font-bold text-content-primary">{cat.category}</span>
+                          <span className="font-mono font-bold text-emerald-500">{cat.currentScore} / {cat.maxScore}</span>
                         </div>
-                        <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                        <div className="w-full h-2 bg-surface-base rounded-full overflow-hidden border border-surface-border">
                           <div
-                            className={`h-full rounded-full ${pct >= 80 ? 'bg-emerald-400' : pct >= 50 ? 'bg-amber-400' : 'bg-rose-400'}`}
+                            className={`h-full rounded-full ${pct >= 80 ? 'bg-emerald-500' : pct >= 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
                             style={{ width: `${pct}%` }}
                           />
                         </div>
-                        <p className="text-[11px] text-slate-400">{cat.explanation}</p>
+                        <p className="text-[11px] text-content-secondary">{cat.explanation}</p>
                       </div>
                     );
                   })}
@@ -407,36 +406,36 @@ export default function AtsAnalysisPage(): React.ReactElement {
 
             {/* DETAILED KEYWORD ANALYSIS (IF AVAILABLE) */}
             {detailedReview?.keywords && (
-              <GlassCard padding="lg" className="border-teal-500/20 shadow-xl space-y-4">
+              <GlassCard padding="lg" className="border-surface-border shadow-sm space-y-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Search className="h-5 w-5 text-teal-400" />
-                    <h3 className="text-lg font-bold text-white">Software Engineering Keywords Analysis</h3>
+                    <Search className="h-5 w-5 text-emerald-500" />
+                    <h3 className="text-lg font-bold text-content-primary">Software Engineering Keywords Analysis</h3>
                   </div>
-                  <span className="text-sm font-bold text-teal-400">
+                  <span className="text-sm font-bold text-emerald-500">
                     Coverage: {detailedReview.keywords.coveragePercentage}%
                   </span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 space-y-2">
-                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
                       Matched Keywords ({detailedReview.keywords.matchedKeywords.length})
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {detailedReview.keywords.matchedKeywords.map((kw: string) => (
-                        <span key={kw} className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300">
+                        <span key={kw} className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-600 dark:text-emerald-400">
                           ✓ {kw}
                         </span>
                       ))}
                     </div>
                   </div>
                   <div className="p-3.5 rounded-xl bg-amber-500/5 border border-amber-500/20 space-y-2">
-                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">
+                    <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider block">
                       Missing Keywords ({detailedReview.keywords.missingKeywords.length})
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {detailedReview.keywords.missingKeywords.map((kw: string) => (
-                        <span key={kw} className="px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                        <span key={kw} className="px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-xs text-amber-600 dark:text-amber-400">
                           + {kw}
                         </span>
                       ))}
@@ -448,12 +447,12 @@ export default function AtsAnalysisPage(): React.ReactElement {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Section Completeness */}
-              <GlassCard padding="lg" className="flex flex-col h-full">
+              <GlassCard padding="lg" className="flex flex-col h-full border border-surface-border">
                 <div className="flex items-center gap-2 mb-6 shrink-0">
-                  <div className="h-8 w-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                  <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                     <Sparkles className="h-4.5 w-4.5" />
                   </div>
-                  <h3 className="text-lg font-bold text-white">Section Completeness</h3>
+                  <h3 className="text-lg font-bold text-content-primary">Section Completeness</h3>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 flex-1">
@@ -466,15 +465,15 @@ export default function AtsAnalysisPage(): React.ReactElement {
                           : 'bg-rose-500/5 border-rose-500/20 hover:bg-rose-500/10'
                       }`}
                     >
-                      <span className={`text-sm font-semibold capitalize tracking-tight ${present ? 'text-emerald-100' : 'text-rose-100'}`}>
+                      <span className={`text-sm font-semibold capitalize tracking-tight ${present ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                         {sec.replace(/_/g, ' ')}
                       </span>
                       {present ? (
-                        <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">
+                        <div className="flex items-center gap-2 text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">
                           <CheckCircle2 className="h-3.5 w-3.5" /> Found
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2 text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">
+                        <div className="flex items-center gap-2 text-rose-500 bg-rose-500/10 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">
                           <XCircle className="h-3.5 w-3.5" /> Missing
                         </div>
                       )}
@@ -484,17 +483,17 @@ export default function AtsAnalysisPage(): React.ReactElement {
               </GlassCard>
 
               {/* Optimization Suggestions */}
-              <GlassCard padding="lg" className="flex flex-col h-full">
+              <GlassCard padding="lg" className="flex flex-col h-full border border-surface-border">
                 <div className="flex items-center gap-2 mb-6 shrink-0">
-                  <div className="h-8 w-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
+                  <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
                     <AlertCircle className="h-4.5 w-4.5" />
                   </div>
-                  <h3 className="text-lg font-bold text-white">Optimization Suggestions</h3>
+                  <h3 className="text-lg font-bold text-content-primary">Optimization Suggestions</h3>
                 </div>
 
                 {ats.suggestions.length === 0 ? (
                   <EmptyState
-                    icon={<CheckCircle2 className="text-emerald-400" />}
+                    icon={<CheckCircle2 className="text-emerald-500" />}
                     title="Perfect Structure"
                     description="Your resume document passes all basic ATS criteria cleanly!"
                     className="flex-1"
@@ -504,17 +503,17 @@ export default function AtsAnalysisPage(): React.ReactElement {
                     {ats.suggestions.map((sug, idx) => (
                       <div
                         key={idx}
-                        className="group p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 text-slate-300 text-sm flex items-start justify-between gap-3 hover:bg-slate-800/60 hover:border-amber-500/30 transition-all"
+                        className="group p-4 rounded-xl bg-surface-hover border border-surface-border text-content-primary text-sm flex items-start justify-between gap-3 hover:border-emerald-500/30 transition-all"
                       >
                         <div className="flex items-start gap-3">
-                          <div className="h-6 w-6 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 text-xs font-bold font-mono mt-0.5 border border-amber-500/20">
+                          <div className="h-6 w-6 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 text-xs font-bold font-mono mt-0.5 border border-emerald-500/20">
                             {idx + 1}
                           </div>
                           <span className="leading-relaxed font-medium">{sug}</span>
                         </div>
                         <button
                           onClick={() => copyToClipboard(sug)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-white"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-content-secondary hover:text-content-primary"
                           title="Copy suggestion"
                         >
                           <Copy className="h-4 w-4" />

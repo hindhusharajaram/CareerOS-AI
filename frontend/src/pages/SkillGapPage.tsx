@@ -60,12 +60,12 @@ export default function SkillGapPage(): React.ReactElement {
         ) : gap ? (
           <div className="space-y-6">
             {/* Role Banner */}
-            <div className="rounded-3xl border border-indigo-500/20 bg-gradient-to-r from-slate-900 via-indigo-950/20 to-slate-900 p-7 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="rounded-3xl border border-emerald-500/20 bg-gradient-to-r from-surface-card via-emerald-950/20 to-surface-card p-7 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Target Role Objective</p>
-                <h3 className="text-3xl font-black text-white">{gap.preferredRole}</h3>
-                <p className="text-sm text-slate-400 mt-2">
-                  Verified Skills: <strong className="text-white">{gap.currentSkills.length}</strong>
+                <p className="text-xs font-bold text-content-muted uppercase tracking-widest mb-2">Target Role Objective</p>
+                <h3 className="text-3xl font-black text-content-primary">{gap.preferredRole}</h3>
+                <p className="text-sm text-content-secondary mt-2">
+                  Verified Skills: <strong className="text-content-primary">{gap.currentSkills.length}</strong>
                   {' '}·{' '}
                   Missing Skills: <strong className="text-amber-400">{gap.missingSkills.length}</strong>
                 </p>
@@ -92,8 +92,8 @@ export default function SkillGapPage(): React.ReactElement {
                   onClick={() => setFilter(f)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     filter === f
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
-                      : 'bg-slate-900/60 text-slate-400 border border-slate-800 hover:text-white hover:border-slate-700'
+                      ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
+                      : 'bg-surface-card text-content-secondary border border-surface-border hover:text-content-primary hover:border-surface-hover'
                   }`}
                 >
                   {f === 'ALL' ? `All (${gap.missingSkills.length})` : f}
@@ -124,20 +124,20 @@ export default function SkillGapPage(): React.ReactElement {
                           <div className={`h-8 w-8 rounded-lg ${priority.bg} border ${priority.border} flex items-center justify-center`}>
                             <Cpu className={`h-4 w-4 ${priority.color}`} />
                           </div>
-                          <h4 className="text-base font-bold text-white">{item.skillName}</h4>
+                          <h4 className="text-base font-bold text-content-primary">{item.skillName}</h4>
                         </div>
                         <Badge variant={priority.variant} size="sm">
                           {item.priorityLevel}
                         </Badge>
                       </div>
 
-                      <div className="flex items-center justify-between text-xs pt-3 border-t border-slate-800/40">
+                      <div className="flex items-center justify-between text-xs pt-3 border-t border-surface-border">
                         <span className={`flex items-center gap-1.5 font-semibold ${difficulty.color}`}>
                           <AlertCircle className="h-3.5 w-3.5" />
                           {difficulty.label}
                         </span>
-                        <span className="flex items-center gap-1.5 text-slate-400 font-mono">
-                          <Clock className="h-3.5 w-3.5 text-indigo-400" />
+                        <span className="flex items-center gap-1.5 text-content-muted font-mono">
+                          <Clock className="h-3.5 w-3.5 text-emerald-500" />
                           ~{item.estimatedLearningHours}h to learn
                         </span>
                       </div>
@@ -150,19 +150,19 @@ export default function SkillGapPage(): React.ReactElement {
             {/* Total Hours Summary */}
             {gap.missingSkills.length > 0 && (
               <div className="glass-card rounded-2xl p-5 flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0">
+                <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
                   <Clock className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Estimated Learning Time</p>
-                  <p className="text-2xl font-black text-white">
+                  <p className="text-xs text-content-muted font-semibold uppercase tracking-wider">Total Estimated Learning Time</p>
+                  <p className="text-2xl font-black text-content-primary">
                     {gap.missingSkills.reduce((sum, s) => sum + s.estimatedLearningHours, 0)} Hours
                   </p>
                 </div>
                 <div className="ml-auto">
                   <div className="text-right">
-                    <p className="text-xs text-slate-500">At 2 hrs/day</p>
-                    <p className="text-sm font-bold text-indigo-400">
+                    <p className="text-xs text-content-muted">At 2 hrs/day</p>
+                    <p className="text-sm font-bold text-emerald-500">
                       ~{Math.ceil(gap.missingSkills.reduce((sum, s) => sum + s.estimatedLearningHours, 0) / 2 / 30)} months
                     </p>
                   </div>
