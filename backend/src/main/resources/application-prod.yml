@@ -5,13 +5,8 @@ spring:
       on-profile: prod
   main:
     lazy-initialization: true
-groq:
-  api:
-    key: ${GROQ_API_KEY:}
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}?sslmode=require}
-    username: ${DATABASE_USERNAME:${PGUSER}}
-    password: ${DATABASE_PASSWORD:${PGPASSWORD}}
+    url: ${DATABASE_URL:${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/careeros_ai_db}}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -27,6 +22,10 @@ groq:
     hibernate:
       ddl-auto: update
     show-sql: false
+
+groq:
+  api:
+    key: ${GROQ_API_KEY:}
 
 logging:
   level:
