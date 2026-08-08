@@ -76,13 +76,21 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
         if (dto.getFirstName() != null) profile.setFirstName(dto.getFirstName());
         if (dto.getLastName() != null) profile.setLastName(dto.getLastName());
         if (dto.getProfilePhoto() != null) profile.setProfilePhoto(dto.getProfilePhoto());
-        if (dto.getPhone() != null) profile.setPhone(dto.getPhone());
+        
+        final String phoneVal = dto.getEffectivePhone();
+        if (phoneVal != null) {
+            profile.setPhone(phoneVal);
+        }
+        
         if (dto.getGender() != null) profile.setGender(dto.getGender());
         if (dto.getDateOfBirth() != null) profile.setDateOfBirth(dto.getDateOfBirth());
         if (dto.getCity() != null) profile.setCity(dto.getCity());
         if (dto.getState() != null) profile.setState(dto.getState());
         if (dto.getCountry() != null) profile.setCountry(dto.getCountry());
-        if (dto.getUniversityName() != null) profile.setUniversityName(dto.getUniversityName());
+        
+        final String uniVal = dto.getEffectiveUniversity();
+        if (uniVal != null) profile.setUniversityName(uniVal);
+        
         if (dto.getDegree() != null) profile.setDegree(dto.getDegree());
         if (dto.getMajor() != null) profile.setMajor(dto.getMajor());
         if (dto.getBranch() != null) profile.setBranch(dto.getBranch());
@@ -90,9 +98,21 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
         if (dto.getGraduationYear() != null) profile.setGraduationYear(dto.getGraduationYear());
         if (dto.getCurrentSemester() != null) profile.setCurrentSemester(dto.getCurrentSemester());
         if (dto.getAbout() != null) profile.setAbout(dto.getAbout());
-        if (dto.getLinkedin() != null) profile.setLinkedin(dto.getLinkedin());
-        if (dto.getGithub() != null) profile.setGithub(dto.getGithub());
-        if (dto.getPortfolio() != null) profile.setPortfolio(dto.getPortfolio());
+        
+        final String linkedinVal = dto.getEffectiveLinkedin();
+        if (linkedinVal != null) profile.setLinkedin(linkedinVal);
+
+        final String githubVal = dto.getEffectiveGithub();
+        if (githubVal != null) profile.setGithub(githubVal);
+
+        final String portfolioVal = dto.getEffectivePortfolio();
+        if (portfolioVal != null) profile.setPortfolio(portfolioVal);
+
+        if (dto.getAiModelPreference() != null) profile.setAiModelPreference(dto.getAiModelPreference());
+        if (dto.getPrimaryCareerFocus() != null) profile.setPrimaryCareerFocus(dto.getPrimaryCareerFocus());
+        if (dto.getAtsSkills() != null) {
+            profile.setAtsSkills(String.join(",", dto.getAtsSkills()));
+        }
 
         final StudentProfile saved = Objects.requireNonNull(studentProfileRepository.save(Objects.requireNonNull(profile)));
         return studentProfileMapper.toDto(saved);

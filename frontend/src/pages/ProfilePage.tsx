@@ -97,10 +97,17 @@ export default function ProfilePage(): React.ReactElement {
     e?.preventDefault();
     setIsSaving(true);
     try {
-      await studentService.updateProfile(profile);
+      const payload: StudentProfileData = {
+        ...profile,
+        aiModelPreference: aiModel,
+        primaryCareerFocus: careerFocus,
+        atsSkills: skillTags,
+      };
+      await studentService.updateProfile(payload);
       toast.success('Settings and profile updated successfully!');
-    } catch (error) {
-      toast.error('Failed to update profile');
+    } catch (error: any) {
+      const serverMessage = error?.response?.data?.message || error?.message || 'Failed to update profile';
+      toast.error(serverMessage);
     } finally {
       setIsSaving(false);
     }
