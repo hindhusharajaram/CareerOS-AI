@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component("mockAIProvider")
@@ -195,9 +196,11 @@ public class MockAIProviderImpl implements AIProvider {
                 RestTemplate restTemplate = new RestTemplate();
                 String url = "https://api.groq.com/openai/v1/chat/completions";
 
+                final String validApiKey = Objects.requireNonNull(apiKey.trim());
+
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.setBearerAuth(apiKey.trim());
+                headers.setBearerAuth(validApiKey);
 
                 Map<String, Object> body = new HashMap<>();
                 body.put("model", "llama-3.3-70b-versatile");
