@@ -5,11 +5,17 @@ import com.careerosai.ai.dto.AILearningPlanDto;
 import com.careerosai.ai.dto.AIMockInterviewDto;
 import com.careerosai.ai.dto.AIProjectAdviceDto;
 import com.careerosai.ai.dto.AIResumeReviewDto;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component("mockAIProvider")
@@ -178,6 +184,50 @@ public class MockAIProviderImpl implements AIProvider {
 
     @Override
     public String generateChatResponse(final String userMessage, final String conversationHistory, final String contextJson) {
+        String apiKey = System.getenv("OPENAI_API_KEY");
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            apiKey = System.getProperty("OPENAI_API_KEY");
+        }
+
+        if (apiKey != null && !apiKey.trim().isEmpty()) {
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                String url = "https://api.openai.com/v1/chat/completions";
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setBearerAuth(apiKey.trim());
+
+                Map<String, Object> body = new HashMap<>();
+                body.put("model", "gpt-4o-mini");
+                body.put("messages", List.of(
+                    Map.of("role", "system", "content", "You are CareerOS AI, an expert technical career coach helping engineering students with resumes, career scores, and interview prep."),
+                    Map.of("role", "user", "content", userMessage != null ? userMessage : "")
+                ));
+
+                HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+                Map<?, ?> response = restTemplate.postForObject(url, entity, Map.class);
+
+                if (response != null && response.containsKey("choices")) {
+                    Object choicesObj = response.get("choices");
+                    if (choicesObj instanceof List<?> choices && !choices.isEmpty()) {
+                        Object firstChoiceObj = choices.get(0);
+                        if (firstChoiceObj instanceof Map<?, ?> firstChoice) {
+                            Object messageObj = firstChoice.get("message");
+                            if (messageObj instanceof Map<?, ?> message) {
+                                Object contentObj = message.get("content");
+                                if (contentObj instanceof String replyText) {
+                                    return replyText;
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Fallback to local mock if API fails
+            }
+        }
+
         final String msg = userMessage != null ? userMessage.toLowerCase() : "";
 
         if (msg.contains("weather") || msg.contains("movie") || msg.contains("recipe") || msg.contains("sports")) {
