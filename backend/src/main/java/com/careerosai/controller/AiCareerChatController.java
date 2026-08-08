@@ -24,39 +24,40 @@ import java.util.Objects;
 @CrossOrigin(origins = "*")
 public class AiCareerChatController {
 
-    @Value("${spring.ai.openai.api-key:${OPENAI_API_KEY:}}")
-    private String openAiApiKey;
+    @Value("${GROQ_API_KEY:${groq.api.key:}}")
+    private String groqApiKey;
 
     @PostMapping("/chat")
-    public ResponseEntity<Map<String, String>> chatWithGpt(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Map<String, String>> handleCareerChat(@RequestBody Map<String, String> payload) {
         String userMessage = payload != null ? payload.get("message") : null;
         if (userMessage == null || userMessage.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("reply", "Please provide a valid prompt."));
+            return ResponseEntity.ok(Map.of("reply", "Please enter a valid message."));
         }
 
-        // If no API key is present, fallback gracefully with a clear message
-        if (openAiApiKey == null || openAiApiKey.trim().isEmpty()) {
-            return ResponseEntity.ok(Map.of("reply", "OpenAI API Key is missing on the server. Please set OPENAI_API_KEY in Render environment variables."));
+        if (groqApiKey == null || groqApiKey.trim().isEmpty()) {
+            return ResponseEntity.ok(Map.of(
+                "reply", "Groq API key is missing on the server. Please add GROQ_API_KEY in Render Environment Variables."
+            ));
         }
 
-        final String apiKey = Objects.requireNonNull(openAiApiKey.trim());
+        final String apiKey = Objects.requireNonNull(groqApiKey.trim());
 
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String url = "https://api.openai.com/v1/chat/completions";
+            String url = "https://api.groq.com/openai/v1/chat/completions";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setBearerAuth(apiKey);
 
-            Map<String, Object> body = new HashMap<>();
-            body.put("model", "gpt-4o-mini");
-            body.put("messages", List.of(
-                Map.of("role", "system", "content", "You are CareerOS AI, an expert technical career coach helping engineering students with resumes, career scores, and interview prep."),
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", "llama-3.3-70b-versatile");
+            requestBody.put("messages", List.of(
+                Map.of("role", "system", "content", "You are CareerOS AI, an elite technical career advisor for engineering students."),
                 Map.of("role", "user", "content", userMessage)
             ));
 
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
             Map<?, ?> response = restTemplate.postForObject(url, entity, Map.class);
 
             if (response != null && response.containsKey("choices")) {
@@ -75,15 +76,16 @@ public class AiCareerChatController {
                 }
             }
 
-            return ResponseEntity.ok(Map.of("reply", "Invalid response structure received from ChatGPT API."));
+            return ResponseEntity.ok(Map.of("reply", "Unexpected response structure from Groq API."));
+
         } catch (HttpStatusCodeException e) {
             String responseBody = e.getResponseBodyAsString();
-            String errorMsg = "OpenAI API Error (" + e.getStatusCode() + "): " + (responseBody != null && !responseBody.isEmpty() ? responseBody : e.getMessage());
+            String errorMsg = "Groq API Error (" + e.getStatusCode() + "): " + (responseBody != null && !responseBody.isEmpty() ? responseBody : e.getMessage());
             return ResponseEntity.ok(Map.of("reply", errorMsg));
         } catch (RestClientException e) {
-            return ResponseEntity.ok(Map.of("reply", "OpenAI Communication Error: " + e.getMessage()));
+            return ResponseEntity.ok(Map.of("reply", "Groq Communication Error: " + e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.ok(Map.of("reply", "Error communicating with ChatGPT: " + e.getMessage()));
+            return ResponseEntity.ok(Map.of("reply", "Backend Processing Error: " + e.getMessage()));
         }
     }
 }

@@ -55,7 +55,7 @@ We use a standard branching strategy. Branch names should be descriptive and fol
 Commit messages should be clear, concise, and follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. 
 
 Example:
-`feat(ai): integrate OpenAI API for resume scoring`
+`feat(ai): integrate Groq API for resume scoring`
 `fix(ui): resolve overflow issue on mobile dashboard`
 
 ### Pull Requests
