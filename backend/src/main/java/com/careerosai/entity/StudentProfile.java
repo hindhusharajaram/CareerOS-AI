@@ -75,10 +75,9 @@ public class StudentProfile extends BaseEntity {
     private String lastName;
 
     /**
-     * Optional Contact Phone Number formatted in E.164 international standard.
+     * Optional Contact Phone Number.
      */
-    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Phone number must follow valid international E.164 format (e.g. +1234567890)")
-    @Column(name = "phone", length = 20)
+    @Column(name = "phone", length = 50)
     private String phone;
 
     /**
@@ -191,4 +190,22 @@ public class StudentProfile extends BaseEntity {
      */
     @Column(name = "portfolio", length = 255)
     private String portfolio;
+
+    /**
+     * Preferred AI Model (e.g. Groq Llama 3.3 70B).
+     */
+    @Column(name = "ai_model_preference", length = 100)
+    private String aiModelPreference;
+
+    /**
+     * Primary Career Focus (e.g. Full-Stack Software Engineering).
+     */
+    @Column(name = "primary_career_focus", length = 150)
+    private String primaryCareerFocus;
+
+    /**
+     * ATS Key Skill Tags (comma-separated list).
+     */
+    @Column(name = "ats_skills", columnDefinition = "TEXT")
+    private String atsSkills;
 }

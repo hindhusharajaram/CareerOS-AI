@@ -25,6 +25,14 @@ export interface StudentProfileData {
   linkedin?: string;
   github?: string;
   portfolio?: string;
+  phoneNumber?: string;
+  university?: string;
+  linkedInUrl?: string;
+  githubUrl?: string;
+  portfolioUrl?: string;
+  aiModelPreference?: string;
+  primaryCareerFocus?: string;
+  atsSkills?: string[];
 }
 
 export interface SkillItem {

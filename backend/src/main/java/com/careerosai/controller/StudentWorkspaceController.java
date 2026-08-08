@@ -81,9 +81,14 @@ public class StudentWorkspaceController {
         @RequestBody final StudentProfileDto dto,
         final HttpServletRequest request
     ) {
-        final UUID userId = getEffectiveUserId(currentUser);
-        final StudentProfileDto updated = studentWorkspaceService.updateProfile(userId, dto);
-        return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", updated, request.getRequestURI()));
+        try {
+            final UUID userId = getEffectiveUserId(currentUser);
+            final StudentProfileDto updated = studentWorkspaceService.updateProfile(userId, dto);
+            return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", updated, request.getRequestURI()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error("Failed to update profile: " + e.getMessage(), HttpStatus.BAD_REQUEST.value(), request.getRequestURI()));
+        }
     }
 
     // Skills
