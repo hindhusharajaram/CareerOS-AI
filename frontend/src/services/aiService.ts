@@ -99,8 +99,15 @@ export const aiService = {
   },
 
   sendChatMessage: async (messageText: string): Promise<AIChatMessage> => {
-    const res = await api.post('/api/v1/student/ai/chat/send', null, { params: { messageText } });
-    return res.data.data;
+    const res = await api.post('/api/v1/ai/chat', { message: messageText });
+    const replyText = res.data?.reply || 'No response received from AI.';
+    return {
+      id: `ai-${Date.now()}`,
+      sessionId: 'session',
+      senderRole: 'AI',
+      messageText: replyText,
+      createdAt: new Date().toISOString(),
+    };
   },
 
   chatWithGpt: async (messageText: string): Promise<{ reply: string }> => {
