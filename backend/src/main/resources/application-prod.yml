@@ -5,6 +5,13 @@ spring:
       on-profile: prod
   main:
     lazy-initialization: true
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.7
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}?sslmode=require}
     username: ${DATABASE_USERNAME:${PGUSER}}
