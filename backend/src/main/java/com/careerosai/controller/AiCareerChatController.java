@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -73,9 +75,15 @@ public class AiCareerChatController {
                 }
             }
 
-            return ResponseEntity.status(500).body(Map.of("reply", "Invalid response received from ChatGPT API."));
+            return ResponseEntity.ok(Map.of("reply", "Invalid response structure received from ChatGPT API."));
+        } catch (HttpStatusCodeException e) {
+            String responseBody = e.getResponseBodyAsString();
+            String errorMsg = "OpenAI API Error (" + e.getStatusCode() + "): " + (responseBody != null && !responseBody.isEmpty() ? responseBody : e.getMessage());
+            return ResponseEntity.ok(Map.of("reply", errorMsg));
+        } catch (RestClientException e) {
+            return ResponseEntity.ok(Map.of("reply", "OpenAI Communication Error: " + e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("reply", "Error communicating with ChatGPT: " + e.getMessage()));
+            return ResponseEntity.ok(Map.of("reply", "Error communicating with ChatGPT: " + e.getMessage()));
         }
     }
 }
