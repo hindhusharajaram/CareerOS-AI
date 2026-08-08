@@ -185,24 +185,24 @@ public class MockAIProviderImpl implements AIProvider {
 
     @Override
     public String generateChatResponse(final String userMessage, final String conversationHistory, final String contextJson) {
-        String apiKey = System.getenv("OPENAI_API_KEY");
+        String apiKey = System.getenv("GROQ_API_KEY");
         if (apiKey == null || apiKey.trim().isEmpty()) {
-            apiKey = System.getProperty("OPENAI_API_KEY");
+            apiKey = System.getProperty("GROQ_API_KEY");
         }
 
         if (apiKey != null && !apiKey.trim().isEmpty()) {
             try {
                 RestTemplate restTemplate = new RestTemplate();
-                String url = "https://api.openai.com/v1/chat/completions";
+                String url = "https://api.groq.com/openai/v1/chat/completions";
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.setBearerAuth(apiKey.trim());
 
                 Map<String, Object> body = new HashMap<>();
-                body.put("model", "gpt-4o-mini");
+                body.put("model", "llama-3.3-70b-versatile");
                 body.put("messages", List.of(
-                    Map.of("role", "system", "content", "You are CareerOS AI, an expert technical career coach helping engineering students with resumes, career scores, and interview prep."),
+                    Map.of("role", "system", "content", "You are CareerOS AI, an elite technical career advisor for engineering students."),
                     Map.of("role", "user", "content", userMessage != null ? userMessage : "")
                 ));
 
@@ -226,7 +226,7 @@ public class MockAIProviderImpl implements AIProvider {
                 }
             } catch (HttpStatusCodeException e) {
                 String responseBody = e.getResponseBodyAsString();
-                return "OpenAI API Error (" + e.getStatusCode() + "): " + (responseBody != null && !responseBody.isEmpty() ? responseBody : e.getMessage());
+                return "Groq API Error (" + e.getStatusCode() + "): " + (responseBody != null && !responseBody.isEmpty() ? responseBody : e.getMessage());
             } catch (Exception e) {
                 // Fallback to local mock if API fails
             }

@@ -124,8 +124,8 @@ export default function AiCareerChatPage(): React.ReactElement {
             </div>
           </div>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-indigo-500/25 bg-indigo-500/8 text-indigo-300 text-[11px] font-semibold">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" />
-            AI Active
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Groq AI Active
           </span>
         </div>
 
@@ -208,8 +208,8 @@ export default function AiCareerChatPage(): React.ReactElement {
               )}
             </button>
           </form>
-          <p className="text-center text-[10px] text-slate-700 mt-2">
-            AI responses are grounded in your verified profile data. Scope-guarded.
+          <p className="text-center text-[10px] text-slate-500 mt-2">
+            Powered by Groq AI Engine (llama-3.3-70b-versatile). Grounded in verified profile data. Scope-guarded.
           </p>
         </div>
       </div>

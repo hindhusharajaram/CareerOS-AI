@@ -61,7 +61,7 @@ export default function SearchPage(): React.ReactElement {
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-emerald-500" />
             <input
               type="text"
-              placeholder="Search keywords (e.g. React, Python, OpenAI, Stanford, AWS)..."
+              placeholder="Search keywords (e.g. React, Python, Groq, Stanford, AWS)..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="w-full rounded-3xl border border-surface-border bg-surface-card py-5 pl-16 pr-32 text-base text-content-primary placeholder-content-muted focus:border-emerald-500 focus:outline-none backdrop-blur-xl shadow-2xl transition-all"
