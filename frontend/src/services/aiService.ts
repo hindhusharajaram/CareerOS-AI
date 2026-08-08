@@ -101,5 +101,10 @@ export const aiService = {
   sendChatMessage: async (messageText: string): Promise<AIChatMessage> => {
     const res = await api.post('/api/v1/student/ai/chat/send', null, { params: { messageText } });
     return res.data.data;
+  },
+
+  chatWithGpt: async (messageText: string): Promise<{ reply: string }> => {
+    const res = await api.post('/api/v1/ai/chat', { message: messageText });
+    return res.data;
   }
 };
