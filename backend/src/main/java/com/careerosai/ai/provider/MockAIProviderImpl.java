@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -223,6 +224,9 @@ public class MockAIProviderImpl implements AIProvider {
                         }
                     }
                 }
+            } catch (HttpStatusCodeException e) {
+                String responseBody = e.getResponseBodyAsString();
+                return "OpenAI API Error (" + e.getStatusCode() + "): " + (responseBody != null && !responseBody.isEmpty() ? responseBody : e.getMessage());
             } catch (Exception e) {
                 // Fallback to local mock if API fails
             }
