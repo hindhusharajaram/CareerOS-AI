@@ -1,5 +1,5 @@
 /* ===== Google Fonts Import ===== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,14 +7,17 @@
 
 @layer base {
   :root {
-    --surface-base: #fafafa;
-    --surface-card: #ffffff;
-    --surface-hover: #f4f4f5;
-    --surface-border: #e4e4e7;
+    --surface-base: #FAF7F2;
+    --surface-card: #FFFFFF;
+    --surface-hover: #F3EFE6;
+    --surface-border: #E5E0D8;
 
-    --content-primary: #18181b;
-    --content-secondary: #52525b;
-    --content-muted: #a1a1aa;
+    --content-primary: #121316;
+    --content-secondary: #5A5D64;
+    --content-muted: #8E919A;
+
+    --accent-cobalt: #2E4CFF;
+    --accent-terracotta: #FF6B35;
 
     --bg-main: var(--surface-base);
     --bg-card: var(--surface-card);
@@ -23,41 +26,44 @@
     --text-primary: var(--content-primary);
     --text-secondary: var(--content-secondary);
 
-    --background: 0 0% 98%;
-    --foreground: 240 10% 3.9%;
+    --background: 38 40% 97%;
+    --foreground: 225 10% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 225 10% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 158 64% 40%;
+    --popover-foreground: 225 10% 8%;
+    --primary: 231 100% 59%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 158 64% 40%;
-    --accent-foreground: 240 5.9% 10%;
+    --secondary: 36 20% 93%;
+    --secondary-foreground: 225 10% 8%;
+    --muted: 36 15% 91%;
+    --muted-foreground: 220 6% 40%;
+    --accent: 17 100% 60%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 158 64% 40%;
+    --border: 36 20% 87%;
+    --input: 36 20% 87%;
+    --ring: 231 100% 59%;
 
     --radius: 0.75rem;
 
-    --gradient-from: #10b981;
-    --gradient-to: #059669;
+    --gradient-from: #2E4CFF;
+    --gradient-to: #1A32C7;
   }
 
   .dark {
-    --surface-base: #09090b;
-    --surface-card: #141417;
-    --surface-hover: #1f1f23;
-    --surface-border: #27272a;
+    --surface-base: #121316;
+    --surface-card: #1B1D22;
+    --surface-hover: #252830;
+    --surface-border: #2E323C;
 
-    --content-primary: #f4f4f5;
-    --content-secondary: #a1a1aa;
-    --content-muted: #71717a;
+    --content-primary: #FAF7F2;
+    --content-secondary: #A0A5B1;
+    --content-muted: #6C7280;
+
+    --accent-cobalt: #4D67FF;
+    --accent-terracotta: #FF7B47;
 
     --bg-main: var(--surface-base);
     --bg-card: var(--surface-card);
@@ -66,25 +72,25 @@
     --text-primary: var(--content-primary);
     --text-secondary: var(--content-secondary);
 
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 5.5%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 5.5%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 158 64% 42%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 158 64% 42%;
-    --accent-foreground: 0 0% 98%;
+    --background: 225 10% 8%;
+    --foreground: 38 40% 97%;
+    --card: 222 11% 12%;
+    --card-foreground: 38 40% 97%;
+    --popover: 222 11% 12%;
+    --popover-foreground: 38 40% 97%;
+    --primary: 231 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 10% 18%;
+    --secondary-foreground: 38 40% 97%;
+    --muted: 222 10% 18%;
+    --muted-foreground: 220 8% 65%;
+    --accent: 17 100% 64%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 158 64% 42%;
+    --border: 222 10% 20%;
+    --input: 222 10% 20%;
+    --ring: 231 100% 65%;
   }
 }
 
