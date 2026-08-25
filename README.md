@@ -5,6 +5,7 @@
   <p><b>An open-source, AI-powered Career Operating System for engineering students.</b></p>
 
   <p>
+    <a href="https://github.com/hindhusharajaram/CareerOS-AI/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Release-v1.0.0-2E4CFF?style=for-the-badge&logo=github&logoColor=white" alt="Release v1.0.0" /></a>
     <a href="https://github.com/hindhusharajaram/CareerOS-AI/actions/workflows/backend-ci.yml"><img src="https://github.com/hindhusharajaram/CareerOS-AI/actions/workflows/backend-ci.yml/badge.svg" alt="Backend CI Status" /></a>
     <a href="https://github.com/hindhusharajaram/CareerOS-AI/actions/workflows/frontend-ci.yml"><img src="https://github.com/hindhusharajaram/CareerOS-AI/actions/workflows/frontend-ci.yml/badge.svg" alt="Frontend CI Status" /></a>
     <a href="https://java.com"><img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=java&logoColor=white" alt="Java 21" /></a>
