@@ -74,7 +74,7 @@ export default function LoginPage(): React.ReactElement {
       <div className="hidden lg:flex w-[45%] relative flex-col justify-between p-12 border-r border-surface-border bg-surface-card overflow-hidden">
         <div className="relative">
           <Link to="/" className="flex items-center gap-2.5 mb-16">
-            <div className="h-10 w-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-sm">
+            <div className="h-10 w-10 rounded-xl bg-[#2E4CFF] flex items-center justify-center text-white shadow-sm">
               <Sparkles className="h-5 w-5" />
             </div>
             <span className="text-lg font-bold text-content-primary">CareerOS AI</span>
@@ -84,9 +84,9 @@ export default function LoginPage(): React.ReactElement {
             <div className="inline-flex items-center gap-2 rounded-full border border-surface-border bg-surface-hover px-3 py-1 text-xs text-content-secondary font-semibold uppercase tracking-wider">
               v1.0 Production Ready
             </div>
-            <h2 className="text-4xl font-black text-content-primary leading-tight">
+            <h2 className="text-4xl font-display font-extrabold text-content-primary leading-tight">
               Intelligence that<br />
-              <span className="text-emerald-500">
+              <span className="text-[#2E4CFF]">
                 accelerates careers
               </span>
             </h2>
@@ -105,8 +105,8 @@ export default function LoginPage(): React.ReactElement {
               'Real-time Skill Gap Detection',
             ].map((feature) => (
               <div key={feature} className="flex items-center gap-3">
-                <div className="h-5 w-5 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                  <CheckCircle className="h-3 w-3 text-emerald-500" />
+                <div className="h-5 w-5 rounded-full bg-[#2E4CFF]/10 border border-[#2E4CFF]/20 flex items-center justify-center">
+                  <CheckCircle className="h-3 w-3 text-[#2E4CFF]" />
                 </div>
                 <span className="text-sm text-content-secondary">{feature}</span>
               </div>
@@ -131,14 +131,14 @@ export default function LoginPage(): React.ReactElement {
         <div className="w-full max-w-[380px]">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="h-9 w-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white">
+            <div className="h-9 w-9 rounded-xl bg-[#2E4CFF] flex items-center justify-center text-white">
               <Sparkles className="h-4 w-4" />
             </div>
             <span className="font-bold text-content-primary">CareerOS AI</span>
           </div>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-black text-content-primary mb-2">Welcome back</h1>
+            <h1 className="text-2xl font-display font-extrabold text-content-primary mb-2">Welcome back</h1>
             <p className="text-sm text-content-secondary">Sign in to your career workspace</p>
           </div>
 
@@ -166,7 +166,7 @@ export default function LoginPage(): React.ReactElement {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-10 pr-4 text-sm text-content-primary placeholder-content-muted focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
+                  className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-10 pr-4 text-sm text-content-primary placeholder-content-muted focus:border-[#2E4CFF] focus:outline-none focus:ring-2 focus:ring-[#2E4CFF]/30 transition-all"
                   required
                   autoComplete="email"
                 />
@@ -188,7 +188,7 @@ export default function LoginPage(): React.ReactElement {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-10 pr-11 text-sm text-content-primary placeholder-content-muted focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
+                  className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-10 pr-11 text-sm text-content-primary placeholder-content-muted focus:border-[#2E4CFF] focus:outline-none focus:ring-2 focus:ring-[#2E4CFF]/30 transition-all"
                   required
                   autoComplete="current-password"
                 />
@@ -206,7 +206,7 @@ export default function LoginPage(): React.ReactElement {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 py-3.5 text-sm font-bold shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-xl bg-[#2E4CFF] hover:bg-[#1A32C7] text-white py-3.5 text-sm font-bold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -221,7 +221,7 @@ export default function LoginPage(): React.ReactElement {
 
           <p className="mt-6 text-center text-sm text-content-secondary">
             Don't have an account?{' '}
-            <Link to="/register" className="font-semibold text-emerald-500 hover:underline transition-colors">
+            <Link to="/register" className="font-semibold text-[#2E4CFF] hover:underline transition-colors">
               Create account
             </Link>
           </p>

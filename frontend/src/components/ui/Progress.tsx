@@ -80,7 +80,7 @@ interface ProgressRingProps {
   max?: number;
   size?: number;
   strokeWidth?: number;
-  color?: 'indigo' | 'purple' | 'emerald' | 'amber';
+  color?: 'indigo' | 'purple' | 'emerald' | 'amber' | 'blue';
   children?: React.ReactNode;
   className?: string;
   animated?: boolean;
@@ -91,6 +91,7 @@ const ringColors = {
   purple: '#8b5cf6',
   emerald: '#10b981',
   amber: '#f59e0b',
+  blue: '#2E4CFF',
 };
 
 const ringTrackColors = {
@@ -98,6 +99,7 @@ const ringTrackColors = {
   purple: '#2e1065',
   emerald: '#064e3b',
   amber: '#451a03',
+  blue: '#E5E0D8',
 };
 
 export function ProgressRing({

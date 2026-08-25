@@ -51,6 +51,9 @@ backend/.settings/
 *.db
 database/*.local.sql
 
+# Docker Local Overrides
+docker-compose.override.yml
+
 # Log Files
 *.log
 logs/

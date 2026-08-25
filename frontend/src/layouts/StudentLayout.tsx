@@ -121,7 +121,7 @@ function NavGroupSection({
       <button
         onClick={() => setOpen(!open)}
         className={`w-full flex items-center justify-between px-3 py-1.5 mb-1 rounded-lg transition-colors ${
-          isAnyActive ? 'text-emerald-500 font-semibold' : 'text-textSecondary hover:text-textPrimary'
+          isAnyActive ? 'text-[#2E4CFF] font-semibold' : 'text-textSecondary hover:text-textPrimary'
         }`}
       >
         <span className="text-[10px] font-bold uppercase tracking-widest">{group.label}</span>
@@ -141,7 +141,7 @@ function NavGroupSection({
                 to={item.path}
                 className={`group flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150 ${
                   isActive
-                    ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-950/20'
+                    ? 'bg-[#2E4CFF] text-white shadow-sm'
                     : 'text-textSecondary hover:text-textPrimary hover:bg-cardHover'
                 }`}
               >
@@ -184,11 +184,11 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
     <div className="flex flex-col h-full">
       {/* Logo */}
       <Link to="/" className="flex items-center gap-2.5 px-4 py-4 mb-4 shrink-0">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-500 shadow-md shadow-emerald-950/20">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2E4CFF] shadow-sm">
           <Sparkles className="h-4.5 w-4.5 text-white" />
         </div>
         <div>
-          <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-600 dark:from-white dark:to-emerald-400">
+          <span className="text-base font-display font-extrabold text-content-primary">
             CareerOS AI
           </span>
           <p className="text-[9px] text-textSecondary font-mono tracking-widest uppercase -mt-0.5">

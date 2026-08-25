@@ -91,12 +91,12 @@ function CapabilityStat({ value, label, sub }: { value: string; label: string; s
 
 function BetaPlaceholderCard({ icon: Icon, title, body }: { icon: React.ElementType; title: string; body: string }) {
   return (
-    <div className="glass-card rounded-3xl p-7 card-interactive flex flex-col gap-4 border border-dashed border-emerald-500/30 bg-surface-card">
+    <div className="glass-card rounded-3xl p-7 card-interactive flex flex-col gap-4 border border-dashed border-[#2E4CFF]/30 bg-surface-card">
       <div className="flex items-center gap-3">
-        <div className="h-9 w-9 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-          <Icon className="h-4 w-4 text-emerald-500" aria-hidden="true" />
+        <div className="h-9 w-9 rounded-full bg-[#2E4CFF]/10 border border-[#2E4CFF]/20 flex items-center justify-center">
+          <Icon className="h-4 w-4 text-[#2E4CFF]" aria-hidden="true" />
         </div>
-        <span className="text-xs font-bold text-emerald-500 uppercase tracking-wider">Open Beta</span>
+        <span className="text-xs font-bold text-[#2E4CFF] uppercase tracking-wider">Open Beta</span>
       </div>
       <div>
         <p className="text-sm font-semibold text-content-primary mb-1">{title}</p>
@@ -123,7 +123,7 @@ export default function LandingPage(): React.ReactElement {
           aria-label="Main navigation"
         >
           <a href="/" className="flex items-center gap-2.5" aria-label="CareerOS AI home">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#2E4CFF] text-white shadow-sm">
               <Sparkles className="h-4 w-4" aria-hidden="true" />
             </div>
             <span className="text-lg font-bold tracking-tight text-content-primary">
@@ -163,18 +163,18 @@ export default function LandingPage(): React.ReactElement {
         <section className="mx-auto max-w-7xl px-6 lg:px-8 pt-20 pb-24 text-center" aria-labelledby="hero-heading">
           {/* Top Badge */}
           <div className="inline-flex items-center gap-2 bg-surface-card border border-surface-border text-content-secondary text-xs px-3.5 py-1.5 rounded-full mb-8 shadow-sm animate-fade-in">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+            <span className="h-2 w-2 rounded-full bg-[#2E4CFF] animate-pulse" aria-hidden="true" />
             AI-Powered Career Intelligence · Open Beta
           </div>
 
-          {/* Crisp Heading */}
+          {/* Crisp Heading - Option 1 Approved Direction */}
           <h1
             id="hero-heading"
-            className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] mb-6 text-content-primary animate-fade-up"
+            className="text-5xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight leading-[1.08] mb-6 text-content-primary animate-fade-up"
           >
-            Your Career,
+            Stop guessing if you're hireable.
             <br />
-            <span className="text-emerald-500">Intelligently Engineered.</span>
+            <span className="text-[#2E4CFF]">Quantify your engineering readiness.</span>
           </h1>
 
           {/* Subtitle */}
@@ -182,9 +182,7 @@ export default function LandingPage(): React.ReactElement {
             className="text-lg sm:text-xl text-content-secondary leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-up"
             style={{ animationDelay: '100ms' }}
           >
-            CareerOS AI helps engineering students measure career readiness with a structured score engine,
-            ATS resume analysis, skill gap detection, and AI-assisted 90-day roadmaps — all grounded in
-            your actual profile data.
+            CareerOS AI evaluates your real code repositories, ATS resume depth, and technical skills against verified recruiter benchmarks — computing a 0–1000 readiness score and 90-day execution flight plan.
           </p>
 
           {/* CTAs */}
@@ -194,22 +192,22 @@ export default function LandingPage(): React.ReactElement {
           >
             <Link
               to="/register"
-              className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-medium px-8 py-4 rounded-xl transition-all shadow-sm inline-flex items-center justify-center gap-2 text-base"
+              className="bg-[#2E4CFF] hover:bg-[#1A32C7] text-white font-medium px-8 py-4 rounded-xl transition-all shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2 text-base"
             >
               <Sparkles className="h-5 w-5" aria-hidden="true" />
-              Get Started Now
+              Calculate My Score Free
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link
               to="/login"
-              className="bg-surface-card hover:bg-surface-hover text-content-primary border border-surface-border font-medium px-8 py-4 rounded-xl transition-all inline-flex items-center justify-center gap-2 text-base"
+              className="bg-surface-card hover:bg-surface-hover text-content-primary border border-surface-border font-medium px-8 py-4 rounded-xl transition-all inline-flex items-center justify-center gap-2 text-base shadow-sm"
             >
               Sign In to Dashboard
             </Link>
           </div>
 
-          <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-14 animate-fade-up flex items-center justify-center gap-1.5" style={{ animationDelay: '250ms' }}>
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+          <p className="text-xs text-[#2E4CFF] font-medium mb-14 animate-fade-up flex items-center justify-center gap-1.5" style={{ animationDelay: '250ms' }}>
+            <span className="h-2 w-2 rounded-full bg-[#FF6B35] animate-pulse" aria-hidden="true" />
             Hosted backend live on Render & Neon PostgreSQL
           </p>
 

@@ -5,6 +5,8 @@
   <p><b>An open-source, AI-powered Career Operating System for engineering students.</b></p>
 
   <p>
+    <a href="https://github.com/hindhusharajaram/CareerOS-AI/actions/workflows/backend-ci.yml"><img src="https://github.com/hindhusharajaram/CareerOS-AI/actions/workflows/backend-ci.yml/badge.svg" alt="Backend CI Status" /></a>
+    <a href="https://github.com/hindhusharajaram/CareerOS-AI/actions/workflows/frontend-ci.yml"><img src="https://github.com/hindhusharajaram/CareerOS-AI/actions/workflows/frontend-ci.yml/badge.svg" alt="Frontend CI Status" /></a>
     <a href="https://java.com"><img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=java&logoColor=white" alt="Java 21" /></a>
     <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring_Boot-3.4-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" alt="Spring Boot 3.4" /></a>
     <a href="https://react.dev"><img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 18" /></a>
