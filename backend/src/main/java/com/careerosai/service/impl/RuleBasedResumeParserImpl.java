@@ -3,6 +3,7 @@ package com.careerosai.service.impl;
 import com.careerosai.dto.ParsedResumeDto;
 import com.careerosai.service.ResumeParserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.tika.Tika;
@@ -28,9 +29,10 @@ public class RuleBasedResumeParserImpl implements ResumeParserService {
     private static final Pattern GITHUB_PATTERN = Pattern.compile("(?:https?:\\/\\/)?(?:www\\.)?github\\.com\\/[a-zA-Z0-9_-]+");
 
     private static final List<String> SKILL_TAXONOMY_KEYWORDS = Arrays.asList(
-        "Java", "Python", "React", "TypeScript", "JavaScript", "Spring Boot", "PostgreSQL",
-        "Node.js", "SQL", "Machine Learning", "Data Structures", "Docker", "Git",
-        "Tailwind CSS", "REST APIs", "AWS", "Kubernetes", "C++", "HTML", "CSS"
+        "Java", "Spring Boot", "Spring Data JPA", "Spring Security", "PostgreSQL", "MySQL", "MongoDB",
+        "React", "TypeScript", "JavaScript", "HTML", "CSS", "TailwindCSS", "Node.js", "Express",
+        "Docker", "Kubernetes", "Git", "GitHub Actions", "CI/CD", "AWS", "REST API", "Microservices",
+        "JUnit", "Mockito", "Python", "C++", "Data Structures", "Algorithms", "System Design"
     );
 
     @Override
@@ -46,8 +48,7 @@ public class RuleBasedResumeParserImpl implements ResumeParserService {
 
         // Attempt 2: PDFBox Fallback if Tika extracted empty/short string (< 50 chars)
         if (rawText == null || rawText.trim().length() < 50) {
-            try (InputStream is = file.getInputStream();
-                 PDDocument document = PDDocument.load(is)) {
+            try (PDDocument document = Loader.loadPDF(file.getBytes())) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 rawText = stripper.getText(document);
             } catch (Exception e) {

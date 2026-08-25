@@ -1,5 +1,6 @@
 package com.careerosai.service;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.tika.Tika;
@@ -24,8 +25,7 @@ public class ResumeParsingService {
 
         // Attempt 2: PDFBox Fallback if Tika extracted empty/short string
         if (extractedText == null || extractedText.trim().length() < 50) {
-            try (InputStream inputStream = file.getInputStream();
-                 PDDocument document = PDDocument.load(inputStream)) {
+            try (PDDocument document = Loader.loadPDF(file.getBytes())) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 extractedText = stripper.getText(document);
             } catch (Exception e) {
