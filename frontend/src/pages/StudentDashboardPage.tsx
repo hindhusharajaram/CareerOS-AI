@@ -74,14 +74,13 @@ export default function StudentDashboardPage(): React.ReactElement {
           <AlertCircle className="h-5 w-5 shrink-0" />
           <span className="text-sm">{error}</span>
         </div>
-      ) : data ? (
-        <div className="space-y-8 max-w-7xl">
+      ) : data ? (        <div className="space-y-6 max-w-7xl">
 
-          {/* ===== WELCOME BANNER ===== */}
-          <div className="relative overflow-hidden rounded-3xl border border-surface-border bg-surface-card p-7 shadow-sm">
+          {/* ===== UNIFIED WELCOME & SCORE HEADER ===== */}
+          <div className="relative overflow-hidden rounded-3xl border border-surface-border bg-surface-card p-6 shadow-sm">
             <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-surface-border bg-surface-hover px-3 py-1 text-xs text-[#2E4CFF] font-semibold mb-3">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 rounded-full border border-surface-border bg-surface-hover px-3 py-1 text-xs text-[#2E4CFF] font-semibold">
                   <Sparkles className="h-3.5 w-3.5" />
                   {isNewUser ? 'Account Setup Needed' : 'AI Career Engine Active'}
                 </div>
@@ -92,34 +91,37 @@ export default function StudentDashboardPage(): React.ReactElement {
                   </span>
                   !
                 </h2>
-                <p className="mt-2 text-sm text-content-secondary max-w-lg">
+                <p className="text-sm text-content-secondary max-w-xl">
                   {isNewUser
-                    ? 'Start by completing your profile or analyzing a resume below to activate your Career Score Engine (0–1000).'
+                    ? 'Start by analyzing your resume below to activate your Career Score Engine (0–1000).'
                     : 'Your career workspace is active. Keep updating your skills and projects to maximize your placement score.'}
                 </p>
 
-                {/* Progress bar */}
-                <div className="mt-5 max-w-sm">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-content-secondary">Profile Completion</span>
-                    <span className="text-xs font-bold text-[#2E4CFF]">{data.completionPercentage}%</span>
-                  </div>
-                  <div className="w-full bg-surface-hover h-2 rounded-full overflow-hidden border border-surface-border">
-                    <div
-                      className="bg-[#2E4CFF] h-full rounded-full transition-all duration-1000"
-                      style={{ width: `${data.completionPercentage}%` }}
-                    />
-                  </div>
+                {/* Integrated Compact Stat Chips */}
+                <div className="pt-2 flex flex-wrap items-center gap-2 text-xs">
+                  <span className="text-content-muted font-medium mr-1">Current Profile Data:</span>
+                  <span className="px-2.5 py-0.5 rounded-full border border-surface-border bg-surface-hover text-content-secondary font-medium">
+                    Skills <strong className="text-content-primary">{data.skillsCount}</strong>
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full border border-surface-border bg-surface-hover text-content-secondary font-medium">
+                    Projects <strong className="text-content-primary">{data.projectsCount}</strong>
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full border border-surface-border bg-surface-hover text-content-secondary font-medium">
+                    Certs <strong className="text-content-primary">{data.certificatesCount}</strong>
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full border border-surface-border bg-surface-hover text-content-secondary font-medium">
+                    Experience <strong className="text-content-primary">{data.experienceCount}</strong>
+                  </span>
                 </div>
               </div>
 
-              {/* Score Ring */}
-              <div className="shrink-0 flex items-center gap-4 bg-surface-hover p-4 rounded-2xl border border-surface-border">
+              {/* Single Consolidated Progress Ring */}
+              <div className="shrink-0 flex items-center gap-4 bg-surface-hover p-4 rounded-2xl border border-surface-border self-start md:self-auto">
                 <ProgressRing
                   value={data.completionPercentage}
                   max={100}
-                  size={80}
-                  strokeWidth={7}
+                  size={72}
+                  strokeWidth={6}
                   color="blue"
                 >
                   <span className="text-sm font-black text-content-primary">{data.completionPercentage}%</span>
@@ -127,7 +129,7 @@ export default function StudentDashboardPage(): React.ReactElement {
                 <div>
                   <h4 className="text-sm font-bold text-content-primary">Profile Score</h4>
                   <p className="text-xs text-content-muted mt-0.5">Completion Index</p>
-                  <div className="mt-2 flex items-center gap-1.5">
+                  <div className="mt-1.5 flex items-center gap-1.5">
                     <CheckCircle className="h-3.5 w-3.5 text-[#2E4CFF]" />
                     <span className="text-[11px] text-[#2E4CFF] font-semibold">
                       {data.completionPercentage >= 80 ? 'Excellent!' : data.completionPercentage >= 50 ? 'Good Progress' : 'Getting Started'}
@@ -140,76 +142,77 @@ export default function StudentDashboardPage(): React.ReactElement {
 
           {/* ===== NEW USER vs RETURNING USER VIEW ===== */}
           {isNewUser ? (
-            /* ===== NEW USER: GUIDED QUICK START FLIGHT PLAN ===== */
-            <div className="space-y-6 animate-fade-in">
+            /* ===== NEW USER: SEQUENTIAL FLIGHT PLAN ===== */
+            <div className="space-y-5 animate-fade-in">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-display font-extrabold text-content-primary">
                     Quick Start Flight Plan
                   </h3>
                   <p className="text-xs text-content-secondary mt-0.5">
-                    Complete these recommended steps to build your initial career readiness score
+                    Follow step 01 to initialize your career readiness score
                   </p>
                 </div>
               </div>
 
-              {/* Primary Onboarding Cards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                  { step: '01', label: 'Analyze Resume', href: '/intelligence/ats', icon: Brain, desc: 'Extract skills automatically from your resume', highlight: true },
-                  { step: '02', label: 'Add Key Skills', href: '/skills', icon: Cpu, desc: 'Add languages, frameworks & databases', highlight: false },
-                  { step: '03', label: 'Add Portfolio Projects', href: '/projects', icon: FolderGit2, desc: 'Link your GitHub repositories', highlight: false },
-                  { step: '04', label: 'Set Target Goals', href: '/career-goals', icon: Target, desc: 'Choose target engineering job roles', highlight: false },
-                ].map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      className={`group relative flex flex-col justify-between rounded-2xl border p-5 transition-all duration-200 shadow-sm ${
-                        item.highlight
-                          ? 'border-[#2E4CFF] bg-[#2E4CFF]/5 hover:bg-[#2E4CFF]/10'
-                          : 'border-surface-border bg-surface-card hover:border-[#2E4CFF]/40'
-                      }`}
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-4">
-                          <div className={`h-10 w-10 rounded-xl flex items-center justify-center text-white shadow-sm ${item.highlight ? 'bg-[#2E4CFF]' : 'bg-surface-hover text-content-primary border border-surface-border'}`}>
-                            <Icon className={`h-5 w-5 ${item.highlight ? 'text-white' : 'text-[#2E4CFF]'}`} />
-                          </div>
-                          <span className="text-xs font-mono font-bold text-content-muted">{item.step}</span>
-                        </div>
-                        <p className="text-sm font-bold text-content-primary mb-1">{item.label}</p>
-                        <p className="text-xs text-content-secondary leading-relaxed">{item.desc}</p>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-surface-border/50 flex items-center justify-between text-xs font-semibold text-[#2E4CFF]">
-                        <span>Start Step</span>
-                        <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </Link>
-                  );
-                })}
+              {/* STEP 01: Hero Call-to-Action Card */}
+              <div className="relative overflow-hidden rounded-2xl border-2 border-[#2E4CFF] bg-[#2E4CFF]/5 p-6 shadow-sm">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="space-y-2 max-w-xl">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#2E4CFF] text-white text-[11px] font-bold tracking-wide uppercase">
+                      <span>Step 01 of 04</span>
+                      <span>·</span>
+                      <span>Recommended Next Action</span>
+                    </div>
+                    <h4 className="text-xl font-bold text-content-primary flex items-center gap-2">
+                      <Brain className="h-5 w-5 text-[#2E4CFF]" />
+                      Analyze Resume
+                    </h4>
+                    <p className="text-sm text-content-secondary leading-relaxed">
+                      Upload your PDF or Word resume to automatically extract your skills, past experiences, and contact details into your student profile.
+                    </p>
+                  </div>
+                  <Link
+                    to="/intelligence/ats"
+                    className="shrink-0 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#2E4CFF] text-white font-semibold text-sm shadow-sm hover:bg-[#2E4CFF]/90 transition-all hover:gap-3"
+                  >
+                    <span>Analyze Resume Now</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
 
-              {/* Collapsed Compact Stat Bar */}
-              <div className="rounded-2xl border border-surface-border bg-surface-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
-                <div className="flex items-center gap-2 text-content-secondary">
-                  <span className="font-semibold text-content-primary">Profile Data Checklist:</span>
-                  <span>Add items to unlock score calculation</span>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${data.skillsCount > 0 ? 'bg-[#2E4CFF]/10 text-[#2E4CFF] border-[#2E4CFF]/30' : 'bg-surface-hover text-content-muted border-surface-border'}`}>
-                    Skills: <strong className="text-content-primary">{data.skillsCount}</strong>
-                  </span>
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${data.projectsCount > 0 ? 'bg-[#2E4CFF]/10 text-[#2E4CFF] border-[#2E4CFF]/30' : 'bg-surface-hover text-content-muted border-surface-border'}`}>
-                    Projects: <strong className="text-content-primary">{data.projectsCount}</strong>
-                  </span>
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${data.certificatesCount > 0 ? 'bg-[#2E4CFF]/10 text-[#2E4CFF] border-[#2E4CFF]/30' : 'bg-surface-hover text-content-muted border-surface-border'}`}>
-                    Certs: <strong className="text-content-primary">{data.certificatesCount}</strong>
-                  </span>
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${data.experienceCount > 0 ? 'bg-[#2E4CFF]/10 text-[#2E4CFF] border-[#2E4CFF]/30' : 'bg-surface-hover text-content-muted border-surface-border'}`}>
-                    Experience: <strong className="text-content-primary">{data.experienceCount}</strong>
-                  </span>
+              {/* UPCOMING STEPS (02-04): Compact Sequential Preview Row */}
+              <div>
+                <p className="text-xs font-semibold text-content-muted mb-3 uppercase tracking-wider">
+                  Upcoming Steps (Unlocked after Step 01)
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { step: '02', label: 'Add Key Skills', href: '/skills', icon: Cpu, desc: 'Languages, frameworks & databases' },
+                    { step: '03', label: 'Add Portfolio Projects', href: '/projects', icon: FolderGit2, desc: 'Link your GitHub repositories' },
+                    { step: '04', label: 'Set Target Goals', href: '/career-goals', icon: Target, desc: 'Choose target engineering roles' },
+                  ].map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.href}
+                        to={item.href}
+                        className="group flex items-start gap-3 rounded-xl border border-surface-border bg-surface-card/60 p-3.5 opacity-75 hover:opacity-100 hover:border-[#2E4CFF]/40 transition-all"
+                      >
+                        <div className="h-8 w-8 rounded-lg bg-surface-hover border border-surface-border flex items-center justify-center shrink-0 text-content-muted group-hover:text-[#2E4CFF] transition-colors">
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-content-primary truncate">{item.label}</span>
+                            <span className="text-[10px] font-mono font-bold text-content-muted">{item.step}</span>
+                          </div>
+                          <p className="text-[11px] text-content-muted truncate mt-0.5">{item.desc}</p>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>
