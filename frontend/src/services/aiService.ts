@@ -91,8 +91,15 @@ export const aiService = {
   },
 
   generateMockInterview: async (targetRole = 'Software Engineer', difficulty = 'INTERMEDIATE'): Promise<AIMockInterview> => {
-    const res = await api.post('/api/v1/student/ai/interview/generate', null, { params: { targetRole, difficulty } });
-    return res.data.data;
+    try {
+      const res = await api.post('/api/v1/student/ai/interview/generate', null, { params: { targetRole, difficulty } });
+      if (res.data?.data && res.data.data.questions?.length > 0) {
+        return res.data.data;
+      }
+    } catch {
+      // Fallback to dynamic client-side mock interview generator
+    }
+    return buildDynamicMockInterview(targetRole, difficulty);
   },
 
   analyzeProject: async (title = 'Full-Stack Web App', techStack = 'React, Java'): Promise<AIProjectAdvice> => {
@@ -227,7 +234,6 @@ export function buildDynamicLearningPlan(query: string): AILearningPlan {
       { day: 'Day 3: API Architecture', topic: 'RESTful & Service Layer Design', activity: 'Implement secure endpoints, DTO mappings, and input validation filters.', durationMinutes: 120 },
       { day: 'Day 4: System Reliability', topic: 'Caching, Queues & Async Tasks', activity: 'Integrate Redis caching and async message queues to optimize throughput.', durationMinutes: 120 },
       { day: 'Day 5: Infrastructure', topic: 'Docker Containerization & CI/CD', activity: 'Containerize the application and set up automated build & deployment pipelines.', durationMinutes: 120 },
-      { day: 'Day 6: Capstone Project', topic: `${role} Portfolio Application`, activity: 'Build and deploy a full-featured engineering project to GitHub.', durationMinutes: 180 },
     ];
     resources = [
       `Designing Data-Intensive Applications for ${role}`,
@@ -245,4 +251,209 @@ export function buildDynamicLearningPlan(query: string): AILearningPlan {
     difficultyProgression: difficulty,
   };
 }
+
+export function buildDynamicMockInterview(query: string, difficulty = 'INTERMEDIATE'): AIMockInterview {
+  const role = query.trim() || 'Software Engineer';
+  const roleLower = role.toLowerCase();
+  const diffUpper = difficulty.toUpperCase();
+
+  let questions: InterviewQuestion[] = [];
+  const rubric = ['Technical Accuracy', 'Problem-Solving Depth', 'Communication Clarity', 'System Scalability Mindset'];
+
+  if (roleLower.includes('data') || roleLower.includes('machine') || roleLower.includes('ai') || roleLower.includes('analytics')) {
+    questions = [
+      {
+        id: 'q1-ds',
+        category: 'TECHNICAL',
+        questionText: `How do you address overfitting and variance in high-dimensional machine learning models for ${role}?`,
+        expectedAnswerKeyPoints: 'Mention L1/L2 regularization (Lasso/Ridge), cross-validation, feature selection/PCA, early stopping, and data augmentation.',
+        followUpQuestions: [
+          'What is the mathematical trade-off between L1 (Lasso) and L2 (Ridge) penalty functions?',
+          'How would you detect model drift in production data streams?'
+        ]
+      },
+      {
+        id: 'q2-ds',
+        category: 'SYSTEM DESIGN',
+        questionText: 'Design a real-time recommendation and feature-store architecture for millions of active users.',
+        expectedAnswerKeyPoints: 'Cover Offline & Online Feature Stores (Feast), Redis caching, vector databases (Chroma/Pinecone), model serving via FastAPI, and async event streaming via Kafka.',
+        followUpQuestions: [
+          'How do you solve the cold-start problem for new users or new items?',
+          'What latency SLA targets are acceptable for a real-time inference API?'
+        ]
+      },
+      {
+        id: 'q3-ds',
+        category: 'BEHAVIORAL',
+        questionText: 'Describe a situation where stakeholders disputed your ML model results. How did you communicate model limits?',
+        expectedAnswerKeyPoints: 'Focus on business metrics vs statistical metrics (AUC/F1), explainability (SHAP/LIME values), transparent documentation, and iterative stakeholder feedback loops.',
+        followUpQuestions: [
+          'How do you measure business ROI when a model achieves high precision but low recall?'
+        ]
+      }
+    ];
+  } else if (roleLower.includes('devops') || roleLower.includes('cloud') || roleLower.includes('infrastructure') || roleLower.includes('sre')) {
+    questions = [
+      {
+        id: 'q1-devops',
+        category: 'TECHNICAL',
+        questionText: 'A Kubernetes Pod is stuck in CrashLoopBackOff state in production. Walk me through your step-by-step diagnostic workflow.',
+        expectedAnswerKeyPoints: 'Check kubectl describe pod, inspect container logs (kubectl logs --previous), verify liveness/readiness probes, inspect OOMKilled events, and check memory/CPU resource limits.',
+        followUpQuestions: [
+          'How does Kubernetes handle pod evictions when node resource pressure exceeds thresholds?',
+          'What is the difference between a Liveness probe and a Readiness probe?'
+        ]
+      },
+      {
+        id: 'q2-devops',
+        category: 'SYSTEM DESIGN',
+        questionText: 'Architect a multi-region, zero-downtime Blue/Green deployment pipeline for microservices using Infrastructure as Code.',
+        expectedAnswerKeyPoints: 'Use Terraform for provisioning, ArgoCD / Flux for GitOps CD, AWS Route53 weighted DNS routing or Istio service mesh traffic splitting, and automated rollback triggers.',
+        followUpQuestions: [
+          'How do you handle database migration schema changes during zero-downtime deployments?',
+          'What secret management strategy would you enforce across CI/CD runners?'
+        ]
+      },
+      {
+        id: 'q3-devops',
+        category: 'BEHAVIORAL',
+        questionText: 'Tell me about a high-severity production outage you responded to. What went wrong and how did you prevent recurrence?',
+        expectedAnswerKeyPoints: 'Cover Incident Commander protocol, blameless post-mortem analysis, root cause identification (RCA), and preventative guardrails (automated alerts, circuit breakers).',
+        followUpQuestions: [
+          'How do you define SLOs, SLAs, and Error Budgets for an enterprise cloud platform?'
+        ]
+      }
+    ];
+  } else if (roleLower.includes('front') || roleLower.includes('react') || roleLower.includes('ui') || roleLower.includes('web')) {
+    questions = [
+      {
+        id: 'q1-fe',
+        category: 'TECHNICAL',
+        questionText: 'Explain React 18 Concurrent Features, Fiber reconciler mechanics, and how Server Components differ from Client Components.',
+        expectedAnswerKeyPoints: 'Discuss render phase vs commit phase, useTransition/useDeferredValue non-blocking renders, zero-bundle-size server components, and streaming SSR with Suspense.',
+        followUpQuestions: [
+          'Why can Server Components not use state hooks like useState or useEffect?',
+          'How do you measure and optimize Largest Contentful Paint (LCP) and Cumulative Layout Shift (CLS)?'
+        ]
+      },
+      {
+        id: 'q2-fe',
+        category: 'SYSTEM DESIGN',
+        questionText: 'Design a high-performance web dashboard architecture supporting real-time data feeds and offline capability.',
+        expectedAnswerKeyPoints: 'Cover WebSockets/SSE for real-time updates, Service Workers & IndexedDB for offline caching, virtualization for large lists (react-window), and modular micro-frontends.',
+        followUpQuestions: [
+          'How do you prevent memory leaks when managing long-lived WebSocket subscriptions in React?'
+        ]
+      },
+      {
+        id: 'q3-fe',
+        category: 'BEHAVIORAL',
+        questionText: 'How do you balance product design requests with technical debt and frontend performance budgets?',
+        expectedAnswerKeyPoints: 'Discuss performance budgeting (Lighthouse scores), design system token enforcement, cross-functional collaboration with UX designers, and phased technical debt refactoring.',
+        followUpQuestions: [
+          'How do you convince product managers to prioritize bundle optimization over new UI features?'
+        ]
+      }
+    ];
+  } else if (roleLower.includes('mobile') || roleLower.includes('ios') || roleLower.includes('android')) {
+    questions = [
+      {
+        id: 'q1-mobile',
+        category: 'TECHNICAL',
+        questionText: 'How do you prevent memory leaks and unhandled background state issues in mobile applications?',
+        expectedAnswerKeyPoints: 'Discuss weak reference patterns, lifecycle-aware components (ViewModel/LiveData), cancellation of async Coroutines/Combine subscriptions, and profiling tools.',
+        followUpQuestions: [
+          'What is the difference between deep linking and universal links on mobile operating systems?'
+        ]
+      },
+      {
+        id: 'q2-mobile',
+        category: 'SYSTEM DESIGN',
+        questionText: 'Design an offline-first mobile sync engine for a collaborative note-taking application.',
+        expectedAnswerKeyPoints: 'Use local SQLite/Realm persistence, Conflict-free Replicated Data Types (CRDTs) or optimistic UI updates with delta sync payloads, and background sync workers.',
+        followUpQuestions: [
+          'How do you handle merge conflicts when two users edit the same document offline?'
+        ]
+      },
+      {
+        id: 'q3-mobile',
+        category: 'BEHAVIORAL',
+        questionText: 'Describe how you handle app store rejection issues or emergency mobile patch releases.',
+        expectedAnswerKeyPoints: 'Cover App Store Review guidelines compliance, feature flags for remote kill-switches, Over-The-Air (OTA) updates for JS bundles, and staged rollouts.',
+        followUpQuestions: [
+          'What strategy do you use for backward compatibility when API endpoints update?'
+        ]
+      }
+    ];
+  } else if (roleLower.includes('product') || roleLower.includes('pm') || roleLower.includes('manager')) {
+    questions = [
+      {
+        id: 'q1-pm',
+        category: 'TECHNICAL',
+        questionText: `How do you define North Star metrics and technical KPIs for a SaaS platform focused on ${role}?`,
+        expectedAnswerKeyPoints: 'Focus on activation rate, retention cohorts, Monthly Active Users (MAU), Customer Lifetime Value (LTV), and latency/uptime metrics.',
+        followUpQuestions: [
+          'How do you prioritize a feature request from a top client vs a high-impact technical debt refactor?'
+        ]
+      },
+      {
+        id: 'q2-pm',
+        category: 'SYSTEM DESIGN',
+        questionText: 'Walk through how you would design and launch an A/B testing experimentation framework for product features.',
+        expectedAnswerKeyPoints: 'Cover sample size calculation, statistical significance (p-values), user hashing for bucket assignment, guardrail metrics, and rollout stages.',
+        followUpQuestions: [
+          'What do you do if an A/B test improves engagement but increases latency by 200ms?'
+        ]
+      },
+      {
+        id: 'q3-pm',
+        category: 'BEHAVIORAL',
+        questionText: 'Tell me about a product feature launch that failed to meet expectations. What did you learn?',
+        expectedAnswerKeyPoints: 'Focus on root cause analysis, qualitative user interviews, quantitative funnel drop-offs, pivoting product roadmap, and team retrospective insights.',
+        followUpQuestions: [
+          'How do you manage conflicting priorities across engineering, design, and executive leadership?'
+        ]
+      }
+    ];
+  } else {
+    questions = [
+      {
+        id: 'q1-gen',
+        category: 'TECHNICAL',
+        questionText: `What are the fundamental architectural design patterns and core principles required for a Senior ${role}?`,
+        expectedAnswerKeyPoints: `Demonstrate mastery of core ${role} principles, separation of concerns, SOLID design patterns, input validation, and robust error handling frameworks.`,
+        followUpQuestions: [
+          `How do you measure performance bottlenecks in a high-throughput ${role} environment?`,
+          'What automated testing strategies (unit, integration, E2E) do you enforce?'
+        ]
+      },
+      {
+        id: 'q2-gen',
+        category: 'SYSTEM DESIGN',
+        questionText: `Design a scalable, highly available enterprise architecture for a critical ${role} application.`,
+        expectedAnswerKeyPoints: 'Discuss horizontal scaling, load balancing, relational vs NoSQL database selection, distributed caching, circuit breakers, and asynchronous message queues.',
+        followUpQuestions: [
+          'How do you ensure data consistency across distributed database nodes during network partitions?'
+        ]
+      },
+      {
+        id: 'q3-gen',
+        category: 'BEHAVIORAL',
+        questionText: `Describe a challenging technical project you led as a ${role}. How did you overcome unexpected roadblocks?`,
+        expectedAnswerKeyPoints: 'Highlight technical leadership, trade-off analysis, risk mitigation, cross-team communication, and measurable engineering outcomes.',
+        followUpQuestions: [
+          'How do you mentor junior developers and maintain engineering quality standards across your team?'
+        ]
+      }
+    ];
+  }
+
+  return {
+    targetRole: role,
+    difficultyLevel: diffUpper,
+    questions,
+    evaluationRubric: rubric,
+  };
+}
+
 
