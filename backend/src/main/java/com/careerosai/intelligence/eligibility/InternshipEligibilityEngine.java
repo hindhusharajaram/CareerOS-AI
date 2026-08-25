@@ -85,8 +85,8 @@ public class InternshipEligibilityEngine {
         if (projectMet) met.add("Minimum Project Count Met"); else missing.add("Needs at least 1 verified portfolio project");
 
         String status = "ELIGIBLE";
-        if (missing.size() == 1) status = "NEARLY_ELIGIBLE";
-        else if (missing.size() > 1) status = "NOT_ELIGIBLE";
+        if (missing.size() == 1) status = "PARTIALLY ELIGIBLE";
+        else if (missing.size() > 1) status = "NOT YET ELIGIBLE";
 
         return EligibilityReportDto.CompanyEligibility.builder()
             .companyName(company)

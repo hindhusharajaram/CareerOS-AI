@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ShieldCheck, Building2, Target, CheckCircle2, AlertCircle } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
 import { intelligenceService, EligibilityReportData } from '../services/intelligenceService';
@@ -28,12 +29,10 @@ export default function EligibilityPage(): React.ReactElement {
     }
   };
 
-  // 
-
   const getStatusColorClass = (status: string) => {
     switch (status) {
       case 'ELIGIBLE': return 'text-emerald-400';
-      case 'NEARLY_ELIGIBLE': return 'text-amber-400';
+      case 'PARTIALLY ELIGIBLE': return 'text-amber-400';
       default: return 'text-rose-400';
     }
   };
@@ -106,12 +105,20 @@ export default function EligibilityPage(): React.ReactElement {
 
                       {comp.missingCriteria.length > 0 && (
                         <div>
-                          <h5 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 mt-4">Missing Requirements</h5>
+                          <h5 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2 mt-4">Missing Requirements & Direct Actions</h5>
                           <div className="space-y-2">
                             {comp.missingCriteria.map((miss, msIdx) => (
-                              <div key={msIdx} className="flex items-start gap-2.5 p-2 rounded-lg bg-rose-500/5 border border-rose-500/10">
-                                <AlertCircle className="h-4 w-4 text-rose-500 shrink-0 mt-0.5" />
-                                <span className="text-sm text-rose-200 font-medium">{miss}</span>
+                              <div key={msIdx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg bg-amber-500/5 border border-amber-500/15">
+                                <div className="flex items-start gap-2.5">
+                                  <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                                  <span className="text-xs text-amber-200 font-medium">{miss}</span>
+                                </div>
+                                <Link
+                                  to={miss.toLowerCase().includes('skill') ? '/intelligence/skill-gap' : '/profile'}
+                                  className="text-[11px] font-bold text-[#2E4CFF] hover:underline shrink-0"
+                                >
+                                  {miss.toLowerCase().includes('skill') ? 'Fix in Skill Gap →' : 'Fix in Profile →'}
+                                </Link>
                               </div>
                             ))}
                           </div>

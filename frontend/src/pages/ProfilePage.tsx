@@ -242,6 +242,26 @@ export default function ProfilePage(): React.ReactElement {
                   <span>Profile: {scoreData ? scoreData.profileCompletenessPercentage : 0}%</span>
                   <span>Score: {scoreData ? scoreData.overallScore : 0}/1000</span>
                 </div>
+
+                {/* Field-Level Completeness Checklist */}
+                <div className="pt-2 border-t border-surface-border space-y-1 text-[11px]">
+                  <p className="font-bold text-content-secondary uppercase text-[9px] tracking-wider mb-1">Completeness Status</p>
+                  {scoreData && scoreData.skillsCount > 0 ? (
+                    <div className="text-emerald-400 font-semibold flex items-center gap-1">✓ {scoreData.skillsCount} Skills Verified</div>
+                  ) : (
+                    <div className="text-amber-400 font-semibold flex items-center gap-1">⚠️ Skills: 0 added</div>
+                  )}
+                  {scoreData && scoreData.projectsCount > 0 ? (
+                    <div className="text-emerald-400 font-semibold flex items-center gap-1">✓ {scoreData.projectsCount} Projects Added</div>
+                  ) : (
+                    <div className="text-amber-400 font-semibold flex items-center gap-1">⚠️ Projects: 0 added</div>
+                  )}
+                  {scoreData && scoreData.atsReadinessPercentage > 0 ? (
+                    <div className="text-emerald-400 font-semibold flex items-center gap-1">✓ Resume Uploaded ({scoreData.atsReadinessPercentage}%)</div>
+                  ) : (
+                    <div className="text-amber-400 font-semibold flex items-center gap-1">⚠️ Resume: Not uploaded</div>
+                  )}
+                </div>
               </div>
             </div>
 

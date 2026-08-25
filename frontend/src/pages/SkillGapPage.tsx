@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Brain, Cpu, Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
 import { intelligenceService, SkillGapData } from '../services/intelligenceService';
@@ -137,9 +138,19 @@ export default function SkillGapPage(): React.ReactElement {
                           {difficulty.label}
                         </span>
                         <span className="flex items-center gap-1.5 text-content-muted font-mono">
-                          <Clock className="h-3.5 w-3.5 text-emerald-500" />
+                          <Clock className="h-3.5 w-3.5 text-[#2E4CFF]" />
                           ~{item.estimatedLearningHours}h to learn
                         </span>
+                      </div>
+
+                      <div className="mt-3 pt-2 text-right border-t border-dashed border-surface-border">
+                        <Link
+                          to="/ai/learning-coach"
+                          className="inline-flex items-center gap-1 text-xs font-bold text-[#2E4CFF] hover:underline"
+                        >
+                          <span>Generate Learning Plan for {item.skillName}</span>
+                          <span>→</span>
+                        </Link>
                       </div>
                     </div>
                   );
