@@ -176,7 +176,7 @@
 
   .gradient-text-brand {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background-image: linear-gradient(135deg, #2E4CFF 0%, #1A34C7 100%);
   }
 
   /* Skeleton Loading */
@@ -224,7 +224,7 @@
   .border-gradient {
     position: relative;
     background: linear-gradient(var(--surface-card), var(--surface-card)) padding-box,
-                linear-gradient(135deg, #10b981, #059669) border-box;
+                linear-gradient(135deg, #2E4CFF, #1A34C7) border-box;
     border: 1px solid transparent;
   }
 
@@ -242,7 +242,7 @@
 
   /* Chat bubble */
   .chat-bubble-user {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: linear-gradient(135deg, #2E4CFF, #1A34C7);
     border-radius: 18px 18px 4px 18px;
     color: #ffffff;
   }
@@ -256,7 +256,7 @@
 
   /* Gradient backgrounds */
   .bg-brand-gradient {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #2E4CFF 0%, #1A34C7 100%);
   }
 
   .bg-hero-gradient {
@@ -292,7 +292,7 @@
     left: 0;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, #10b981, #059669);
+    background: linear-gradient(90deg, #2E4CFF, #1A34C7);
     transition: width 0.3s ease;
   }
   .nav-underline:hover::after {

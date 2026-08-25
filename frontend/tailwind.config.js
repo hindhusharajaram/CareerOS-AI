@@ -46,7 +46,7 @@ export default {
           300: '#6ee7b7',
           400: '#34d399',
           500: '#10b981',
-          600: '#059669',
+          600: '#2E4CFF',
           700: '#047857',
           800: '#065f46',
           900: '#064e3b',
@@ -83,7 +83,7 @@ export default {
           foreground: 'hsl(var(--accent-foreground))',
           50: '#ecfdf5',
           500: '#10b981',
-          600: '#059669',
+          600: '#2E4CFF',
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',
