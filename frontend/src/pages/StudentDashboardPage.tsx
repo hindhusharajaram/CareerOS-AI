@@ -16,6 +16,7 @@ import {
   Zap,
   ChevronRight,
   CheckCircle,
+  FileText,
 } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
 import { studentService, DashboardSummaryData } from '../services/studentService';
@@ -24,15 +25,18 @@ import AnimatedCounter from '../components/ui/AnimatedCounter';
 import { ProgressBar, ProgressRing } from '../components/ui/Progress';
 import { SkeletonStatGrid, SkeletonCard } from '../components/ui/Skeleton';
 
+import { scoreService, CareerScoreData } from '../services/scoreService';
+
 const quickActions = [
-  { label: 'View Career Score', href: '/intelligence/score', icon: Award, color: 'from-emerald-600 to-emerald-500', desc: 'Check your 0–1000 rating' },
-  { label: 'Analyze Resume', href: '/intelligence/ats', icon: Brain, color: 'from-emerald-600 to-emerald-500', desc: 'ATS optimization' },
+  { label: 'AI Resume Review', href: '/intelligence/ats', icon: FileText, color: 'from-emerald-500 to-emerald-600', desc: 'Scan & optimize' },
+  { label: 'Skill Gap Matrix', href: '/intelligence/skill-gap', icon: Brain, color: 'from-emerald-500 to-emerald-600', desc: 'Target role fit' },
   { label: 'AI Career Chat', href: '/ai/chat', icon: Bot, color: 'from-emerald-600 to-emerald-500', desc: 'Ask anything' },
   { label: '90-Day Roadmap', href: '/intelligence/roadmap', icon: Target, color: 'from-emerald-600 to-emerald-500', desc: 'Your action plan' },
 ];
 
 export default function StudentDashboardPage(): React.ReactElement {
   const [data, setData] = useState<DashboardSummaryData | null>(null);
+  const [scoreData, setScoreData] = useState<CareerScoreData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -44,8 +48,12 @@ export default function StudentDashboardPage(): React.ReactElement {
     setIsLoading(true);
     setError('');
     try {
-      const summary = await studentService.getDashboard();
-      setData(summary);
+      const [summary, score] = await Promise.all([
+        studentService.getDashboard().catch(() => null),
+        scoreService.getCareerScore().catch(() => null),
+      ]);
+      if (summary) setData(summary);
+      if (score) setScoreData(score);
     } catch {
       setError('Could not fetch dashboard. Make sure the backend server is running.');
     } finally {
@@ -53,9 +61,10 @@ export default function StudentDashboardPage(): React.ReactElement {
     }
   };
 
+  const completionPercent = scoreData?.profileCompletenessPercentage ?? data?.completionPercentage ?? 4;
   const isNewUser = data ? (
     (data.skillsCount + data.projectsCount + data.certificatesCount + data.experienceCount === 0) ||
-    data.completionPercentage < 20
+    completionPercent < 20
   ) : false;
 
   return (
@@ -118,21 +127,23 @@ export default function StudentDashboardPage(): React.ReactElement {
               {/* Single Consolidated Progress Ring */}
               <div className="shrink-0 flex items-center gap-4 bg-surface-hover p-4 rounded-2xl border border-surface-border self-start md:self-auto">
                 <ProgressRing
-                  value={data.completionPercentage}
+                  value={completionPercent}
                   max={100}
                   size={72}
                   strokeWidth={6}
                   color="blue"
                 >
-                  <span className="text-sm font-black text-content-primary">{data.completionPercentage}%</span>
+                  <span className="text-sm font-black text-content-primary">{completionPercent}%</span>
                 </ProgressRing>
                 <div>
-                  <h4 className="text-sm font-bold text-content-primary">Profile Score</h4>
-                  <p className="text-xs text-content-muted mt-0.5">Completion Index</p>
+                  <h4 className="text-sm font-bold text-content-primary">
+                    Score: {scoreData ? scoreData.overallScore : 160}/1000
+                  </h4>
+                  <p className="text-xs text-content-muted mt-0.5">Profile Completeness: {completionPercent}%</p>
                   <div className="mt-1.5 flex items-center gap-1.5">
                     <CheckCircle className="h-3.5 w-3.5 text-[#2E4CFF]" />
                     <span className="text-[11px] text-[#2E4CFF] font-semibold">
-                      {data.completionPercentage >= 80 ? 'Excellent!' : data.completionPercentage >= 50 ? 'Good Progress' : 'Getting Started'}
+                      {completionPercent >= 80 ? 'Excellent!' : completionPercent >= 50 ? 'Good Progress' : 'Getting Started'}
                     </span>
                   </div>
                 </div>

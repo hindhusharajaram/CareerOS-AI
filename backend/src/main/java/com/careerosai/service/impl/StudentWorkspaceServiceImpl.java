@@ -115,13 +115,41 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
         }
 
         final StudentProfile saved = Objects.requireNonNull(studentProfileRepository.save(Objects.requireNonNull(profile)));
+        autoExtractSkillsFromProfile(saved);
         return studentProfileMapper.toDto(saved);
     }
 
+    private void autoExtractSkillsFromProfile(final StudentProfile profile) {
+        if (profile == null || profile.getId() == null) return;
+        final String combinedText = ((profile.getAbout() != null ? profile.getAbout() : "") + " " + (profile.getAtsSkills() != null ? profile.getAtsSkills() : "")).toLowerCase();
+        if (combinedText.isBlank()) return;
+
+        final String[] knownSkills = {"Java", "Spring Boot", "React", "PostgreSQL", "Python", "TypeScript", "Docker", "Kubernetes", "Git", "SQL", "HTML5", "CSS3", "Node.js", "AWS"};
+        for (String skillName : knownSkills) {
+            if (combinedText.contains(skillName.toLowerCase())) {
+                final Skill skill = skillRepository.findBySkillNameIgnoreCase(skillName)
+                    .orElseGet(() -> Objects.requireNonNull(skillRepository.save(Objects.requireNonNull(Skill.builder()
+                        .skillName(skillName)
+                        .category("Technical")
+                        .icon("code")
+                        .build()))));
+                if (studentSkillRepository.findByStudentProfileIdAndSkillId(profile.getId(), skill.getId()).isEmpty()) {
+                    studentSkillRepository.save(StudentSkill.builder()
+                        .studentProfile(profile)
+                        .skill(skill)
+                        .proficiency("INTERMEDIATE")
+                        .yearsOfExperience(1.5)
+                        .build());
+                }
+            }
+        }
+    }
+
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public StudentDashboardSummaryDto getDashboardSummary(final UUID userId) {
         final StudentProfile profile = getOrCreateProfile(userId);
+        autoExtractSkillsFromProfile(profile);
         final UUID profileId = profile.getId();
 
         final long skillsCount = studentSkillRepository.countByStudentProfileId(profileId);

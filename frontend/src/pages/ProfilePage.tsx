@@ -28,10 +28,13 @@ import { studentService, StudentProfileData } from '../services/studentService';
 import SectionHeader from '../components/ui/SectionHeader';
 import { SkeletonCard } from '../components/ui/Skeleton';
 
+import { scoreService, CareerScoreData } from '../services/scoreService';
+
 type TabType = 'profile' | 'career' | 'security' | 'integrations';
 
 export default function ProfilePage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
+  const [scoreData, setScoreData] = useState<CareerScoreData | null>(null);
   const [profile, setProfile] = useState<StudentProfileData>({
     firstName: 'Hindhusha',
     lastName: 'P R',
@@ -77,9 +80,15 @@ export default function ProfilePage(): React.ReactElement {
   const fetchProfile = async () => {
     setIsLoading(true);
     try {
-      const data = await studentService.getProfile();
+      const [data, score] = await Promise.all([
+        studentService.getProfile().catch(() => null),
+        scoreService.getCareerScore().catch(() => null),
+      ]);
       if (data && Object.keys(data).length > 0) {
         setProfile((prev) => ({ ...prev, ...data }));
+      }
+      if (score) {
+        setScoreData(score);
       }
     } catch (err) {
       toast.error('Failed to load profile details.');
@@ -104,6 +113,8 @@ export default function ProfilePage(): React.ReactElement {
         atsSkills: skillTags,
       };
       await studentService.updateProfile(payload);
+      const updatedScore = await scoreService.getCareerScore().catch(() => null);
+      if (updatedScore) setScoreData(updatedScore);
       toast.success('Settings and profile updated successfully!');
     } catch (error: any) {
       const serverMessage = error?.response?.data?.message || error?.message || 'Failed to update profile';
@@ -211,18 +222,26 @@ export default function ProfilePage(): React.ReactElement {
                 </div>
               </div>
 
-              {/* Profile Strength Meter */}
+              {/* Profile Strength & ATS Meter */}
               <div className="w-full md:w-64 bg-surface-base border border-surface-border rounded-xl p-4 space-y-2 shrink-0">
                 <div className="flex justify-between items-center text-xs">
                   <span className="font-semibold text-content-secondary flex items-center gap-1.5">
-                    <Zap className="h-3.5 w-3.5 text-emerald-500" /> Profile Strength
+                    <Zap className="h-3.5 w-3.5 text-[#2E4CFF]" /> ATS Readiness
                   </span>
-                  <span className="font-extrabold text-emerald-500">85% ATS Ready</span>
+                  <span className="font-extrabold text-[#2E4CFF]">
+                    {scoreData ? `${scoreData.atsReadinessPercentage}% ATS Ready` : '0% ATS Ready'}
+                  </span>
                 </div>
                 <div className="h-2 w-full bg-surface-border rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 rounded-full transition-all duration-500" style={{ width: '85%' }} />
+                  <div
+                    className="h-full bg-[#2E4CFF] rounded-full transition-all duration-500"
+                    style={{ width: `${scoreData ? scoreData.atsReadinessPercentage : 0}%` }}
+                  />
                 </div>
-                <p className="text-[11px] text-content-muted text-right">High ATS Match Index</p>
+                <div className="flex items-center justify-between text-[10px] text-content-muted pt-1">
+                  <span>Profile: {scoreData ? scoreData.profileCompletenessPercentage : 0}%</span>
+                  <span>Score: {scoreData ? scoreData.overallScore : 0}/1000</span>
+                </div>
               </div>
             </div>
 

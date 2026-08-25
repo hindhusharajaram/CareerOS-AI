@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Award, CheckCircle2, AlertCircle, TrendingUp, Star } from 'lucide-react';
+import { Award, CheckCircle2, AlertCircle, TrendingUp, Star, Clock } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
-import { intelligenceService, CareerScoreData } from '../services/intelligenceService';
+import { scoreService, CareerScoreData } from '../services/scoreService';
 import SectionHeader from '../components/ui/SectionHeader';
 import { ProgressBar, ProgressRing } from '../components/ui/Progress';
 import { GlassCard } from '../components/ui/Card';
@@ -10,31 +10,43 @@ import AnimatedCounter from '../components/ui/AnimatedCounter';
 import { SkeletonCard, SkeletonStatGrid } from '../components/ui/Skeleton';
 
 function getScoreTier(val: number) {
-  if (val >= 850) return { label: 'Elite', color: 'emerald', desc: 'Top 5% of all candidates', stars: 5 };
-  if (val >= 700) return { label: 'Strong', color: 'indigo', desc: 'Top 15% of all candidates', stars: 4 };
-  if (val >= 500) return { label: 'Developing', color: 'amber', desc: 'Top 40% of all candidates', stars: 3 };
-  if (val >= 300) return { label: 'Starter', color: 'warning', desc: 'Building your foundation', stars: 2 };
-  return { label: 'Beginner', color: 'error', desc: 'Just getting started', stars: 1 };
+  if (val >= 850) return { label: 'Expert', color: 'emerald', desc: 'Top tier placement candidate', stars: 5 };
+  if (val >= 600) return { label: 'Advanced', color: 'indigo', desc: 'High placement readiness', stars: 4 };
+  if (val >= 300) return { label: 'Intermediate', color: 'amber', desc: 'Solid foundation established', stars: 3 };
+  return { label: 'Beginner', color: 'error', desc: 'Building candidate profile', stars: 2 };
 }
 
 const ringColorMap: Record<string, 'emerald' | 'indigo' | 'amber' | 'purple'> = {
-  Elite: 'emerald',
-  Strong: 'indigo',
-  Developing: 'amber',
-  Starter: 'amber',
+  Expert: 'emerald',
+  Advanced: 'indigo',
+  Intermediate: 'amber',
   Beginner: 'amber',
+};
+
+const categoryMaxPoints: Record<string, number> = {
+  'Profile Completeness': 150,
+  'Projects': 200,
+  'Skills Matrix': 200,
+  'Experience': 150,
+  'Education': 100,
+  'Certificates': 100,
+  'Resume Quality': 50,
+  'GitHub Presence': 30,
+  'LinkedIn Presence': 20,
 };
 
 export default function CareerScorePage(): React.ReactElement {
   const [score, setScore] = useState<CareerScoreData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => { fetchScore(); }, []);
+  useEffect(() => {
+    fetchScore();
+  }, []);
 
   const fetchScore = async () => {
     setIsLoading(true);
     try {
-      const data = await intelligenceService.getCareerScore();
+      const data = await scoreService.getCareerScore();
       setScore(data);
     } catch (err) {
       console.error(err);
@@ -117,22 +129,34 @@ export default function CareerScorePage(): React.ReactElement {
 
             {/* ===== CATEGORY BREAKDOWN ===== */}
             <GlassCard padding="lg">
-              <div className="flex items-center gap-2 mb-6">
-                <TrendingUp className="h-5 w-5 text-indigo-400" />
-                <h3 className="text-base font-bold text-white">Category Weightage Breakdown</h3>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-[#2E4CFF]" />
+                  <h3 className="text-base font-bold text-content-primary">Category Weightage Breakdown</h3>
+                </div>
+                {score.lastCalculated && (
+                  <span className="text-[11px] font-mono text-content-muted flex items-center gap-1">
+                    <Clock className="h-3 w-3 text-[#2E4CFF]" />
+                    Updated: {new Date(score.lastCalculated).toLocaleTimeString()}
+                  </span>
+                )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {Object.entries(score.categoryScores || {}).map(([cat, val]) => (
-                  <ProgressBar
-                    key={cat}
-                    label={cat}
-                    value={val as number}
-                    max={200}
-                    sublabel={`${val} pts of 200`}
-                    color="auto"
-                    size="md"
-                  />
-                ))}
+                {Object.entries(score.categoryScores || {}).map(([cat, val]) => {
+                  const maxPts = categoryMaxPoints[cat] || 100;
+                  const weightStr = score.categoryWeights?.[cat] ? ` (${score.categoryWeights[cat]})` : '';
+                  return (
+                    <ProgressBar
+                      key={cat}
+                      label={`${cat}${weightStr}`}
+                      value={val as number}
+                      max={maxPts}
+                      sublabel={`${val} / ${maxPts} pts`}
+                      color="auto"
+                      size="md"
+                    />
+                  );
+                })}
               </div>
             </GlassCard>
 

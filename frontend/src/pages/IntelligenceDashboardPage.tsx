@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Brain, Award, FileText, ArrowRight, ShieldCheck, TrendingUp, Compass, Target } from 'lucide-react';
 import StudentLayout from '../layouts/StudentLayout';
-import { intelligenceService, CareerScoreData, AtsScoreData, EligibilityReportData, RecommendationData } from '../services/intelligenceService';
+import { intelligenceService, AtsScoreData, EligibilityReportData, RecommendationData } from '../services/intelligenceService';
+import { scoreService, CareerScoreData } from '../services/scoreService';
 import { GlassCard } from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import { SkeletonCard, SkeletonStatGrid } from '../components/ui/Skeleton';
@@ -23,15 +24,15 @@ export default function IntelligenceDashboardPage(): React.ReactElement {
     setIsLoading(true);
     try {
       const [s, a, e, r] = await Promise.all([
-        intelligenceService.getCareerScore(),
-        intelligenceService.getAtsScore(),
-        intelligenceService.getEligibility(),
-        intelligenceService.getRecommendations()
+        scoreService.getCareerScore(),
+        intelligenceService.getAtsScore().catch(() => null),
+        intelligenceService.getEligibility().catch(() => null),
+        intelligenceService.getRecommendations().catch(() => null),
       ]);
       setScore(s);
-      setAts(a);
-      setEligibility(e);
-      setRecommendations(r);
+      if (a) setAts(a);
+      if (e) setEligibility(e);
+      if (r) setRecommendations(r);
     } catch (err) {
       console.error(err);
     } finally {

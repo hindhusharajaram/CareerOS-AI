@@ -1,6 +1,8 @@
 package com.careerosai.intelligence.scoring;
 
 import com.careerosai.entity.StudentProfile;
+import com.careerosai.intelligence.ats.AtsScoreEngine;
+import com.careerosai.intelligence.dto.AtsScoreDto;
 import com.careerosai.intelligence.dto.CareerScoreDto;
 import com.careerosai.repository.CertificateRepository;
 import com.careerosai.repository.EducationRepository;
@@ -11,6 +13,7 @@ import com.careerosai.repository.StudentSkillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +30,7 @@ public class CareerScoreEngine {
     private final CertificateRepository certificateRepository;
     private final ExperienceRepository experienceRepository;
     private final ResumeRepository resumeRepository;
+    private final AtsScoreEngine atsScoreEngine;
 
     public CareerScoreDto calculateScore(final StudentProfile profile) {
         final UUID profileId = profile.getId();
@@ -38,19 +42,44 @@ public class CareerScoreEngine {
         final long expCount = experienceRepository.countByStudentProfileId(profileId);
         final long resumeCount = resumeRepository.countByStudentProfileId(profileId);
 
+        final AtsScoreDto atsDto = atsScoreEngine.analyzeResume(profile);
+        final int atsReadiness = atsDto.getAtsScore();
+
         final Map<String, Integer> categoryScores = new LinkedHashMap<>();
+        final Map<String, String> categoryWeights = new LinkedHashMap<>();
         final List<String> strengths = new ArrayList<>();
         final List<String> weaknesses = new ArrayList<>();
         final List<String> improvementAreas = new ArrayList<>();
 
-        // 1. Profile Completeness (15% = 150 pts)
-        int profileScore = 0;
-        if (profile.getFirstName() != null && !profile.getFirstName().isBlank()) profileScore += 30;
-        if (profile.getPhone() != null && !profile.getPhone().isBlank()) profileScore += 30;
-        if (profile.getCity() != null || profile.getCountry() != null) profileScore += 30;
-        if (profile.getAbout() != null && !profile.getAbout().isBlank()) profileScore += 30;
-        if (profile.getUniversityName() != null) profileScore += 30;
-        categoryScores.put("Profile Completeness", Math.min(150, profileScore));
+        // Category Weights Definition (Single Source of Truth Constants)
+        categoryWeights.put("Profile Completeness", "15%");
+        categoryWeights.put("Projects", "20%");
+        categoryWeights.put("Skills Matrix", "20%");
+        categoryWeights.put("Experience", "15%");
+        categoryWeights.put("Education", "10%");
+        categoryWeights.put("Certificates", "10%");
+        categoryWeights.put("Resume Quality", "5%");
+        categoryWeights.put("GitHub Presence", "3%");
+        categoryWeights.put("LinkedIn Presence", "2%");
+
+        // 1. Profile Completeness (15% = 150 pts max)
+        int profilePoints = 0;
+        int profileFieldFilledCount = 0;
+        final int totalRequiredFields = 10;
+
+        if (profile.getFirstName() != null && !profile.getFirstName().isBlank()) { profilePoints += 30; profileFieldFilledCount++; }
+        if (profile.getPhone() != null && !profile.getPhone().isBlank()) { profilePoints += 30; profileFieldFilledCount++; }
+        if (profile.getCity() != null || profile.getCountry() != null) { profilePoints += 30; profileFieldFilledCount++; }
+        if (profile.getAbout() != null && !profile.getAbout().isBlank()) { profilePoints += 30; profileFieldFilledCount++; }
+        if (profile.getUniversityName() != null && !profile.getUniversityName().isBlank()) { profilePoints += 30; profileFieldFilledCount++; }
+        if (profile.getMajor() != null && !profile.getMajor().isBlank()) profileFieldFilledCount++;
+        if (profile.getDegree() != null && !profile.getDegree().isBlank()) profileFieldFilledCount++;
+        if (skillsCount > 0) profileFieldFilledCount++;
+        if (projCount > 0) profileFieldFilledCount++;
+        if (expCount > 0) profileFieldFilledCount++;
+
+        final int profileCompletenessPercentage = (int) Math.min(100, Math.round(((double) profileFieldFilledCount / totalRequiredFields) * 100.0));
+        categoryScores.put("Profile Completeness", Math.min(150, profilePoints));
 
         // 2. Projects (20% = 200 pts)
         int projScore = (int) Math.min(200, projCount * 100);
@@ -86,7 +115,7 @@ public class CareerScoreEngine {
         if (certCount >= 2) strengths.add("Verified industry certifications");
 
         // 7. Resume Quality (5% = 50 pts)
-        int resumeScore = resumeCount > 0 ? 50 : 0;
+        int resumeScore = (int) Math.min(50, Math.round((double) atsReadiness * 0.5));
         categoryScores.put("Resume Quality", resumeScore);
 
         // 8. GitHub Presence (3% = 30 pts)
@@ -97,14 +126,30 @@ public class CareerScoreEngine {
         int linkedinScore = (profile.getLinkedin() != null && !profile.getLinkedin().isBlank()) ? 20 : 0;
         categoryScores.put("LinkedIn Presence", linkedinScore);
 
-        final int overallScore = categoryScores.values().stream().mapToInt(v -> v != null ? v : 0).sum();
+        final int overallScore = Math.min(1000, categoryScores.values().stream().mapToInt(v -> v != null ? v : 0).sum());
+
+        String tier = "BEGINNER";
+        if (overallScore >= 850) tier = "EXPERT";
+        else if (overallScore >= 600) tier = "ADVANCED";
+        else if (overallScore >= 300) tier = "INTERMEDIATE";
 
         return CareerScoreDto.builder()
-            .overallScore(Math.min(1000, overallScore))
+            .overallScore(overallScore)
+            .tier(tier)
+            .profileCompletenessPercentage(profileCompletenessPercentage)
+            .atsReadinessPercentage(atsReadiness)
+            .skillsCount(skillsCount)
+            .projectsCount(projCount)
+            .experienceCount(expCount)
+            .certificatesCount(certCount)
+            .educationCount(eduCount)
             .categoryScores(categoryScores)
+            .categoryWeights(categoryWeights)
             .strengths(strengths)
             .weaknesses(weaknesses)
             .improvementAreas(improvementAreas)
+            .lastCalculated(Instant.now())
             .build();
     }
 }
+
