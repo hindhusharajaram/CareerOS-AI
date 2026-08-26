@@ -16,6 +16,7 @@ import {
 import toast from 'react-hot-toast';
 import StudentLayout from '../layouts/StudentLayout';
 import { intelligenceService, AtsScoreData } from '../services/intelligenceService';
+import { fetchGroqResumeReview } from '../services/aiService';
 import SectionHeader from '../components/ui/SectionHeader';
 import { GlassCard } from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
@@ -105,7 +106,23 @@ export default function AtsAnalysisPage(): React.ReactElement {
 
     try {
       setUploadProgress(60);
-      const result = await intelligenceService.analyzeAtsResume(selectedFile);
+      let result: any = null;
+      try {
+        result = await intelligenceService.analyzeAtsResume(selectedFile);
+      } catch (backendErr) {
+        console.warn('Backend resume review failed, attempting direct Groq AI ATS parser:', backendErr);
+      }
+
+      if (!result) {
+        let textContent = '';
+        try {
+          textContent = await selectedFile.text();
+        } catch {
+          textContent = selectedFile.name;
+        }
+        result = await fetchGroqResumeReview(textContent, selectedFile.name);
+      }
+
       setUploadProgress(100);
       setDetailedReview(result);
 
@@ -131,6 +148,8 @@ export default function AtsAnalysisPage(): React.ReactElement {
 
         setAts(updatedAtsData);
         toast.success(`Resume analyzed! Quality Score: ${result.score}/100`);
+      } else {
+        throw new Error('Failed to analyze resume file.');
       }
     } catch (err: any) {
       console.error(err);

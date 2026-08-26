@@ -77,11 +77,7 @@ export const resumeService = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await api.post('/api/v1/student/resumes/review', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await api.post('/api/v1/student/resumes/review', formData);
     return response.data.data;
   },
 
@@ -89,11 +85,7 @@ export const resumeService = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await api.post('/api/v1/student/resumes/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await api.post('/api/v1/student/resumes/upload', formData);
     return response.data.data;
   },
 

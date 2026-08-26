@@ -24,6 +24,7 @@ import {
   SectionHeatmapData,
   QuantificationBulletData,
 } from '../services/resumeService';
+import { fetchGroqResumeReview } from '../services/aiService';
 import SectionHeader from '../components/ui/SectionHeader';
 import { GlassCard } from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
@@ -89,9 +90,29 @@ export default function AiResumeReviewPage(): React.ReactElement {
     setErrorMessage(null);
 
     try {
-      const result = await resumeService.reviewResume(selectedFile);
-      setReview(result);
-      toast.success('Resume analysis completed successfully!');
+      let result: any = null;
+      try {
+        result = await resumeService.reviewResume(selectedFile);
+      } catch (backendErr) {
+        console.warn('Backend resume review endpoint failed, attempting direct Groq AI ATS parser:', backendErr);
+      }
+
+      if (!result) {
+        let textContent = '';
+        try {
+          textContent = await selectedFile.text();
+        } catch {
+          textContent = selectedFile.name;
+        }
+        result = await fetchGroqResumeReview(textContent, selectedFile.name);
+      }
+
+      if (result) {
+        setReview(result);
+        toast.success('Resume analysis completed successfully!');
+      } else {
+        throw new Error('Failed to parse or analyze resume file.');
+      }
     } catch (err: any) {
       console.error(err);
       const apiErr = err.response?.data?.message || err.message || 'Failed to review resume.';

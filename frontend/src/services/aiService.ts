@@ -889,5 +889,79 @@ export function buildDynamicCopilotExplanation(topic: string): AICopilotExplanat
   }
 }
 
+export async function fetchGroqResumeReview(rawText: string, fileName: string): Promise<any | null> {
+  const messages = [
+    {
+      role: 'system',
+      content: `You are an elite ATS (Applicant Tracking System) Resume Reviewer and Technical Recruiter. Analyze the provided resume text for candidate document "${fileName}".
+Generate a structured, comprehensive JSON evaluation with NO markdown formatting or extra text.
+JSON structure MUST strictly match:
+{
+  "score": 88,
+  "grade": "Excellent",
+  "fileName": "${fileName}",
+  "health": {
+    "score": 88,
+    "label": "Strong Candidate Profile",
+    "stars": "★★★★☆",
+    "percentile": "88th Percentile",
+    "readinessStatus": "PLACEMENT_READY"
+  },
+  "atsCategoryBreakdown": [
+    { "category": "Contact Information", "currentScore": 15, "maxScore": 15, "explanation": "Email, phone, LinkedIn, and GitHub cleanly detected." },
+    { "category": "Education", "currentScore": 15, "maxScore": 15, "explanation": "Degree title, major, and graduation year clearly listed." },
+    { "category": "Experience", "currentScore": 12, "maxScore": 15, "explanation": "Internships or work experience with quantifiable impact statements." },
+    { "category": "Projects", "currentScore": 15, "maxScore": 15, "explanation": "Technical full-stack or AI project portfolio highlighting modern frameworks." },
+    { "category": "Skills", "currentScore": 10, "maxScore": 10, "explanation": "Dedicated Technical Skills matrix listing core tools and languages." },
+    { "category": "Keywords", "currentScore": 12, "maxScore": 14, "explanation": "Matches software engineering keywords (Java, React, SQL, Docker, CI/CD)." },
+    { "category": "Formatting", "currentScore": 5, "maxScore": 5, "explanation": "Standard section headers and clean ATS-parsable document formatting." },
+    { "category": "Action Verbs", "currentScore": 8, "maxScore": 10, "explanation": "Uses high-impact action verbs (built, engineered, scaled, optimized)." },
+    { "category": "Resume Length", "currentScore": 5, "maxScore": 5, "explanation": "Optimal document word count for engineering resumes." }
+  ],
+  "heatmap": [
+    { "section": "Contact Details", "status": "Present", "details": "Email, phone, and professional links present." },
+    { "section": "Summary / Objective", "status": "Present", "details": "Clear engineering profile summary." },
+    { "section": "Education", "status": "Present", "details": "Degree, major, and university details found." },
+    { "section": "Work Experience", "status": "Present", "details": "Experience listed with bullet points." },
+    { "section": "Projects", "status": "Present", "details": "Software engineering builds detected." },
+    { "section": "Technical Skills", "status": "Present", "details": "Languages, databases, and tools categorized." },
+    { "section": "Certifications", "status": "Partial", "details": "Industry certifications or coursework." }
+  ],
+  "keywords": {
+    "matchedKeywords": ["Java", "React", "TypeScript", "Spring Boot", "PostgreSQL", "Docker", "Git", "REST API"],
+    "missingKeywords": ["AWS", "Kubernetes", "Redis", "Microservices", "System Design"],
+    "coveragePercentage": 75
+  },
+  "quantification": [
+    { "currentBullet": "Developed backend REST APIs for student platform", "status": "Needs Quantification", "suggestion": "Developed 12+ REST APIs reducing response latency by 35%" },
+    { "currentBullet": "Built React web application interface", "status": "Quantified", "suggestion": "Built React dashboard serving 500+ daily active users" }
+  ],
+  "insights": [
+    { "category": "Quantifiable Impact", "description": "Add measurable metrics (percentages, user counts, performance gains) to bullet points.", "priority": "HIGH" },
+    { "category": "Cloud Technologies", "description": "Add AWS or Docker container deployment experience to increase recruiter match rate.", "priority": "MEDIUM" },
+    { "category": "Action Verbs", "description": "Start bullet points with strong action verbs like Engineered, Spearheaded, and Architected.", "priority": "LOW" }
+  ]
+}`
+    },
+    {
+      role: 'user',
+      content: `Analyze this resume document (${fileName}):\n\n${rawText.slice(0, 3000)}`
+    }
+  ];
+
+  try {
+    const contentStr = await callGroqChatCompletions(messages, 2000, 0.4);
+    if (contentStr) {
+      const parsed = extractJsonFromText(contentStr);
+      if (parsed && parsed.score && parsed.atsCategoryBreakdown) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('Groq AI Resume Review call failed:', err);
+  }
+  return null;
+}
+
 
 

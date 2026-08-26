@@ -56,7 +56,7 @@ public class RuleBasedResumeParserImpl implements ResumeParserService {
             }
         }
 
-        rawText = rawText != null ? rawText.replaceAll("\\s+", " ").trim() : "";
+        rawText = rawText != null ? rawText.trim() : "";
         return buildParsedResumeDto(rawText);
     }
 
@@ -70,15 +70,16 @@ public class RuleBasedResumeParserImpl implements ResumeParserService {
             rawText = "Parsed Document: " + fileName;
         }
 
-        rawText = rawText != null ? rawText.replaceAll("\\s+", " ").trim() : "";
+        rawText = rawText != null ? rawText.trim() : "";
         return buildParsedResumeDto(rawText);
     }
 
     private ParsedResumeDto buildParsedResumeDto(final String rawText) {
-        final String email = findFirstMatch(EMAIL_PATTERN, rawText);
-        final String phone = findFirstMatch(PHONE_PATTERN, rawText);
-        final String linkedin = findFirstMatch(LINKEDIN_PATTERN, rawText);
-        final String github = findFirstMatch(GITHUB_PATTERN, rawText);
+        final String cleanSingleLineText = rawText != null ? rawText.replaceAll("\\s+", " ").trim() : "";
+        final String email = findFirstMatch(EMAIL_PATTERN, cleanSingleLineText);
+        final String phone = findFirstMatch(PHONE_PATTERN, cleanSingleLineText);
+        final String linkedin = findFirstMatch(LINKEDIN_PATTERN, cleanSingleLineText);
+        final String github = findFirstMatch(GITHUB_PATTERN, cleanSingleLineText);
 
         final List<String> extractedSkills = new ArrayList<>();
         for (String skill : SKILL_TAXONOMY_KEYWORDS) {

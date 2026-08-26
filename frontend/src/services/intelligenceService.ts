@@ -123,11 +123,7 @@ export const intelligenceService = {
   analyzeAtsResume: async (file: File): Promise<any> => {
     const formData = new FormData();
     formData.append('file', file);
-    const res = await api.post('/api/v1/student/resumes/review', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const res = await api.post('/api/v1/student/resumes/review', formData);
     return res.data.data;
   },
 
