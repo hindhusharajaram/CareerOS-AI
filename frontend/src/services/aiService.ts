@@ -67,6 +67,70 @@ export interface AIChatMessage {
   createdAt: string;
 }
 
+const getGroqApiKey = (): string => {
+  return (import.meta as any).env?.VITE_GROQ_API_KEY || '';
+};
+
+export async function fetchGroqLearningPlan(targetRole: string): Promise<AILearningPlan | null> {
+  const apiKey = getGroqApiKey();
+  if (!apiKey) return null;
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are CareerOS AI Learning Coach. Generate a comprehensive learning plan for the requested role/topic in raw JSON format with NO markdown ticks or extra text. JSON structure MUST match:
+{
+  "targetRole": "Role Name",
+  "difficultyProgression": "Beginner to Advanced (12-Week Roadmap)",
+  "technologySequence": ["Tech1", "Tech2", "Tech3", "Tech4", "Tech5"],
+  "weeklyPlan": [
+    {"day": "Day 1: Foundations", "topic": "Topic Summary", "activity": "Specific action item", "durationMinutes": 90},
+    {"day": "Day 2: Architecture", "topic": "Topic Summary", "activity": "Specific action item", "durationMinutes": 90},
+    {"day": "Day 3: Deep Dive", "topic": "Topic Summary", "activity": "Specific action item", "durationMinutes": 90},
+    {"day": "Day 4: System Integration", "topic": "Topic Summary", "activity": "Specific action item", "durationMinutes": 90},
+    {"day": "Day 5: Testing & Security", "topic": "Topic Summary", "activity": "Specific action item", "durationMinutes": 90},
+    {"day": "Day 6: Capstone Project", "topic": "Topic Summary", "activity": "Specific action item", "durationMinutes": 120}
+  ],
+  "recommendedResources": ["Resource 1", "Resource 2", "Resource 3", "Resource 4"]
+}`
+          },
+          {
+            role: 'user',
+            content: `Generate a study plan for: ${targetRole}`
+          }
+        ],
+        temperature: 0.5,
+        max_tokens: 1200
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const contentStr = data.choices?.[0]?.message?.content;
+      if (contentStr) {
+        const cleanJson = contentStr.replace(/```json/g, '').replace(/```/g, '').trim();
+        const parsed = JSON.parse(cleanJson);
+        if (parsed && parsed.targetRole && Array.isArray(parsed.technologySequence)) {
+          return parsed as AILearningPlan;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Groq AI Direct learning plan call failed, falling back to local engine:', err);
+  }
+  return null;
+}
+
 export const aiService = {
   explainTopic: async (topic = 'CAREER_SCORE'): Promise<AICopilotExplanation> => {
     try {
@@ -92,10 +156,17 @@ export const aiService = {
         return res.data.data;
       }
     } catch {
-      // Fallback to dynamic client-side domain plan generator
+      // Fallback to direct Groq API engine
     }
+
+    const groqPlan = await fetchGroqLearningPlan(targetRole);
+    if (groqPlan) {
+      return groqPlan;
+    }
+
     return buildDynamicLearningPlan(targetRole);
   },
+
 
   generateMockInterview: async (targetRole = 'Software Engineer', difficulty = 'INTERMEDIATE'): Promise<AIMockInterview> => {
     try {

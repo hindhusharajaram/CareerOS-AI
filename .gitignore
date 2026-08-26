@@ -22,10 +22,12 @@ frontend/dist/
 frontend/build/
 frontend/.cache/
 frontend/*.tsbuildinfo
+frontend/.env
 frontend/.env.local
 frontend/.env.development.local
 frontend/.env.test.local
 frontend/.env.production.local
+*.env
 
 # Java & Backend Build
 backend/target/

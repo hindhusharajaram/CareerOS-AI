@@ -29,6 +29,7 @@ groq:
   api:
     key: ${GROQ_API_KEY:}
 
+
 logging:
   level:
     root: INFO
