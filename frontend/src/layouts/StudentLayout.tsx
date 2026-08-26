@@ -191,11 +191,9 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
           <span className="text-base font-display font-extrabold text-content-primary">
             CareerOS AI
           </span>
-          <p className="text-[9px] text-textSecondary font-mono tracking-widest uppercase -mt-0.5">
-            v1.0 · Production
-          </p>
         </div>
       </Link>
+
 
       {/* Nav Groups — scrollable */}
       <nav className="flex-1 px-2 overflow-y-auto scrollable pb-4">
@@ -223,12 +221,12 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
         </div>
 
         <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-cardHover transition-colors group cursor-default">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-500 flex items-center justify-center font-bold text-white text-xs shrink-0">
+          <div className="h-8 w-8 rounded-full bg-[#2E4CFF] flex items-center justify-center font-bold text-white text-xs shrink-0 shadow-sm">
             {initials}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs font-semibold text-textPrimary truncate">{userName}</p>
-            <p className="text-[10px] text-emerald-500 font-mono tracking-wider">{userRole}</p>
+            <p className="text-[10px] text-[#2E4CFF] font-mono tracking-wider">{userRole}</p>
           </div>
           <button
             onClick={handleLogout}
@@ -267,7 +265,7 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
       >
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-500 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-xl bg-[#2E4CFF] flex items-center justify-center">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
             <span className="font-bold text-textPrimary">CareerOS AI</span>
@@ -307,27 +305,28 @@ export default function StudentLayout({ children }: StudentLayoutProps): React.R
             <ThemeToggle variant="buttons" />
 
             {/* AI status badge */}
-            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#2E4CFF]/25 bg-[#2E4CFF]/10 px-2.5 py-1 text-[11px] text-[#2E4CFF] font-semibold">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               AI Engine Active
             </span>
 
             {/* Notifications */}
             <button className="relative p-2 text-textSecondary hover:text-textPrimary hover:bg-cardHover rounded-xl transition-colors border border-borderMain">
               <Bell className="h-4 w-4" />
-              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-[#2E4CFF]" />
             </button>
 
             {/* Avatar */}
             <button
               onClick={handleLogout}
               title="Sign Out"
-              className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-600 to-emerald-500 flex items-center justify-center font-bold text-white text-xs hover:shadow-md hover:shadow-emerald-500/20 transition-all"
+              className="h-8 w-8 rounded-full bg-[#2E4CFF] flex items-center justify-center font-bold text-white text-xs hover:shadow-md hover:shadow-[#2E4CFF]/20 transition-all"
             >
               {initials}
             </button>
           </div>
         </header>
+
 
         {/* Page Content */}
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">{children}</main>

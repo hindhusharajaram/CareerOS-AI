@@ -3,6 +3,12 @@
 
   <h1>CareerOS AI</h1>
   <p><b>An open-source, AI-powered Career Operating System for engineering students.</b></p>
+  <p>Stop guessing if you're hireable. Quantify your engineering readiness.</p>
+
+  <p>
+    <a href="https://career-os-ai-mu.vercel.app"><img src="https://img.shields.io/badge/Live_Demo-Visit_App-2E4CFF?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" /></a>
+    <a href="docs/demo/CareerOS_AI_OnePager.pdf"><img src="https://img.shields.io/badge/Download-One--Pager_PDF-2E4CFF?style=for-the-badge&logo=adobeacrobatreader&logoColor=white" alt="Download One-Pager PDF" /></a>
+  </p>
 
   <p>
     <a href="https://github.com/hindhusharajaram/CareerOS-AI/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Release-v1.0.0-2E4CFF?style=for-the-badge&logo=github&logoColor=white" alt="Release v1.0.0" /></a>
@@ -20,11 +26,33 @@
 
 ---
 
+## Table of Contents
+- [What is CareerOS AI?](#-what-is-careeros-ai)
+- [Live Demo](#-live-demo)
+- [The 5 Pillars](#-the-5-pillars-of-identity)
+- [Screenshots](#-screenshots)
+- [Architecture & Tech Stack](#-architecture--technology-stack)
+- [Quick Start](#-quick-start-local-setup)
+- [Documentation](#-detailed-documentation)
+- [Contributing](#-contributing--community)
+- [License](#-license)
+
+---
+
 ## 📌 What is CareerOS AI?
 
 **CareerOS AI** is an open-source, AI-powered Career Operating System built specifically for computer science and engineering students preparing for competitive software engineering roles.
 
 Rather than relying on static job portals or generic templates, CareerOS AI connects directly to a student's actual career profile — analyzing project portfolios, technical skills, coursework, and work experience to calculate an objective readiness score and generate personalized, actionable preparation roadmaps.
+
+---
+
+## 🎥 Live Demo
+
+- **Try it live:** [career-os-ai-mu.vercel.app](https://career-os-ai-mu.vercel.app)
+- **One-pager overview:** [docs/demo/CareerOS_AI_OnePager.pdf](docs/demo/CareerOS_AI_OnePager.pdf) — a single-page PDF summary for quick review.
+
+> Note: the live app is hosted on a free tier and may take up to a minute to respond on first load after a period of inactivity (cold start).
 
 ---
 
@@ -42,6 +70,18 @@ CareerOS AI is designed around five core pillars of career intelligence:
 
 ---
 
+## 📸 Screenshots
+
+| Page / Interface | Preview |
+| :--- | :--- |
+| **Landing Page** | ![Landing Page](assets/screenshots/landing-page.png) |
+| **Student Dashboard** | ![Student Dashboard](assets/screenshots/dashboard.png) |
+| **Career Score Engine** | ![Career Score](assets/screenshots/career-score.png) |
+| **AI Career Chat** | ![AI Chat](assets/screenshots/ai-chat.png) |
+| **Analytics & Data Warehouse** | ![Analytics](assets/screenshots/analytics.png) |
+
+---
+
 ## 🛠️ Architecture & Technology Stack
 
 CareerOS AI is built with modern, production-tested software engineering standards:
@@ -54,18 +94,18 @@ CareerOS AI is built with modern, production-tested software engineering standar
 ```mermaid
 graph TD
     Client[React 18 SPA] -->|HTTP / REST| Security[Spring Security 6 + JWT]
-    
+
     subgraph Spring Boot Backend
         Security --> Auth[Auth Service]
         Security --> Intell[Intelligence Engines]
         Security --> AI[AI Context Engine]
-        
+
         Intell --> CoreDB[(PostgreSQL Primary)]
         AI --> CoreDB
-        
+
         Intell --> ETL[ETL Worker Pipeline]
     end
-    
+
     ETL --> DW[(PostgreSQL Star Schema Warehouse)]
 ```
 
@@ -108,18 +148,6 @@ If you prefer running services directly:
 
 ---
 
-## 📸 Screenshots
-
-| Page / Interface | Preview |
-| :--- | :--- |
-| **Landing Page** | ![Landing Page](assets/screenshots/landing-page.png) |
-| **Student Dashboard** | ![Student Dashboard](assets/screenshots/dashboard.png) |
-| **Career Score Engine** | ![Career Score](assets/screenshots/career-score.png) |
-| **AI Career Chat** | ![AI Chat](assets/screenshots/ai-chat.png) |
-| **Analytics & Data Warehouse** | ![Analytics](assets/screenshots/analytics.png) |
-
----
-
 ## 📚 Detailed Documentation
 
 For technical deep dives, architectural specs, and deployment guides, explore the `docs/` directory:
@@ -146,4 +174,4 @@ We welcome open-source contributions from engineering students and software deve
 
 ## 📄 License
 
-CareerOS AI is licensed under the [MIT License](LICENSE).
+Distributed under the MIT License. See [LICENSE](LICENSE) for details.

@@ -409,22 +409,19 @@ export default function LandingPage(): React.ReactElement {
                 Run CareerOS AI locally from the repository, or join the waitlist to be notified when the hosted platform launches.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a
-                  href="https://github.com/hindhusharajaram/CareerOS-AI"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-medium px-8 py-4 rounded-xl transition-all shadow-sm inline-flex items-center justify-center gap-2 text-base"
-                >
-                  <GitBranch className="h-5 w-5" aria-hidden="true" />
-                  View on GitHub
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </a>
                 <Link
                   to="/register"
-                  className="bg-surface-card hover:bg-surface-hover text-content-primary border border-surface-border font-medium px-8 py-4 rounded-xl transition-all inline-flex items-center justify-center gap-2 text-base"
+                  className="bg-[#2E4CFF] hover:bg-[#1A32C7] text-white font-bold px-8 py-4 rounded-xl transition-all shadow-md inline-flex items-center justify-center gap-2 text-base"
                 >
                   <Sparkles className="h-5 w-5" aria-hidden="true" />
                   Create Free Account
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+                <Link
+                  to="/login"
+                  className="bg-surface-card hover:bg-surface-hover text-content-primary border border-surface-border font-medium px-8 py-4 rounded-xl transition-all inline-flex items-center justify-center gap-2 text-base"
+                >
+                  Sign In to Workspace
                 </Link>
               </div>
             </div>
@@ -457,12 +454,19 @@ export default function LandingPage(): React.ReactElement {
               <div>
                 <p className="text-xs font-bold text-content-secondary uppercase tracking-wider mb-4">Project</p>
                 <div className="space-y-3">
-                  {['GitHub', 'FAQ'].map((item) => (
-                    <span key={item} className="block text-sm text-content-secondary cursor-default">{item}</span>
-                  ))}
+                  <a href="#faq" className="block text-sm text-content-secondary hover:text-content-primary transition-colors">FAQ</a>
+                  <a
+                    href="https://github.com/hindhusharajaram/CareerOS-AI"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-xs text-content-muted hover:text-content-secondary transition-colors"
+                  >
+                    View on GitHub
+                  </a>
                 </div>
               </div>
             </div>
+
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-surface-border pt-8">
               <p className="text-xs text-content-muted">© 2026 CareerOS AI. Open-source project. All rights reserved.</p>
