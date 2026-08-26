@@ -88,7 +88,7 @@ export async function fetchGroqLearningPlan(targetRole: string): Promise<AILearn
         messages: [
           {
             role: 'system',
-            content: `You are CareerOS AI Learning Coach. Generate a comprehensive learning plan for the requested role/topic in raw JSON format with NO markdown ticks or extra text. JSON structure MUST match:
+            content: `You are Learning Coach CareerOS AI. Generate a comprehensive learning plan for the requested role/topic in raw JSON format with NO markdown ticks or extra text. JSON structure MUST match:
 {
   "targetRole": "Role Name",
   "difficultyProgression": "Beginner to Advanced (12-Week Roadmap)",
@@ -147,7 +147,7 @@ export async function fetchGroqMockInterview(targetRole: string, difficulty = 'I
         messages: [
           {
             role: 'system',
-            content: `You are CareerOS AI Mock Interview Generator. Generate an elite, realistic technical & behavioral mock interview set for the requested role and difficulty level in raw JSON format with NO markdown formatting or extra text. JSON structure MUST strictly match:
+            content: `You are Mock Interview CareerOS AI. Generate an elite, realistic technical & behavioral mock interview set for the requested role and difficulty level in raw JSON format with NO markdown formatting or extra text. JSON structure MUST strictly match:
 {
   "targetRole": "${targetRole}",
   "difficultyLevel": "${difficulty}",
