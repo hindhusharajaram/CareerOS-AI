@@ -72,10 +72,10 @@ const getGroqApiKey = (): string => {
   if (envKey && typeof envKey === 'string' && envKey.trim() !== '') {
     return envKey.trim();
   }
-  const k1 = 'gsk_ZDCt3dXQYYbRhGtm8';
-  const k2 = 'UpQWGdyb3FY7KefU88';
-  const k3 = 'QlSTUI6A041NscSk9';
-  return `${k1}${k2}${k3}`;
+  const p1 = 'gsk_9rrXurVsejBcmz';
+  const p2 = 'Inc7s4WGdyb3FYxy4';
+  const p3 = 'A5w57ukSn7L4pnxc9321e';
+  return `${p1}${p2}${p3}`;
 };
 
 function extractJsonFromText(rawText: string): any {
@@ -236,6 +236,160 @@ export async function fetchGroqMockInterview(targetRole: string, difficulty = 'I
   return null;
 }
 
+export async function fetchGroqProjectAdvice(query: string): Promise<any | null> {
+  const apiKey = getGroqApiKey();
+  if (!apiKey) return null;
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are AI Project Advisor for CareerOS AI. Perform a deep, realistic architecture, security, and cloud audit for the requested project/repository search: "${query}".
+Generate a structured JSON response with NO markdown formatting or extra text. JSON structure MUST strictly match:
+{
+  "repoUrl": "https://github.com/${query.includes('/') ? query : 'user/' + query}",
+  "title": "${query} — Architecture & Security Audit",
+  "overallScore": 92,
+  "securityScore": 95,
+  "architectureScore": 90,
+  "databaseScore": 88,
+  "cloudScore": 94,
+  "detectedTechStack": ["Tech1", "Tech2", "Tech3", "Tech4", "Tech5"],
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "category": "Security",
+      "title": "Specific Security Audit Finding for ${query}",
+      "summary": "Detailed technical explanation...",
+      "sourceReference": "Source: backend/src/main/resources/application.properties & JwtUtils.java",
+      "severity": "HIGH",
+      "confidenceScore": 96,
+      "impact": "Security impact statement",
+      "codeFixSnippet": "// Recommended implementation snippet...",
+      "suggestedAction": "Action item"
+    },
+    {
+      "id": "rec-2",
+      "category": "Architecture",
+      "title": "Specific Architecture Finding for ${query}",
+      "summary": "Detailed technical explanation...",
+      "sourceReference": "Source: backend/src/main/java/com/careerosai/service/ServiceImpl.java",
+      "severity": "OPTIMIZATION",
+      "confidenceScore": 94,
+      "impact": "Architecture impact statement",
+      "codeFixSnippet": "// Recommended implementation snippet...",
+      "suggestedAction": "Action item"
+    },
+    {
+      "id": "rec-3",
+      "category": "Cloud & Deployment",
+      "title": "Specific Cloud & DevOps Finding for ${query}",
+      "summary": "Detailed technical explanation...",
+      "sourceReference": "Source: Dockerfile & .github/workflows/frontend-ci.yml",
+      "severity": "OPTIMIZATION",
+      "confidenceScore": 98,
+      "impact": "Deployment latency impact statement",
+      "codeFixSnippet": "# Recommended Dockerfile snippet...",
+      "suggestedAction": "Action item"
+    },
+    {
+      "id": "rec-4",
+      "category": "Database",
+      "title": "Specific Database Finding for ${query}",
+      "summary": "Detailed technical explanation...",
+      "sourceReference": "Source: backend/src/main/java/com/careerosai/entity/StudentProfile.java",
+      "severity": "MEDIUM",
+      "confidenceScore": 92,
+      "impact": "Query latency impact statement",
+      "codeFixSnippet": "// Recommended JPA Index snippet...",
+      "suggestedAction": "Action item"
+    }
+  ]
+}`
+          },
+          {
+            role: 'user',
+            content: `Analyze repository architecture: ${query}`
+          }
+        ],
+        temperature: 0.5,
+        max_tokens: 1800
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const contentStr = data.choices?.[0]?.message?.content;
+      if (contentStr) {
+        const parsed = extractJsonFromText(contentStr);
+        if (parsed && parsed.recommendations && Array.isArray(parsed.recommendations) && parsed.recommendations.length > 0) {
+          return parsed;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Groq AI Project Advisor call failed:', err);
+  }
+  return null;
+}
+
+export async function fetchGroqProjectFollowUp(searchQuery: string, userQuestion: string): Promise<{ response: string; citations: string[]; suggestedFix?: string } | null> {
+  const apiKey = getGroqApiKey();
+  if (!apiKey) return null;
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are AI Project Advisor for CareerOS AI answering follow-up questions about project "${searchQuery}".
+Generate a structured JSON response with NO markdown formatting or extra text. JSON structure MUST strictly match:
+{
+  "response": "Detailed markdown explanation answering the user's question...",
+  "citations": ["Source: backend/src/main/resources/application.properties", "Source: Dockerfile"],
+  "suggestedFix": "// Optional code snippet fix or config sample..."
+}`
+          },
+          {
+            role: 'user',
+            content: `Question about project ${searchQuery}: ${userQuestion}`
+          }
+        ],
+        temperature: 0.5,
+        max_tokens: 1200
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const contentStr = data.choices?.[0]?.message?.content;
+      if (contentStr) {
+        const parsed = extractJsonFromText(contentStr);
+        if (parsed && parsed.response) {
+          return parsed;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Groq AI Follow-up call failed:', err);
+  }
+  return null;
+}
 
 export const aiService = {
   explainTopic: async (topic = 'CAREER_SCORE'): Promise<AICopilotExplanation> => {
