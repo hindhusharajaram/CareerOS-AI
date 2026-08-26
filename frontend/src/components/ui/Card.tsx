@@ -129,26 +129,26 @@ interface FeatureCardProps {
 
 export function FeatureCard({ icon, title, description, color = 'emerald', badge, className = '' }: FeatureCardProps) {
   const colorClasses = {
-    indigo: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white border-emerald-500/10 group-hover:border-emerald-500',
-    purple: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white border-emerald-500/10 group-hover:border-emerald-500',
-    emerald: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white border-emerald-500/10 group-hover:border-emerald-500',
+    indigo: 'bg-[#2E4CFF]/10 text-[#2E4CFF] group-hover:bg-[#2E4CFF] group-hover:text-white border-[#2E4CFF]/10 group-hover:border-[#2E4CFF]',
+    purple: 'bg-[#2E4CFF]/10 text-[#2E4CFF] group-hover:bg-[#2E4CFF] group-hover:text-white border-[#2E4CFF]/10 group-hover:border-[#2E4CFF]',
+    emerald: 'bg-[#2E4CFF]/10 text-[#2E4CFF] group-hover:bg-[#2E4CFF] group-hover:text-white border-[#2E4CFF]/10 group-hover:border-[#2E4CFF]',
     amber: 'bg-amber-500/10 text-amber-500 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white border-amber-500/10 group-hover:border-amber-500',
     sky: 'bg-sky-500/10 text-sky-500 dark:text-sky-400 group-hover:bg-sky-500 group-hover:text-white border-sky-500/10 group-hover:border-sky-500',
     rose: 'bg-rose-500/10 text-rose-500 dark:text-rose-400 group-hover:bg-rose-500 group-hover:text-white border-rose-500/10 group-hover:border-rose-500',
-    violet: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white border-emerald-500/10 group-hover:border-emerald-500',
+    violet: 'bg-[#2E4CFF]/10 text-[#2E4CFF] group-hover:bg-[#2E4CFF] group-hover:text-white border-[#2E4CFF]/10 group-hover:border-[#2E4CFF]',
   };
 
   return (
     <div className={`group relative rounded-2xl border border-borderMain bg-card p-7 text-left backdrop-blur-md hover:bg-cardHover transition-all duration-300 card-interactive ${className}`}>
       {badge && (
-        <div className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+        <div className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-[#2E4CFF]/10 border border-[#2E4CFF]/20 text-[#2E4CFF] text-[10px] font-bold uppercase tracking-wider">
           {badge}
         </div>
       )}
       <div className={`flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-300 mb-5 ${colorClasses[color as keyof typeof colorClasses] || colorClasses.emerald}`}>
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-textPrimary mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{title}</h3>
+      <h3 className="text-lg font-bold text-textPrimary mb-2 group-hover:text-[#2E4CFF] transition-colors">{title}</h3>
       <p className="text-sm text-textSecondary leading-relaxed">{description}</p>
     </div>
   );

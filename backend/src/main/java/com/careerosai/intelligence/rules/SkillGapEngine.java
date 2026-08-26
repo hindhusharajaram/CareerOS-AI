@@ -110,7 +110,7 @@ public class SkillGapEngine {
 
         List<RoleSkillSpec> specs = ROLE_SPECS.entrySet().stream()
             .filter(e -> targetRoleUpper.contains(e.getKey()) || e.getKey().contains(targetRoleUpper))
-            .map(Map.Entry::getValue)
+            .map(entry -> entry.getValue())
             .findFirst()
             .orElse(ROLE_SPECS.get("SOFTWARE ENGINEER"));
 

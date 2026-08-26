@@ -8,7 +8,6 @@ import com.careerosai.repository.CertificateRepository;
 import com.careerosai.repository.EducationRepository;
 import com.careerosai.repository.ExperienceRepository;
 import com.careerosai.repository.ProjectRepository;
-import com.careerosai.repository.ResumeRepository;
 import com.careerosai.repository.StudentSkillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,6 @@ public class CareerScoreEngine {
     private final ProjectRepository projectRepository;
     private final CertificateRepository certificateRepository;
     private final ExperienceRepository experienceRepository;
-    private final ResumeRepository resumeRepository;
     private final AtsScoreEngine atsScoreEngine;
 
     public CareerScoreDto calculateScore(final StudentProfile profile) {
@@ -40,7 +38,6 @@ public class CareerScoreEngine {
         final long projCount = projectRepository.countByStudentProfileId(profileId);
         final long certCount = certificateRepository.countByStudentProfileId(profileId);
         final long expCount = experienceRepository.countByStudentProfileId(profileId);
-        final long resumeCount = resumeRepository.countByStudentProfileId(profileId);
 
         final AtsScoreDto atsDto = atsScoreEngine.analyzeResume(profile);
         final int atsReadiness = atsDto.getAtsScore();

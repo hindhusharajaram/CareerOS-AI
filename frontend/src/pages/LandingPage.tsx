@@ -5,7 +5,6 @@ import {
   TrendingUp,
   ChevronRight,
   Brain,
-  Shield,
   Zap,
   Target,
   Award,
@@ -13,13 +12,9 @@ import {
   Bot,
   CheckCircle,
   ArrowRight,
-  Globe,
-  Lock,
   Cpu,
   Database,
   GitBranch,
-  FlaskConical,
-  Users,
 } from 'lucide-react';
 import { FeatureCard } from '../components/ui/Card';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
@@ -51,24 +46,17 @@ const faqs = [
   },
 ];
 
-const targetCompanies = [
-  'Google', 'Stripe', 'Vercel', 'Linear', 'GitHub', 'Notion', 'Figma', 'Atlassian', 'Cloudflare', 'Supabase',
-  'Google', 'Stripe', 'Vercel', 'Linear', 'GitHub', 'Notion', 'Figma', 'Atlassian', 'Cloudflare', 'Supabase',
-];
-
-const techStack = ['Spring Boot 3', 'PostgreSQL 17', 'React 18', 'TypeScript 5', 'Docker', 'GitHub Actions', 'JUnit 5', 'Vite', 'Apache Tika', 'JJWT'];
-
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-surface-border rounded-2xl overflow-hidden bg-surface-card transition-colors hover:border-zinc-700/60">
+    <div className="border border-surface-border rounded-2xl overflow-hidden bg-surface-card transition-colors hover:border-[#2E4CFF]/40">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between p-5 text-left gap-4"
         aria-expanded={open}
       >
         <span className="font-semibold text-content-primary text-sm leading-relaxed">{q}</span>
-        <ChevronRight className={`h-4 w-4 text-content-secondary shrink-0 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} aria-hidden="true" />
+        <ChevronRight className={`h-4 w-4 text-content-secondary shrink-0 transition-transform duration-200 ${open ? 'rotate-90 text-[#2E4CFF]' : ''}`} aria-hidden="true" />
       </button>
       {open && (
         <div className="px-5 pb-5 text-sm text-content-secondary leading-relaxed border-t border-surface-border pt-4">
@@ -85,23 +73,6 @@ function CapabilityStat({ value, label, sub }: { value: string; label: string; s
       <p className="text-3xl sm:text-4xl font-black text-content-primary tracking-tight">{value}</p>
       <p className="text-sm font-semibold text-content-primary mt-1">{label}</p>
       {sub && <p className="text-xs text-content-secondary mt-0.5">{sub}</p>}
-    </div>
-  );
-}
-
-function BetaPlaceholderCard({ icon: Icon, title, body }: { icon: React.ElementType; title: string; body: string }) {
-  return (
-    <div className="glass-card rounded-3xl p-7 card-interactive flex flex-col gap-4 border border-dashed border-[#2E4CFF]/30 bg-surface-card">
-      <div className="flex items-center gap-3">
-        <div className="h-9 w-9 rounded-full bg-[#2E4CFF]/10 border border-[#2E4CFF]/20 flex items-center justify-center">
-          <Icon className="h-4 w-4 text-[#2E4CFF]" aria-hidden="true" />
-        </div>
-        <span className="text-xs font-bold text-[#2E4CFF] uppercase tracking-wider">Open Beta</span>
-      </div>
-      <div>
-        <p className="text-sm font-semibold text-content-primary mb-1">{title}</p>
-        <p className="text-sm text-content-secondary leading-relaxed">{body}</p>
-      </div>
     </div>
   );
 }
@@ -134,7 +105,6 @@ export default function LandingPage(): React.ReactElement {
           <div className="hidden md:flex items-center gap-6 text-sm text-content-secondary">
             <a href="#features" className="hover:text-content-primary transition-colors nav-underline">Features</a>
             <a href="#ai" className="hover:text-content-primary transition-colors nav-underline">AI Suite</a>
-            <a href="#security" className="hover:text-content-primary transition-colors nav-underline">Security</a>
             <a href="#faq" className="hover:text-content-primary transition-colors nav-underline">FAQ</a>
           </div>
 
@@ -167,7 +137,7 @@ export default function LandingPage(): React.ReactElement {
             AI-Powered Career Intelligence · Open Beta
           </div>
 
-          {/* Crisp Heading - Option 1 Approved Direction */}
+          {/* Crisp Heading */}
           <h1
             id="hero-heading"
             className="text-5xl sm:text-6xl lg:text-7xl font-display font-extrabold tracking-tight leading-[1.08] mb-6 text-content-primary animate-fade-up"
@@ -187,7 +157,7 @@ export default function LandingPage(): React.ReactElement {
 
           {/* CTAs */}
           <div
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 animate-fade-up"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 animate-fade-up"
             style={{ animationDelay: '200ms' }}
           >
             <Link
@@ -206,11 +176,6 @@ export default function LandingPage(): React.ReactElement {
             </Link>
           </div>
 
-          <p className="text-xs text-[#2E4CFF] font-medium mb-14 animate-fade-up flex items-center justify-center gap-1.5" style={{ animationDelay: '250ms' }}>
-            <span className="h-2 w-2 rounded-full bg-[#FF6B35] animate-pulse" aria-hidden="true" />
-            Hosted backend live on Render & Neon PostgreSQL
-          </p>
-
           {/* Real capability stats */}
           <div
             className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto animate-fade-up"
@@ -219,8 +184,8 @@ export default function LandingPage(): React.ReactElement {
           >
             <CapabilityStat value="6" label="AI Modules" sub="Career · Resume · Chat · Interview · Coach · Advisor" />
             <CapabilityStat value="9" label="Score Indicators" sub="Weighted 0–1000 career score" />
-            <CapabilityStat value="1,000" label="Score Range" sub="Structured readiness scale" />
-            <CapabilityStat value="6+" label="Security Layers" sub="JWT · HSTS · CSP · RBAC · Rate Limit · bcrypt" />
+            <CapabilityStat value="Free" label="To Use" sub="Instant access, no credit card" />
+            <CapabilityStat value="<2 min" label="To Your Score" sub="Fast profile evaluation" />
           </div>
         </section>
 
@@ -244,7 +209,6 @@ export default function LandingPage(): React.ReactElement {
                 icon={<Award className="h-6 w-6" />}
                 title="Career Score Engine"
                 description="0–1000 weighted score computed from 9 indicators including projects, skills, experience, education, and AI readiness."
-                color="emerald"
                 badge="Core"
               />
             </Link>
@@ -253,7 +217,6 @@ export default function LandingPage(): React.ReactElement {
                 icon={<FileText className="h-6 w-6" />}
                 title="ATS Resume Analysis"
                 description="Deep ATS scoring with keyword matching, formatting analysis, quantifiable achievements detection, and fix recommendations."
-                color="emerald"
               />
             </Link>
             <Link to="/intelligence/skill-gap" className="block h-full">
@@ -261,7 +224,6 @@ export default function LandingPage(): React.ReactElement {
                 icon={<Cpu className="h-6 w-6" />}
                 title="Skill Gap Detection"
                 description="AI-powered comparison of your current skills against role requirements with priority learning recommendations."
-                color="emerald"
               />
             </Link>
             <Link to="/intelligence/roadmap" className="block h-full">
@@ -269,7 +231,6 @@ export default function LandingPage(): React.ReactElement {
                 icon={<Target className="h-6 w-6" />}
                 title="90-Day Roadmaps"
                 description="Structured week-by-week execution plans for 30, 60, and 90-day windows tailored to your target role and domain."
-                color="emerald"
               />
             </Link>
             <Link to="/intelligence" className="block h-full">
@@ -277,7 +238,6 @@ export default function LandingPage(): React.ReactElement {
                 icon={<Brain className="h-6 w-6" />}
                 title="Intelligence Dashboard"
                 description="Unified intelligence hub with placement eligibility scoring, trend analytics, and project competitiveness analysis."
-                color="emerald"
               />
             </Link>
             <Link to="/warehouse-dashboard" className="block h-full">
@@ -285,7 +245,6 @@ export default function LandingPage(): React.ReactElement {
                 icon={<Database className="h-6 w-6" />}
                 title="Data Engineering"
                 description="Production-grade ETL pipelines, Star Schema warehouse, event-driven analytics, and real-time observability platform."
-                color="emerald"
                 badge="Enterprise"
               />
             </Link>
@@ -316,8 +275,8 @@ export default function LandingPage(): React.ReactElement {
                     { icon: Zap, name: 'Mock Interview', desc: 'Structured practice & feedback' },
                     { icon: GitBranch, name: 'Project Advisor', desc: 'Portfolio gap analysis' },
                   ].map(({ icon: Icon, name, desc }) => (
-                    <div key={name} className="flex items-center gap-3 p-3 rounded-xl bg-surface-hover border border-surface-border hover:border-emerald-500/30 transition-colors">
-                      <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                    <div key={name} className="flex items-center gap-3 p-3 rounded-xl bg-surface-hover border border-surface-border hover:border-[#2E4CFF]/30 transition-colors">
+                      <div className="h-8 w-8 rounded-lg bg-[#2E4CFF]/10 flex items-center justify-center text-[#2E4CFF]">
                         <Icon className="h-4 w-4" />
                       </div>
                       <div>
@@ -332,11 +291,11 @@ export default function LandingPage(): React.ReactElement {
               {/* AI Visual */}
               <div className="relative flex items-center justify-center">
                 <div className="relative h-64 w-64 lg:h-80 lg:w-80">
-                  <div className="absolute inset-0 rounded-full border-2 border-emerald-500/20 animate-spin-slow" />
-                  <div className="absolute inset-4 rounded-full border border-emerald-500/15 animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '12s' }} />
-                  <div className="absolute inset-12 rounded-full bg-emerald-500/10 blur-sm animate-pulse-glow" />
+                  <div className="absolute inset-0 rounded-full border-2 border-[#2E4CFF]/20 animate-spin-slow" />
+                  <div className="absolute inset-4 rounded-full border border-[#2E4CFF]/15 animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '12s' }} />
+                  <div className="absolute inset-12 rounded-full bg-[#2E4CFF]/10 blur-sm animate-pulse-glow" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Brain className="h-16 w-16 text-emerald-500 animate-float" />
+                    <Brain className="h-16 w-16 text-[#2E4CFF] animate-float" />
                   </div>
                 </div>
               </div>
@@ -348,7 +307,7 @@ export default function LandingPage(): React.ReactElement {
         <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24" aria-labelledby="intelligence-heading">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/8 px-3 py-1 text-xs text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider mb-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#2E4CFF]/20 bg-[#2E4CFF]/8 px-3 py-1 text-xs text-[#2E4CFF] font-semibold uppercase tracking-wider mb-6">
                 <TrendingUp className="h-3.5 w-3.5" />
                 Career Intelligence
               </div>
@@ -365,7 +324,7 @@ export default function LandingPage(): React.ReactElement {
                 { label: 'Project Competitiveness', desc: 'Portfolio gap analysis for recruiter readiness' },
               ].map(({ label, desc }) => (
                 <div key={label} className="flex items-start gap-3 mb-4">
-                  <CheckCircle className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+                  <CheckCircle className="h-5 w-5 text-[#2E4CFF] shrink-0 mt-0.5" />
                   <div>
                     <p className="text-sm font-semibold text-content-primary">{label}</p>
                     <p className="text-xs text-content-secondary mt-0.5">{desc}</p>
@@ -374,7 +333,7 @@ export default function LandingPage(): React.ReactElement {
               ))}
               <a
                 href="#features"
-                className="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline transition-colors"
+                className="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-[#2E4CFF] hover:underline transition-colors"
               >
                 See all platform features <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </a>
@@ -391,7 +350,7 @@ export default function LandingPage(): React.ReactElement {
                       <circle cx="48" cy="48" r="38" fill="none" stroke="var(--surface-border)" strokeWidth="8" />
                       <circle
                         cx="48" cy="48" r="38" fill="none"
-                        stroke="#10b981" strokeWidth="8"
+                        stroke="#2E4CFF" strokeWidth="8"
                         strokeLinecap="round"
                         strokeDasharray="238.76"
                         strokeDashoffset="57"
@@ -409,7 +368,7 @@ export default function LandingPage(): React.ReactElement {
                         <div key={k} className="flex items-center gap-2">
                           <span className="text-[10px] text-content-secondary w-16">{k}</span>
                           <div className="flex-1 h-1.5 bg-surface-hover rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${v}%` }} />
+                            <div className="h-full bg-[#2E4CFF] rounded-full" style={{ width: `${v}%` }} />
                           </div>
                           <span className="text-[10px] font-mono text-content-secondary">{v}%</span>
                         </div>
@@ -419,112 +378,6 @@ export default function LandingPage(): React.ReactElement {
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* === SECURITY SECTION === */}
-        <section id="security" className="mx-auto max-w-7xl px-6 lg:px-8 py-24" aria-labelledby="security-heading">
-          <div className="rounded-3xl border border-surface-border bg-surface-card p-10 lg:p-14 shadow-sm">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/8 px-3 py-1 text-xs text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider mb-4">
-                <Shield className="h-3.5 w-3.5" aria-hidden="true" />
-                Security Architecture
-              </div>
-              <h2 id="security-heading" className="text-3xl font-black text-content-primary mb-3">
-                Production-grade security. Built in.
-              </h2>
-              <p className="text-content-secondary max-w-xl mx-auto">
-                Security is implemented at the infrastructure level — not retrofitted. Every layer is verifiable in the open-source codebase.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {[
-                { icon: Lock, label: 'JWT Auth' },
-                { icon: Shield, label: 'HSTS' },
-                { icon: Globe, label: 'CSP Headers' },
-                { icon: Zap, label: 'Rate Limiting' },
-                { icon: CheckCircle, label: 'bcrypt Hashing' },
-                { icon: Database, label: 'RBAC' },
-              ].map(({ icon: Icon, label }) => (
-                <div key={label} className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-surface-hover border border-surface-border hover:border-emerald-500/30 transition-colors text-center">
-                  <Icon className="h-6 w-6 text-emerald-500" />
-                  <span className="text-xs font-semibold text-content-primary">{label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* === TECH STACK === */}
-        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16" aria-labelledby="stack-heading">
-          <div className="text-center mb-8">
-            <p id="stack-heading" className="text-sm font-semibold text-content-secondary mb-1 uppercase tracking-wider">Tech Stack</p>
-            <p className="text-xs text-content-muted">All technologies used in this project — verifiable in the repository.</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3" role="list" aria-label="Technologies used">
-            {techStack.map((tech) => (
-              <span
-                key={tech}
-                role="listitem"
-                className="px-4 py-2 rounded-xl bg-surface-card border border-surface-border text-sm text-content-secondary font-medium hover:border-emerald-500/30 hover:text-emerald-500 transition-all duration-200"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        </section>
-
-        {/* === BETA / EARLY ACCESS === */}
-        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24" aria-labelledby="beta-heading">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/8 px-3 py-1 text-xs text-amber-600 dark:text-amber-400 font-semibold uppercase tracking-wider mb-4">
-              <FlaskConical className="h-3.5 w-3.5" aria-hidden="true" />
-              Open Beta
-            </div>
-            <h2 id="beta-heading" className="text-3xl font-black text-content-primary mb-3">
-              Built for students targeting engineering roles
-            </h2>
-            <p className="text-content-secondary max-w-xl mx-auto">
-              CareerOS AI is in open beta. Early access testers help shape the product. User feedback
-              and case studies will be featured here as they are collected.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <BetaPlaceholderCard
-              icon={Users}
-              title="Looking for early access testers"
-              body="If you are an engineering student preparing for internship or full-time roles, your feedback directly shapes the platform. Reach out via GitHub."
-            />
-            <BetaPlaceholderCard
-              icon={FlaskConical}
-              title="Student feedback coming soon"
-              body="This platform is currently being tested. Real user experiences and outcomes will be published here as the beta progresses."
-            />
-            <BetaPlaceholderCard
-              icon={GitBranch}
-              title="Open-source contributions welcome"
-              body="CareerOS AI is open source. Engineers who contribute to the codebase are acknowledged in the repository and this page."
-            />
-          </div>
-        </section>
-
-        {/* === TARGET COMPANIES === */}
-        <section className="py-12 border-y border-surface-border overflow-hidden opacity-80" aria-label="Target companies context">
-          <p className="text-center text-xs font-semibold text-content-muted uppercase tracking-widest mb-1">
-            Built to prepare you for engineering careers at companies like
-          </p>
-          <p className="text-center text-[10px] text-content-muted mb-6">
-            CareerOS AI does not have a partnership with any of these organisations. This is aspirational context only.
-          </p>
-          <div className="flex gap-12 animate-marquee whitespace-nowrap" aria-hidden="true">
-            {targetCompanies.map((company, i) => (
-              <span
-                key={`${company}-${i}`}
-                className="text-content-secondary font-bold text-sm hover:text-content-primary transition-colors shrink-0"
-              >
-                {company}
-              </span>
-            ))}
           </div>
         </section>
 
@@ -545,7 +398,7 @@ export default function LandingPage(): React.ReactElement {
         <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16" aria-labelledby="cta-heading">
           <div className="relative rounded-3xl border border-surface-border bg-surface-card p-12 text-center shadow-sm">
             <div className="relative">
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-4 py-1.5 text-sm text-emerald-600 dark:text-emerald-400 mb-6 font-semibold">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#2E4CFF]/25 bg-[#2E4CFF]/10 px-4 py-1.5 text-sm text-[#2E4CFF] mb-6 font-semibold">
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
                 Open Beta · Early Access
               </div>
@@ -584,7 +437,7 @@ export default function LandingPage(): React.ReactElement {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
               <div className="col-span-1 md:col-span-2">
                 <div className="flex items-center gap-2.5 mb-4">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
+                  <div className="h-8 w-8 rounded-lg bg-[#2E4CFF] flex items-center justify-center text-white">
                     <Sparkles className="h-4 w-4" aria-hidden="true" />
                   </div>
                   <span className="font-bold text-content-primary">CareerOS AI</span>
@@ -604,7 +457,7 @@ export default function LandingPage(): React.ReactElement {
               <div>
                 <p className="text-xs font-bold text-content-secondary uppercase tracking-wider mb-4">Project</p>
                 <div className="space-y-3">
-                  {['GitHub', 'Security', 'Open Beta', 'FAQ'].map((item) => (
+                  {['GitHub', 'FAQ'].map((item) => (
                     <span key={item} className="block text-sm text-content-secondary cursor-default">{item}</span>
                   ))}
                 </div>
@@ -614,7 +467,7 @@ export default function LandingPage(): React.ReactElement {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-surface-border pt-8">
               <p className="text-xs text-content-muted">© 2026 CareerOS AI. Open-source project. All rights reserved.</p>
               <div className="flex items-center gap-2 text-xs text-content-muted">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+                <span className="h-2 w-2 rounded-full bg-[#2E4CFF] animate-pulse" aria-hidden="true" />
                 Open Beta — Hosted backend launching soon
               </div>
             </div>

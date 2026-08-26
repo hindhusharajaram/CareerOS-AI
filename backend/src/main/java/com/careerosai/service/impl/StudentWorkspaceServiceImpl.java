@@ -134,12 +134,12 @@ public class StudentWorkspaceServiceImpl implements StudentWorkspaceService {
                         .icon("code")
                         .build()))));
                 if (studentSkillRepository.findByStudentProfileIdAndSkillId(profile.getId(), skill.getId()).isEmpty()) {
-                    studentSkillRepository.save(StudentSkill.builder()
+                    studentSkillRepository.save(Objects.requireNonNull(StudentSkill.builder()
                         .studentProfile(profile)
                         .skill(skill)
                         .proficiency("INTERMEDIATE")
                         .yearsOfExperience(1.5)
-                        .build());
+                        .build()));
                 }
             }
         }
