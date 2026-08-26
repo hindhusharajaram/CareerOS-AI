@@ -1,0 +1,20 @@
+name: Backend Keep-Alive Warmup
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free instance from idling
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keep-warm:
+    name: Ping Render Backend Endpoint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Backend Health Endpoint
+        run: |
+          echo "Pinging backend health endpoints to keep Render instance warm..."
+          curl -s -f -m 15 https://careeros-ai-backend-psj7.onrender.com/health || echo "Primary endpoint ping completed with warning"
+          curl -s -f -m 15 https://careeros-ai-backend.onrender.com/health || echo "Fallback endpoint ping completed with warning"
+          echo "Keep-alive ping cycle executed successfully."

@@ -10,6 +10,7 @@ export default function LoginPage(): React.ReactElement {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('Authenticating...');
   const [validationError, setValidationError] = useState('');
   const [serverError, setServerError] = useState('');
 
@@ -39,6 +40,12 @@ export default function LoginPage(): React.ReactElement {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setLoadingMessage('Authenticating...');
+
+    const slowServerTimer = setTimeout(() => {
+      setLoadingMessage('Waking up the server — this can take up to a minute on the first login of the day.');
+    }, 3000);
+
     try {
       const response = await api.post('/api/auth/login', { email, password });
       const resBody = response.data;
@@ -61,7 +68,9 @@ export default function LoginPage(): React.ReactElement {
         setServerError('Cannot connect to the authorization server. Please check backend availability.');
       }
     } finally {
+      clearTimeout(slowServerTimer);
       setIsLoading(false);
+      setLoadingMessage('Authenticating...');
     }
   };
 
@@ -81,9 +90,6 @@ export default function LoginPage(): React.ReactElement {
           </Link>
 
           <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-surface-border bg-surface-hover px-3 py-1 text-xs text-content-secondary font-semibold uppercase tracking-wider">
-              v1.0 Production Ready
-            </div>
             <h2 className="text-4xl font-display font-extrabold text-content-primary leading-tight">
               Intelligence that<br />
               <span className="text-[#2E4CFF]">
@@ -206,12 +212,12 @@ export default function LoginPage(): React.ReactElement {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-xl bg-[#2E4CFF] hover:bg-[#1A32C7] text-white py-3.5 text-sm font-bold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-xl bg-[#2E4CFF] hover:bg-[#1A32C7] text-white py-3.5 px-4 text-sm font-bold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-75 disabled:cursor-not-allowed"
             >
               {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin" />
-                  Authenticating...
+                <span className="flex items-center justify-center gap-2 text-xs sm:text-sm text-center leading-tight">
+                  <span className="h-4 w-4 shrink-0 rounded-full border-2 border-current border-t-transparent animate-spin" />
+                  <span>{loadingMessage}</span>
                 </span>
               ) : (
                 'Sign In to Workspace'
@@ -229,7 +235,7 @@ export default function LoginPage(): React.ReactElement {
           {/* Security note */}
           <div className="mt-8 flex items-center justify-center gap-1.5 text-xs text-content-muted">
             <Lock className="h-3 w-3" />
-            Secured with JWT · TLS · Rate Limiting
+            Secured login
           </div>
         </div>
       </div>
