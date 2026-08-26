@@ -127,35 +127,85 @@ public class MockAIProviderImpl implements AIProvider {
 
     @Override
     public AIMockInterviewDto generateMockInterview(final String targetRole, final String difficulty, final String contextJson) {
+        final String role = (targetRole != null && !targetRole.isBlank()) ? targetRole : "Software Engineer";
+        final String diff = (difficulty != null && !difficulty.isBlank()) ? difficulty.toUpperCase() : "INTERMEDIATE";
+        final String roleLower = role.toLowerCase();
+
         final List<AIMockInterviewDto.InterviewQuestion> qList = new ArrayList<>();
 
-        qList.add(AIMockInterviewDto.InterviewQuestion.builder()
-            .id(UUID.randomUUID().toString())
-            .category("TECHNICAL")
-            .questionText("Explain the difference between HashMap and ConcurrentHashMap in Java. When should you use each?")
-            .expectedAnswerKeyPoints("HashMap is non-thread-safe. ConcurrentHashMap uses segment/bucket level locking allowing concurrent reads and writes.")
-            .followUpQuestions(Arrays.asList("How does ConcurrentHashMap achieve thread safety without locking the entire map?"))
-            .build());
-
-        qList.add(AIMockInterviewDto.InterviewQuestion.builder()
-            .id(UUID.randomUUID().toString())
-            .category("SYSTEM_DESIGN")
-            .questionText("How would you design a scalable REST API rate limiter for CareerOS AI endpoints?")
-            .expectedAnswerKeyPoints("Token bucket or sliding window log algorithm using Redis distributed cache.")
-            .followUpQuestions(Arrays.asList("What HTTP status code should be returned when a client exceeds rate limits?"))
-            .build());
+        if (roleLower.contains("data") || roleLower.contains("machine") || roleLower.contains("ai")) {
+            qList.add(AIMockInterviewDto.InterviewQuestion.builder()
+                .id(UUID.randomUUID().toString())
+                .category("TECHNICAL")
+                .questionText("How do you handle feature selection, L1/L2 regularization, and data leakage when training predictive models for " + role + "?")
+                .expectedAnswerKeyPoints("Discuss cross-validation, Lasso/Ridge regression penalties, correlation analysis, and data scaling within cross-validation folds.")
+                .followUpQuestions(Arrays.asList("What is the difference between SHAP and LIME model explainability techniques?"))
+                .build());
+            qList.add(AIMockInterviewDto.InterviewQuestion.builder()
+                .id(UUID.randomUUID().toString())
+                .category("SYSTEM_DESIGN")
+                .questionText("Design a real-time ML inference pipeline serving 10,000 requests/sec with feature store integration.")
+                .expectedAnswerKeyPoints("Cover Redis online feature store, model versioning (MLflow), FastAPI container deployment, and Kafka streaming.")
+                .followUpQuestions(Arrays.asList("How do you detect data drift and concept drift in production?"))
+                .build());
+        } else if (roleLower.contains("front") || roleLower.contains("react") || roleLower.contains("ui")) {
+            qList.add(AIMockInterviewDto.InterviewQuestion.builder()
+                .id(UUID.randomUUID().toString())
+                .category("TECHNICAL")
+                .questionText("Explain React 18 Concurrent Rendering, Server Components vs Client Components, and performance optimization techniques.")
+                .expectedAnswerKeyPoints("Discuss fiber reconciler, non-blocking transitions with useTransition, zero-bundle-size server components, and Core Web Vitals optimization.")
+                .followUpQuestions(Arrays.asList("How do you prevent memory leaks when managing WebSocket connections in custom React hooks?"))
+                .build());
+            qList.add(AIMockInterviewDto.InterviewQuestion.builder()
+                .id(UUID.randomUUID().toString())
+                .category("SYSTEM_DESIGN")
+                .questionText("Design an accessible, responsive Design System component library with micro-frontend routing.")
+                .expectedAnswerKeyPoints("Discuss TailwindCSS design tokens, ARIA attributes, module federation, and automated visual regression testing.")
+                .followUpQuestions(Arrays.asList("How do you enforce performance budgets on dynamic JS bundle sizes?"))
+                .build());
+        } else if (roleLower.contains("devops") || roleLower.contains("cloud") || roleLower.contains("infrastructure")) {
+            qList.add(AIMockInterviewDto.InterviewQuestion.builder()
+                .id(UUID.randomUUID().toString())
+                .category("TECHNICAL")
+                .questionText("A Kubernetes Pod is stuck in CrashLoopBackOff state in production. Detail your step-by-step diagnostic process.")
+                .expectedAnswerKeyPoints("Inspect kubectl describe, check container exit codes, review previous logs, verify Liveness/Readiness probes, and check resource limits.")
+                .followUpQuestions(Arrays.asList("What is the difference between pod evictions and OOMKilled events?"))
+                .build());
+            qList.add(AIMockInterviewDto.InterviewQuestion.builder()
+                .id(UUID.randomUUID().toString())
+                .category("SYSTEM_DESIGN")
+                .questionText("Design a zero-downtime, multi-region Blue/Green deployment pipeline using Infrastructure as Code.")
+                .expectedAnswerKeyPoints("Use Terraform for provisioning, ArgoCD for GitOps CD, Route53 DNS weighted routing, and automated health canary rollbacks.")
+                .followUpQuestions(Arrays.asList("How do you handle database migration schema changes during blue/green rollouts?"))
+                .build());
+        } else {
+            qList.add(AIMockInterviewDto.InterviewQuestion.builder()
+                .id(UUID.randomUUID().toString())
+                .category("TECHNICAL")
+                .questionText("How do you design high-throughput REST APIs and data access layers for " + role + " applications?")
+                .expectedAnswerKeyPoints("Discuss separation of concerns (Controller-Service-Repository), database indexing, connection pooling, and connection handling.")
+                .followUpQuestions(Arrays.asList("How do you prevent N+1 query problems in ORM data access layers?"))
+                .build());
+            qList.add(AIMockInterviewDto.InterviewQuestion.builder()
+                .id(UUID.randomUUID().toString())
+                .category("SYSTEM_DESIGN")
+                .questionText("How would you design a scalable REST API rate limiter for " + role + " endpoints?")
+                .expectedAnswerKeyPoints("Token bucket or sliding window log algorithm using Redis distributed cache.")
+                .followUpQuestions(Arrays.asList("What HTTP status code and headers should be returned when a client exceeds rate limits?"))
+                .build());
+        }
 
         qList.add(AIMockInterviewDto.InterviewQuestion.builder()
             .id(UUID.randomUUID().toString())
             .category("BEHAVIORAL")
-            .questionText("Describe a challenging technical bug you encountered in a recent project and how you resolved it.")
-            .expectedAnswerKeyPoints("Use STAR method (Situation, Task, Action, Result). Highlight systematic debugging using logs.")
-            .followUpQuestions(Arrays.asList("What preventative measures did you take after fixing the bug?"))
+            .questionText("Describe a challenging technical bug or architecture disagreement you encountered as a " + role + " and how you resolved it.")
+            .expectedAnswerKeyPoints("Use STAR method (Situation, Task, Action, Result). Highlight analytical debugging and collaborative decision making.")
+            .followUpQuestions(Arrays.asList("What preventative measures or automated tests did you introduce after fixing the issue?"))
             .build());
 
         return AIMockInterviewDto.builder()
-            .targetRole(targetRole != null ? targetRole : "Software Engineer")
-            .difficultyLevel(difficulty != null ? difficulty : "INTERMEDIATE")
+            .targetRole(role)
+            .difficultyLevel(diff)
             .questions(qList)
             .evaluationRubric(Arrays.asList(
                 "Technical Accuracy (40%)",
@@ -165,6 +215,7 @@ public class MockAIProviderImpl implements AIProvider {
             ))
             .build();
     }
+
 
     @Override
     public AIProjectAdviceDto analyzeProject(final String title, final String techStack, final String description, final String contextJson) {
