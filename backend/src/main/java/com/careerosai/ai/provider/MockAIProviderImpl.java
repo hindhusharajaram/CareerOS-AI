@@ -105,25 +105,57 @@ public class MockAIProviderImpl implements AIProvider {
 
     @Override
     public AILearningPlanDto generateLearningPlan(final String targetRole, final String contextJson) {
+        final String role = (targetRole != null && !targetRole.isBlank()) ? targetRole : "Software Engineer";
+        final String roleLower = role.toLowerCase();
+
         final List<AILearningPlanDto.StudyDay> days = new ArrayList<>();
-        days.add(AILearningPlanDto.StudyDay.builder().day("Monday").topic("Data Structures & Algorithms").activity("Solve 2 Array & Hash Map Medium problems on LeetCode").durationMinutes(60).build());
-        days.add(AILearningPlanDto.StudyDay.builder().day("Tuesday").topic("Backend REST APIs").activity("Implement JWT authentication filter in Spring Boot").durationMinutes(90).build());
-        days.add(AILearningPlanDto.StudyDay.builder().day("Wednesday").topic("Database Systems").activity("Write complex SQL Joins and PostgreSQL index queries").durationMinutes(60).build());
-        days.add(AILearningPlanDto.StudyDay.builder().day("Thursday").topic("Frontend Architecture").activity("Build custom React hooks and state management with TypeScript").durationMinutes(90).build());
-        days.add(AILearningPlanDto.StudyDay.builder().day("Friday").topic("DevOps & Containers").activity("Write Dockerfile and containerize Spring Boot & React services").durationMinutes(60).build());
+        List<String> techSeq;
+        List<String> resources;
+        String difficulty = "Beginner -> Intermediate -> Advanced";
+
+        if (roleLower.contains("data") || roleLower.contains("machine") || roleLower.contains("ai") || roleLower.contains("analytics")) {
+            techSeq = Arrays.asList("Python 3.12", "Pandas & SQL", "Scikit-Learn", "PyTorch / TensorFlow", "FastAPI & RAG Pipelines");
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 1: Data Foundations").topic("Python for Data Science").activity("Master NumPy vectorization and Pandas DataFrame manipulation").durationMinutes(90).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 2: Exploratory Analysis").topic("SQL & Data Wrangling").activity("Execute complex SQL joins, window functions, and data cleaning").durationMinutes(120).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 3: Supervised ML").topic("Scikit-Learn Modeling").activity("Train and evaluate Random Forest and XGBoost classifiers").durationMinutes(100).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 4: Deep Learning").topic("PyTorch Neural Networks").activity("Train CNN/Transformer models for image/text classification").durationMinutes(120).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 5: Generative AI").topic("LLM RAG Pipelines").activity("Build a LangChain RAG pipeline with ChromaDB vector store").durationMinutes(150).build());
+            resources = Arrays.asList("Hands-On Machine Learning (O'Reilly)", "DeepLearning.AI: Generative AI Certification", "Kaggle Competitions & Datasets Workspace");
+        } else if (roleLower.contains("devops") || roleLower.contains("cloud") || roleLower.contains("infrastructure")) {
+            techSeq = Arrays.asList("Linux Systems", "Docker Containers", "Kubernetes", "Terraform (IaC)", "AWS & CI/CD Pipelines");
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 1: OS Core").topic("Linux & Shell Scripting").activity("Master bash scripts, systemd services, and network permissions").durationMinutes(90).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 2: Containerization").topic("Docker Multi-Stage Builds").activity("Containerize full-stack apps with multi-stage Dockerfiles").durationMinutes(120).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 3: Orchestration").topic("Kubernetes Cluster Mgmt").activity("Deploy Pods, Services, and Ingress controllers on minikube").durationMinutes(120).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 4: Infrastructure").topic("Terraform IaC").activity("Provision cloud VPCs, EC2 instances, and RDS databases using HCL").durationMinutes(150).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 5: Automation").topic("GitHub Actions GitOps").activity("Construct automated CI/CD deployment pipelines").durationMinutes(120).build());
+            resources = Arrays.asList("The DevOps Handbook", "Certified Kubernetes Application Developer (CKAD) Prep", "HashiCorp Terraform Associate Guide");
+        } else if (roleLower.contains("front") || roleLower.contains("react") || roleLower.contains("ui")) {
+            techSeq = Arrays.asList("TypeScript 5", "React 18 & Hooks", "TailwindCSS", "Next.js App Router", "Performance & Web Vitals");
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 1: Modern JS/TS").topic("TypeScript Advanced Types").activity("Master Generics, Utility Types, and strict type safety").durationMinutes(90).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 2: React Core").topic("Custom Hooks & State").activity("Build custom data-fetching and caching React hooks").durationMinutes(120).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 3: UI System").topic("Design Systems & Tailwind").activity("Construct an accessible responsive design system component library").durationMinutes(100).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 4: SSR & Next.js").topic("Next.js Server Components").activity("Build server-rendered pages with dynamic routing and server actions").durationMinutes(120).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 5: Optimization").topic("Web Vitals & Bundling").activity("Optimize LCP, CLS, dynamic imports, and lazy loading").durationMinutes(90).build());
+            resources = Arrays.asList("React Documentation (react.dev)", "TypeScript Deep Dive", "Refactoring UI by Adam Wathan & Steve Schoger");
+        } else {
+            techSeq = Arrays.asList(role + " Core Language", "Data Architecture & SQL", "REST API & Microservices", "Security & Authentication", "Cloud Containers & CI/CD");
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 1: Language Core").topic(role + " Syntax & OOP").activity("Master foundational concepts and design patterns").durationMinutes(90).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 2: Persistence").topic("Relational DB & SQL").activity("Design normalized schemas and write optimized SQL queries").durationMinutes(120).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 3: API Layer").topic("REST API Architecture").activity("Implement secure service layers and input validation").durationMinutes(120).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 4: Performance").topic("Caching & Async Queues").activity("Integrate Redis caching and async background task queues").durationMinutes(120).build());
+            days.add(AILearningPlanDto.StudyDay.builder().day("Day 5: Infrastructure").topic("Docker Containerization").activity("Write multi-stage Dockerfiles and deployment pipelines").durationMinutes(120).build());
+            resources = Arrays.asList("Designing Data-Intensive Applications", "System Design Primer & Scalability Workbook", "GitHub Open-Source Code Repositories");
+        }
 
         return AILearningPlanDto.builder()
-            .targetRole(targetRole != null ? targetRole : "Software Engineer")
-            .technologySequence(Arrays.asList("Java / Python", "Spring Boot / Node", "PostgreSQL", "React", "Docker"))
+            .targetRole(role)
+            .technologySequence(techSeq)
             .weeklyPlan(days)
-            .recommendedResources(Arrays.asList(
-                "Coursera: Java Programming & Software Engineering Fundamentals",
-                "NPTEL: Microservices & Cloud Architecture by IIT Kharagpur",
-                "LeetCode: Top 150 Interview Study Plan"
-            ))
-            .difficultyProgression("Beginner -> Intermediate -> Advanced Placement Level")
+            .recommendedResources(resources)
+            .difficultyProgression(difficulty)
             .build();
     }
+
 
     @Override
     public AIMockInterviewDto generateMockInterview(final String targetRole, final String difficulty, final String contextJson) {

@@ -78,6 +78,22 @@ const getGroqApiKey = (): string => {
   return `${k1}${k2}${k3}`;
 };
 
+function extractJsonFromText(rawText: string): any {
+  if (!rawText) return null;
+  let text = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+  const firstBrace = text.indexOf('{');
+  const lastBrace = text.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    text = text.substring(firstBrace, lastBrace + 1);
+  }
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.warn('Failed to parse JSON from Groq AI response:', e);
+    return null;
+  }
+}
+
 export async function fetchGroqLearningPlan(targetRole: string): Promise<AILearningPlan | null> {
   const apiKey = getGroqApiKey();
   if (!apiKey) return null;
@@ -96,8 +112,8 @@ export async function fetchGroqLearningPlan(targetRole: string): Promise<AILearn
             role: 'system',
             content: `You are Learning Coach CareerOS AI. Generate a comprehensive learning plan for the requested role/topic in raw JSON format with NO markdown ticks or extra text. JSON structure MUST match:
 {
-  "targetRole": "Role Name",
-  "difficultyProgression": "Beginner to Advanced (12-Week Roadmap)",
+  "targetRole": "${targetRole}",
+  "difficultyProgression": "Beginner -> Intermediate -> Advanced",
   "technologySequence": ["Tech1", "Tech2", "Tech3", "Tech4", "Tech5"],
   "weeklyPlan": [
     {"day": "Day 1: Foundations", "topic": "Topic Summary", "activity": "Specific action item", "durationMinutes": 90},
@@ -124,9 +140,8 @@ export async function fetchGroqLearningPlan(targetRole: string): Promise<AILearn
       const data = await response.json();
       const contentStr = data.choices?.[0]?.message?.content;
       if (contentStr) {
-        const cleanJson = contentStr.replace(/```json/g, '').replace(/```/g, '').trim();
-        const parsed = JSON.parse(cleanJson);
-        if (parsed && parsed.targetRole && Array.isArray(parsed.technologySequence)) {
+        const parsed = extractJsonFromText(contentStr);
+        if (parsed && parsed.targetRole && Array.isArray(parsed.technologySequence) && parsed.technologySequence.length > 0) {
           return parsed as AILearningPlan;
         }
       }
@@ -209,8 +224,7 @@ export async function fetchGroqMockInterview(targetRole: string, difficulty = 'I
       const data = await response.json();
       const contentStr = data.choices?.[0]?.message?.content;
       if (contentStr) {
-        const cleanJson = contentStr.replace(/```json/g, '').replace(/```/g, '').trim();
-        const parsed = JSON.parse(cleanJson);
+        const parsed = extractJsonFromText(contentStr);
         if (parsed && parsed.questions && Array.isArray(parsed.questions) && parsed.questions.length > 0) {
           return parsed as AIMockInterview;
         }
@@ -221,6 +235,7 @@ export async function fetchGroqMockInterview(targetRole: string, difficulty = 'I
   }
   return null;
 }
+
 
 export const aiService = {
   explainTopic: async (topic = 'CAREER_SCORE'): Promise<AICopilotExplanation> => {
