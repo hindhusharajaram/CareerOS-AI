@@ -41,51 +41,56 @@ public class AiCareerChatController {
         }
 
         final String apiKey = Objects.requireNonNull(groqApiKey.trim());
+        final List<String> candidateModels = List.of(
+            "groq/compound",
+            "groq/compound-mini",
+            "openai/gpt-oss-120b",
+            "qwen/qwen3.6-27b"
+        );
 
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "https://api.groq.com/openai/v1/chat/completions";
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://api.groq.com/openai/v1/chat/completions";
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(apiKey);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
 
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", "llama-3.3-70b-versatile");
-            requestBody.put("messages", List.of(
-                Map.of("role", "system", "content", "You are CareerOS AI, an elite technical career advisor for engineering students."),
-                Map.of("role", "user", "content", userMessage)
-            ));
+        String lastErrorMsg = null;
 
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-            Map<?, ?> response = restTemplate.postForObject(url, entity, Map.class);
+        for (String model : candidateModels) {
+            try {
+                Map<String, Object> requestBody = new HashMap<>();
+                requestBody.put("model", model);
+                requestBody.put("messages", List.of(
+                    Map.of("role", "system", "content", "You are CareerOS AI, an elite technical career advisor for engineering students."),
+                    Map.of("role", "user", "content", userMessage)
+                ));
 
-            if (response != null && response.containsKey("choices")) {
-                Object choicesObj = response.get("choices");
-                if (choicesObj instanceof List<?> choices && !choices.isEmpty()) {
-                    Object firstChoiceObj = choices.get(0);
-                    if (firstChoiceObj instanceof Map<?, ?> firstChoice) {
-                        Object messageObj = firstChoice.get("message");
-                        if (messageObj instanceof Map<?, ?> message) {
-                            Object contentObj = message.get("content");
-                            if (contentObj instanceof String replyText) {
-                                return ResponseEntity.ok(Map.of("reply", replyText));
+                HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+                Map<?, ?> response = restTemplate.postForObject(url, entity, Map.class);
+
+                if (response != null && response.containsKey("choices")) {
+                    Object choicesObj = response.get("choices");
+                    if (choicesObj instanceof List<?> choices && !choices.isEmpty()) {
+                        Object firstChoiceObj = choices.get(0);
+                        if (firstChoiceObj instanceof Map<?, ?> firstChoice) {
+                            Object messageObj = firstChoice.get("message");
+                            if (messageObj instanceof Map<?, ?> message) {
+                                Object contentObj = message.get("content");
+                                if (contentObj instanceof String replyText && !replyText.trim().isEmpty()) {
+                                    return ResponseEntity.ok(Map.of("reply", replyText));
+                                }
                             }
                         }
                     }
                 }
+            } catch (HttpStatusCodeException e) {
+                lastErrorMsg = "Groq API Error (" + e.getStatusCode() + "): " + e.getResponseBodyAsString();
+            } catch (Exception e) {
+                lastErrorMsg = "Groq Communication Error: " + e.getMessage();
             }
-
-            return ResponseEntity.ok(Map.of("reply", "Unexpected response structure from Groq API."));
-
-        } catch (HttpStatusCodeException e) {
-            String responseBody = e.getResponseBodyAsString();
-            String errorMsg = "Groq API Error (" + e.getStatusCode() + "): " + (responseBody != null && !responseBody.isEmpty() ? responseBody : e.getMessage());
-            return ResponseEntity.ok(Map.of("reply", errorMsg));
-        } catch (RestClientException e) {
-            return ResponseEntity.ok(Map.of("reply", "Groq Communication Error: " + e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.ok(Map.of("reply", "Backend Processing Error: " + e.getMessage()));
         }
+
+        return ResponseEntity.ok(Map.of("reply", lastErrorMsg != null ? lastErrorMsg : "No response from AI models."));
     }
 }

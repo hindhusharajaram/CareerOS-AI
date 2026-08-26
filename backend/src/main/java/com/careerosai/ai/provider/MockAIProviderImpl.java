@@ -280,39 +280,48 @@ public class MockAIProviderImpl implements AIProvider {
                 String url = "https://api.groq.com/openai/v1/chat/completions";
 
                 final String validApiKey = Objects.requireNonNull(apiKey.trim());
+                final List<String> candidateModels = List.of(
+                    "groq/compound",
+                    "groq/compound-mini",
+                    "openai/gpt-oss-120b",
+                    "qwen/qwen3.6-27b"
+                );
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.setBearerAuth(validApiKey);
 
-                Map<String, Object> body = new HashMap<>();
-                body.put("model", "llama-3.3-70b-versatile");
-                body.put("messages", List.of(
-                    Map.of("role", "system", "content", "You are CareerOS AI, an elite technical career advisor for engineering students."),
-                    Map.of("role", "user", "content", userMessage != null ? userMessage : "")
-                ));
+                for (String model : candidateModels) {
+                    try {
+                        Map<String, Object> body = new HashMap<>();
+                        body.put("model", model);
+                        body.put("messages", List.of(
+                            Map.of("role", "system", "content", "You are CareerOS AI, an elite technical career advisor for engineering students."),
+                            Map.of("role", "user", "content", userMessage != null ? userMessage : "")
+                        ));
 
-                HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-                Map<?, ?> response = restTemplate.postForObject(url, entity, Map.class);
+                        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+                        Map<?, ?> response = restTemplate.postForObject(url, entity, Map.class);
 
-                if (response != null && response.containsKey("choices")) {
-                    Object choicesObj = response.get("choices");
-                    if (choicesObj instanceof List<?> choices && !choices.isEmpty()) {
-                        Object firstChoiceObj = choices.get(0);
-                        if (firstChoiceObj instanceof Map<?, ?> firstChoice) {
-                            Object messageObj = firstChoice.get("message");
-                            if (messageObj instanceof Map<?, ?> message) {
-                                Object contentObj = message.get("content");
-                                if (contentObj instanceof String replyText) {
-                                    return replyText;
+                        if (response != null && response.containsKey("choices")) {
+                            Object choicesObj = response.get("choices");
+                            if (choicesObj instanceof List<?> choices && !choices.isEmpty()) {
+                                Object firstChoiceObj = choices.get(0);
+                                if (firstChoiceObj instanceof Map<?, ?> firstChoice) {
+                                    Object messageObj = firstChoice.get("message");
+                                    if (messageObj instanceof Map<?, ?> message) {
+                                        Object contentObj = message.get("content");
+                                        if (contentObj instanceof String replyText && !replyText.trim().isEmpty()) {
+                                            return replyText;
+                                        }
+                                    }
                                 }
                             }
                         }
+                    } catch (Exception e) {
+                        // try next candidate model
                     }
                 }
-            } catch (HttpStatusCodeException e) {
-                String responseBody = e.getResponseBodyAsString();
-                return "Groq API Error (" + e.getStatusCode() + "): " + (responseBody != null && !responseBody.isEmpty() ? responseBody : e.getMessage());
             } catch (Exception e) {
                 // Fallback to local mock if API fails
             }
