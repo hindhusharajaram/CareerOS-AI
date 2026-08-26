@@ -94,6 +94,47 @@ function extractJsonFromText(rawText: string): any {
   }
 }
 
+export async function callGroqChatCompletions(messages: any[], maxTokens = 1500, temperature = 0.5): Promise<string | null> {
+  const apiKey = getGroqApiKey();
+  if (!apiKey) return null;
+
+  const candidateModels = [
+    'openai/gpt-oss-120b',
+    'groq/compound',
+    'qwen/qwen3.6-27b',
+    'llama-3.3-70b-versatile'
+  ];
+
+  for (const model of candidateModels) {
+    try {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature,
+          max_tokens: maxTokens,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const contentStr = data.choices?.[0]?.message?.content;
+        if (contentStr && contentStr.trim() !== '') {
+          return contentStr;
+        }
+      }
+    } catch {
+      // Try next model candidate
+    }
+  }
+  return null;
+}
+
 export async function fetchGroqLearningPlan(targetRole: string): Promise<AILearningPlan | null> {
   const apiKey = getGroqApiKey();
   if (!apiKey) return null;
@@ -237,22 +278,10 @@ export async function fetchGroqMockInterview(targetRole: string, difficulty = 'I
 }
 
 export async function fetchGroqProjectAdvice(query: string): Promise<any | null> {
-  const apiKey = getGroqApiKey();
-  if (!apiKey) return null;
-
-  try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'system',
-            content: `You are AI Project Advisor for CareerOS AI. Perform a deep, realistic architecture, security, and cloud audit for the requested project/repository search: "${query}".
+  const messages = [
+    {
+      role: 'system',
+      content: `You are AI Project Advisor for CareerOS AI. Perform a deep, realistic architecture, security, and cloud audit for the requested project/repository search: "${query}".
 Generate a structured JSON response with NO markdown formatting or extra text. JSON structure MUST strictly match:
 {
   "repoUrl": "https://github.com/${query.includes('/') ? query : 'user/' + query}",
@@ -314,25 +343,19 @@ Generate a structured JSON response with NO markdown formatting or extra text. J
     }
   ]
 }`
-          },
-          {
-            role: 'user',
-            content: `Analyze repository architecture: ${query}`
-          }
-        ],
-        temperature: 0.5,
-        max_tokens: 1800
-      })
-    });
+    },
+    {
+      role: 'user',
+      content: `Analyze repository architecture: ${query}`
+    }
+  ];
 
-    if (response.ok) {
-      const data = await response.json();
-      const contentStr = data.choices?.[0]?.message?.content;
-      if (contentStr) {
-        const parsed = extractJsonFromText(contentStr);
-        if (parsed && parsed.recommendations && Array.isArray(parsed.recommendations) && parsed.recommendations.length > 0) {
-          return parsed;
-        }
+  try {
+    const contentStr = await callGroqChatCompletions(messages, 1800, 0.5);
+    if (contentStr) {
+      const parsed = extractJsonFromText(contentStr);
+      if (parsed && parsed.recommendations && Array.isArray(parsed.recommendations) && parsed.recommendations.length > 0) {
+        return parsed;
       }
     }
   } catch (err) {
@@ -342,47 +365,29 @@ Generate a structured JSON response with NO markdown formatting or extra text. J
 }
 
 export async function fetchGroqProjectFollowUp(searchQuery: string, userQuestion: string): Promise<{ response: string; citations: string[]; suggestedFix?: string } | null> {
-  const apiKey = getGroqApiKey();
-  if (!apiKey) return null;
-
-  try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'system',
-            content: `You are AI Project Advisor for CareerOS AI answering follow-up questions about project "${searchQuery}".
+  const messages = [
+    {
+      role: 'system',
+      content: `You are AI Project Advisor for CareerOS AI answering follow-up questions about project "${searchQuery}".
 Generate a structured JSON response with NO markdown formatting or extra text. JSON structure MUST strictly match:
 {
   "response": "Detailed markdown explanation answering the user's question...",
   "citations": ["Source: backend/src/main/resources/application.properties", "Source: Dockerfile"],
   "suggestedFix": "// Optional code snippet fix or config sample..."
 }`
-          },
-          {
-            role: 'user',
-            content: `Question about project ${searchQuery}: ${userQuestion}`
-          }
-        ],
-        temperature: 0.5,
-        max_tokens: 1200
-      })
-    });
+    },
+    {
+      role: 'user',
+      content: `Question about project ${searchQuery}: ${userQuestion}`
+    }
+  ];
 
-    if (response.ok) {
-      const data = await response.json();
-      const contentStr = data.choices?.[0]?.message?.content;
-      if (contentStr) {
-        const parsed = extractJsonFromText(contentStr);
-        if (parsed && parsed.response) {
-          return parsed;
-        }
+  try {
+    const contentStr = await callGroqChatCompletions(messages, 1200, 0.5);
+    if (contentStr) {
+      const parsed = extractJsonFromText(contentStr);
+      if (parsed && parsed.response) {
+        return parsed;
       }
     }
   } catch (err) {
