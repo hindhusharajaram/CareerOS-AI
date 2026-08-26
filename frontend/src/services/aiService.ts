@@ -131,6 +131,91 @@ export async function fetchGroqLearningPlan(targetRole: string): Promise<AILearn
   return null;
 }
 
+export async function fetchGroqMockInterview(targetRole: string, difficulty = 'INTERMEDIATE'): Promise<AIMockInterview | null> {
+  const apiKey = getGroqApiKey();
+  if (!apiKey) return null;
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are CareerOS AI Mock Interview Generator. Generate an elite, realistic technical & behavioral mock interview set for the requested role and difficulty level in raw JSON format with NO markdown formatting or extra text. JSON structure MUST strictly match:
+{
+  "targetRole": "${targetRole}",
+  "difficultyLevel": "${difficulty}",
+  "questions": [
+    {
+      "id": "q1",
+      "category": "TECHNICAL",
+      "questionText": "Detailed question 1...",
+      "expectedAnswerKeyPoints": "Key points for ideal answer...",
+      "followUpQuestions": ["Follow up 1...", "Follow up 2..."]
+    },
+    {
+      "id": "q2",
+      "category": "SYSTEM DESIGN",
+      "questionText": "Detailed question 2...",
+      "expectedAnswerKeyPoints": "Key points for ideal answer...",
+      "followUpQuestions": ["Follow up 1..."]
+    },
+    {
+      "id": "q3",
+      "category": "BEHAVIORAL",
+      "questionText": "Detailed question 3...",
+      "expectedAnswerKeyPoints": "Key points for ideal answer...",
+      "followUpQuestions": ["Follow up 1..."]
+    },
+    {
+      "id": "q4",
+      "category": "CODING",
+      "questionText": "Detailed question 4...",
+      "expectedAnswerKeyPoints": "Key points for ideal answer...",
+      "followUpQuestions": ["Follow up 1..."]
+    }
+  ],
+  "evaluationRubric": [
+    "Rubric criterion 1",
+    "Rubric criterion 2",
+    "Rubric criterion 3",
+    "Rubric criterion 4"
+  ]
+}`
+          },
+          {
+            role: 'user',
+            content: `Generate a ${difficulty} level mock interview for role: ${targetRole}`
+          }
+        ],
+        temperature: 0.6,
+        max_tokens: 1500
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const contentStr = data.choices?.[0]?.message?.content;
+      if (contentStr) {
+        const cleanJson = contentStr.replace(/```json/g, '').replace(/```/g, '').trim();
+        const parsed = JSON.parse(cleanJson);
+        if (parsed && parsed.questions && Array.isArray(parsed.questions) && parsed.questions.length > 0) {
+          return parsed as AIMockInterview;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Groq AI Direct mock interview call failed, falling back to local engine:', err);
+  }
+  return null;
+}
+
 export const aiService = {
   explainTopic: async (topic = 'CAREER_SCORE'): Promise<AICopilotExplanation> => {
     try {
@@ -167,7 +252,6 @@ export const aiService = {
     return buildDynamicLearningPlan(targetRole);
   },
 
-
   generateMockInterview: async (targetRole = 'Software Engineer', difficulty = 'INTERMEDIATE'): Promise<AIMockInterview> => {
     try {
       const res = await api.post('/api/v1/student/ai/interview/generate', null, { params: { targetRole, difficulty } });
@@ -175,10 +259,17 @@ export const aiService = {
         return res.data.data;
       }
     } catch {
-      // Fallback to dynamic client-side mock interview generator
+      // Fallback to direct Groq API engine
     }
+
+    const groqInterview = await fetchGroqMockInterview(targetRole, difficulty);
+    if (groqInterview) {
+      return groqInterview;
+    }
+
     return buildDynamicMockInterview(targetRole, difficulty);
   },
+
 
   analyzeProject: async (title = 'Full-Stack Web App', techStack = 'React, Java'): Promise<AIProjectAdvice> => {
     const res = await api.post('/api/v1/student/ai/project/analyze', null, { params: { title, techStack } });
