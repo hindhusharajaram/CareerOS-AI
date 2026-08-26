@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/banner.png" alt="CareerOS AI Banner" width="100%" />
+  <img src="assets/banner.svg" alt="CareerOS AI Banner" width="100%" />
 
   <h1>CareerOS AI</h1>
   <p><b>An AI-powered career readiness platform for engineering students — built with Spring Boot, React, and PostgreSQL.</b></p>

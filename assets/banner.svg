@@ -1,0 +1,30 @@
+<svg width="1200" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A0B10"/>
+      <stop offset="100%" stop-color="#13151F"/>
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5B7CFA"/>
+      <stop offset="100%" stop-color="#2E4CFF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="0%" r="70%">
+      <stop offset="0%" stop-color="#2E4CFF" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#2E4CFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="300" fill="url(#bg)"/>
+  <rect width="1200" height="300" fill="url(#glow)"/>
+
+  <!-- logo mark -->
+  <rect x="90" y="98" width="52" height="52" rx="13" fill="url(#iconGrad)"/>
+  <g transform="translate(102,110) scale(1.2)" fill="#FFFFFF">
+    <path d="M11 0 L12.6 8.4 L21 10 L12.6 11.6 L11 20 L9.4 11.6 L1 10 L9.4 8.4 Z"/>
+  </g>
+  <text x="158" y="132" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#FFFFFF">CareerOS AI</text>
+
+  <!-- tagline -->
+  <text x="90" y="200" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="800" fill="#FFFFFF">Quantify your engineering</text>
+  <text x="90" y="248" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="800" fill="#5B7CFA">readiness.</text>
+</svg>
